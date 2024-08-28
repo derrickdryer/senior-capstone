@@ -27,7 +27,7 @@ Unavailable
 Unavailable
 
 ## License
-This project is licensed under the MIT License — see [!(LICENSE)](https://github.com/derrickdryer/senior-capstone/blob/prod/LICENSE) file for more details.
+This project is licensed under the MIT License — see ![LICENSE](https://github.com/derrickdryer/senior-capstone/blob/prod/LICENSE) file for more details.
 
 ## Authors
 **Pennsylvania Western University, California**
