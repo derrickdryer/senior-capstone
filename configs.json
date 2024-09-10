@@ -1,0 +1,6 @@
+{
+    "DB_USER": "senior_capstone",
+    "DB_PASSWORD": "senior_capstone",
+    "DB_CONNECT_STRING": "senior-capstone-1.c3koskskid0m.us-east-2.rds.amazonaws.com:1521/ORCL"
+  }
+  
