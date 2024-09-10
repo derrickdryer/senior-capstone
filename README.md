@@ -33,3 +33,8 @@ This project is licensed under the MIT License — see **[LICENSE](https://githu
 - Derrick Dryer
 - Kolson DeSocio
 - Sarah Cusick
+
+## Connecting to DB
+1. Add configs.json with db credentials
+2. run "node db.connect.test.js"
+3. It should return "Test Completed Successfully"
