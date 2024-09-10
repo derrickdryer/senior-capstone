@@ -13,14 +13,17 @@
     "async": "^3.2.6",
     "axios": "^1.7.7",
     "body-parser": "^1.20.2",
-    "dependencies": "^0.0.1",
     "graphql": "^16.9.0",
-    "jest": "^29.7.0",
+    "oracledb": "^6.6.0",
     "react": "^18.3.1",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "jest-junit": "^16.0.0",
     "supertest": "^7.0.0"
+  },
+  "scripts": {
+    "test-db-connection": "jest db.connect.test.js"
   }
 }
