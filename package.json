@@ -1,4 +1,14 @@
 {
+  "name": "senior-capstone",
+  "version": "0.0.1",
+  "description": "Senior Capstone Project",
+  "author": "Derrick, Kolson, and Sarah",
+  "license": "MIT",
+  "main": "index.js",
+  "keywords": [
+    "capstone",
+    "nodejs"
+  ],
   "dependencies": {
     "async": "^3.2.6",
     "axios": "^1.7.7",
