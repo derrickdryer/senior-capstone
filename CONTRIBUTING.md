@@ -31,6 +31,8 @@ This project follows a `branch-and-pull` workflow.
 3. Make sufficient changes, perform `git add FILES` and `git commit -m "MESSAGE"` often to track changes locally.
 4. When sufficient changes are made or feature/fix is completed push your branch to the repo `git push -u origin BRANCH_NAME`.
 
+![Workflow](/images/Workflow.png)
+
 ## Pull Requests
 
 All issues and features must create a pull request to merge into the `testing` branch and must have sufficient documentation indicating what the pull request is for, what issues it solves/features it adds and lastly if any testing has been performed on the code. Please follow pull request template.
