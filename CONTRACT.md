@@ -4,7 +4,7 @@
 
 - [Team Contract](#team-contract)
   - [Table of contents](#table-of-contents)
-  - [Group Name: \[Insert Group Name\]](#group-name-insert-group-name)
+  - [Group Name: Byte Me](#group-name-byte-me)
     - [Members](#members)
   - [Goals for the Course](#goals-for-the-course)
   - [Communication and Management Procedures](#communication-and-management-procedures)
@@ -34,14 +34,13 @@
     - [Meeting Moderator: \[Specify rotation schedule\]](#meeting-moderator-specify-rotation-schedule)
     - [Note Taker: \[Specify rotation schedule\]](#note-taker-specify-rotation-schedule)
 
-## Group Name: [Insert Group Name]
+## Group Name: Byte Me
 
 ### Members
 
-- [Member 1]
-- [Member 2]
-- [Member 3]
-- [Member 4]
+- Derrick Dryer
+- Kolson DeSocio
+- Sarah Cusick
 
 ## Goals for the Course
 
