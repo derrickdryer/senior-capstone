@@ -16,6 +16,8 @@ async function connectToDB() {
 
     console.log('Connected to Oracle DB!');
     return connection;  // Ensure the connection is returned
+    console.log('Connected to Oracle DB! Connection will remain open.');
+
 
   } catch (err) {
     console.error('Error connecting to Oracle DB:', err);
@@ -24,3 +26,9 @@ async function connectToDB() {
 }
 
 module.exports = connectToDB;
+
+
+  return connection;
+}
+
+module.exports = connectToDB;  // Ensure we are exporting the function
