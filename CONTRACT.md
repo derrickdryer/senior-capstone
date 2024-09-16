@@ -78,9 +78,9 @@ The objective of this project is to develop a professional realtor website that 
 
 Microsoft Teams will be used for file sharing, organizing group documents, and hosting virtual meetings when necessary. It will also serve as a hub for asynchronous discussions.
 
-### Jira/Github Projects
+### Github Projects
 
-Jira/Github Projects will be used for Agile project management, tracking progress through user stories, sprints, and backlog management. Each member will log tasks, update their progress, and move issues through the workflow stages (e.g., To Do, In Progress, Done). Regular sprint planning and retrospectives will be facilitated through Jira to ensure milestones are met.
+Github Projects will be used for Agile project management, tracking progress through user stories, sprints, and backlog management. Each member will log tasks, update their progress, and move issues through the workflow stages (e.g., To Do, In Progress, Done). Regular sprint planning and retrospectives will be facilitated through Jira to ensure milestones are met.
 
 ### GitHub
 
