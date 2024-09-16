@@ -1,6 +1,7 @@
 # Senior Capstone
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Static Badge](https://img.shields.io/badge/Project%20Tracker-Click%20Me-0000ff?link=https%3A%2F%2Fgithub.com%2Fusers%2Fderrickdryer%2Fprojects%2F5%2F)
 
 ## Table of Contents
 
