@@ -6,21 +6,18 @@ async function connectToDB() {
 
   try {
     console.log('Attempting to connect to Oracle DB...');
-
     connection = await oracledb.getConnection({
       user: config.DB_USER,
       password: config.DB_PASSWORD,
       connectString: config.DB_CONNECT_STRING
     });
-
-    console.log('Connected to Oracle DB! Connection will remain open.');
+    console.log('Connected to Oracle DB!');
+    return connection;
 
   } catch (err) {
     console.error('Error connecting to Oracle DB:', err);
     throw err;
   }
-
-  return connection;
 }
 
-module.exports = connectToDB;  // Ensure we are exporting the function
+module.exports = connectToDB;
