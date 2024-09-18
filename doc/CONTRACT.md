@@ -15,7 +15,7 @@
     - [Asynchronous Communication: \[Specify preferred platforms\]](#asynchronous-communication-specify-preferred-platforms)
   - [Sharing Work and Resources](#sharing-work-and-resources)
     - [Microsoft Teams](#microsoft-teams)
-    - [Jira/Github Projects](#jiragithub-projects)
+    - [Github Projects](#github-projects)
     - [GitHub](#github)
   - [Expectations of Group Members](#expectations-of-group-members)
     - [Meeting Attendance](#meeting-attendance)
@@ -130,7 +130,7 @@ The role of Meeting Moderator will rotate on a weekly basis. Each member will be
 - **Week 1:** Derrick Dryer
 - **Week 2:** Kolson DeSocio
 - **Week 3:** Sarah Cusick
-- *The rotation will continue in this order throughout the project.*
+- _The rotation will continue in this order throughout the project._
 
 ### Note Taker
 
@@ -139,7 +139,7 @@ The Note Taker will also rotate on a weekly basis. This member will be responsib
 - **Week 1:** Kolson DeSocio
 - **Week 2:** Sarah Cusick
 - **Week 3:** Derrick Dryer
-- *The rotation will continue in this order throughout the project.*
+- _The rotation will continue in this order throughout the project._
 
 ## Additional Project Roles
 
