@@ -20,7 +20,7 @@ For inquiries, please email <contact@derrickdryer.com>
 
 ## Contributing
 
-Contributions to this project are currently restricted. Only the authors and contributors listed below are allowed to make changes and merge branches. Due to the nature of this project our team will not be adding more contributors. However, you are free to utilize the code as per the [License](#license)
+See [CONTRIBUTING](/doc/CONTRIBUTING.md) document.
 
 ## License
 
@@ -29,13 +29,8 @@ This project is licensed under the MIT License — see **[LICENSE](https://githu
 ## Authors & Contributors
 
 **Pennsylvania Western University, California**
-*Bachelor's of Computer Information Systems*
+_Bachelor's of Computer Information Systems_
 
 - Derrick Dryer
 - Kolson DeSocio
 - Sarah Cusick
-
-## Connecting to DB
-1. Add configs.json with db credentials
-2. run "node db.connect.test.js"
-3. It should return "Test Completed Successfully"
