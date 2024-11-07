@@ -1,0 +1,184 @@
+/* CSS Variables for easy customization */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #d2d2d2;
+    --accent-color: #e74c3c;
+    --background-color: #ffffff;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --transition-speed: 0.3s;
+    --max-width: 1600px;
+    --padding: 20px;
+}
+
+/* Reset default styles */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, h1, h2, p, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* General styles */
+body {
+    font-family: var(--font-family);
+    line-height: 1.6;
+    color: var(--primary-color);
+    background-color: var(--background-color);
+}
+
+.container {
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--padding);
+}
+
+/* Header styles */
+header {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    margin-left: 20px;
+}
+
+header nav {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-right: 20px;
+}
+
+header nav ul {
+    display: flex;
+    gap: 20px;
+}
+
+header nav ul li a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background var(--transition-speed);
+}
+
+header nav ul li a:hover {
+    background: var(--accent-color);
+}
+
+.menu-icon {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--secondary-color);
+}
+
+/* Main content styles */
+main {
+    padding: 40px 20px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+section#property-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+section#property-title h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+}
+
+section#property-title p {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+section#image-gallery {
+    text-align: center;
+}
+
+section#image-gallery h3 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.gallery {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.gallery img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+section#about, section#amenities, section#fees-policies, section#location, section#education, section#transportation, section#points-of-interest, section#reviews {
+    padding: 20px;
+    background: var(--secondary-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+section#about h3, section#amenities h3, section#fees-policies h3, section#location h3, section#education h3, section#transportation h3, section#points-of-interest h3, section#reviews h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+section#about p, section#fees-policies p, section#location p, section#transportation p, section#reviews p {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+}
+
+section#amenities ul, section#education ul, section#points-of-interest ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+section#amenities ul li, section#education ul li, section#points-of-interest ul li {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+/* Footer styles */
+footer {
+    background: var(--primary-color);
+    color: var(--secondary-color);
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
