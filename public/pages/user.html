@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <title>User Account - Russell Properties</title>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Russell Properties</h1>
+        <nav>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <section id="user-account">
+            <div class="container">
+                <h2>Welcome, [User's Name]</h2>
+                
+                <!-- Account Details -->
+                <section>
+                    <h3>Account Details</h3>
+                    <p>Email: user@example.com</p>
+                    <p>Phone: (123) 456-7890</p>
+                    <p>Address: 123 Property Lane, Cityville, ST 12345</p>
+                </section>
+
+                <!-- Rent Payment -->
+                <section id="rent-payment">
+                    <h3>Pay Rent</h3>
+                    <p>Amount Due: $1,200</p>
+                    <form action="invoice.html">
+                        <button type="submit">View Invoice & Pay</button>
+                    </form>
+                </section>
+
+                <!-- Submit Requests -->
+                <section id="requests">
+                    <h3>Submit Request</h3>
+                    <form action="/submit_request" method="POST">
+                        <label for="request-type">Request Type:</label>
+                        <select id="request-type" name="request-type" required>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="complaint">Complaint</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <label for="description">Description:</label>
+                        <textarea id="description" name="description" rows="4" required></textarea>
+                        <button type="submit">Submit Request</button>
+                    </form>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Russell Properties. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Redirect to login page if not authenticated
+        document.addEventListener("DOMContentLoaded", function() {
+            const isAuthenticated = false; 
+            if (!isAuthenticated) {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+</body>
+</html>
