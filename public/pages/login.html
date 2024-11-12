@@ -22,6 +22,7 @@
             // Check if input matches base credentials
             if (username === baseUsername && password === basePassword) {
                 alert("Login successful!");
+                sessionStorage.setItem("isAuthenticated", "true"); // Set authenticated status
                 window.location.href = "user_dashboard.html"; // Redirect to user page
             } else {
                 alert("Invalid username or password. Please try again.");

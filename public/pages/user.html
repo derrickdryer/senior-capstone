@@ -69,11 +69,11 @@
     </footer>
 
     <script>
-        // Redirect to login page if not authenticated
+        // Check if the user is authenticated
         document.addEventListener("DOMContentLoaded", function() {
-            const isAuthenticated = false; 
+            const isAuthenticated = sessionStorage.getItem("isAuthenticated") === "true";
             if (!isAuthenticated) {
-                window.location.href = "login.html";
+                window.location.href = "login.html"; // Redirect to login page if not logged in
             }
         });
     </script>
