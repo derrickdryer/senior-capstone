@@ -11,16 +11,16 @@ async function fetchUsers() {
     }
 
     console.log('Fetching data from users table...');
-    const result = await connection.execute('SELECT * FROM users');
-    return result.rows;
+    const result = await connection.query('SELECT * FROM users');
+    return result;
 
   } catch (err) {
     console.error('Error fetching data from users table:', err);
     throw err;
   } finally {
-    if (connection && typeof connection.close === 'function') {
+    if (connection && typeof connection.end === 'function') {
       try {
-        await connection.close();
+        await connection.end();
         console.log('Connection closed');
       } catch (err) {
         console.error('Error closing the connection:', err);
