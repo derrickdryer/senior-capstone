@@ -8,7 +8,6 @@
 - [Senior Capstone](#senior-capstone)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
-  - [Contributing](#contributing)
   - [License](#license)
   - [Authors \& Contributors](#authors--contributors)
 
@@ -17,10 +16,6 @@
 Our team is working on a service-learning project to analyze a series of disparate business processes in order to redesign into an optimized and streamlined information systems (software) solution by considering technical, user & business requirements. We will then apply a software development methodology to develop and implement the information systems (software) solution. Lastly, our team will produce a software installation support and systems users' manual for this system.
 
 For inquiries, please email <contact@derrickdryer.com>
-
-## Contributing
-
-See [CONTRIBUTING](/doc/CONTRIBUTING.md) document.
 
 ## License
 
