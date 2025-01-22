@@ -90,29 +90,39 @@
         const fileList = document.getElementById('file-list');
 
         // Handle form submission
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', async function(event) {
             event.preventDefault();
-            
+
             const formData = new FormData(form);
-            const propertyItem = {
-                title: formData.get('title'),
-                price: formData.get('price'),
-                address: formData.get('address'),
-                squareFootage: formData.get('square-footage'),
-                bedrooms: formData.get('bedrooms'),
-                bathrooms: formData.get('bathrooms'),
-                acres: formData.get('acres'),
-                description: formData.get('description'),
-                images: formData.getAll('images')
-            };
+            const images = imagesInput.files;
 
-            // Mock saving property data
-            console.log('Property saved:', propertyItem);
+            // Append files to formData
+            Array.from(images).forEach(file => {
+                formData.append('images', file);
+            });
 
-            // Alert for user feedback
-            alert('Property added! Navigate to the properties page to see it.');
-            form.reset();
-            fileList.innerHTML = ''; // Clear file list
+            try {
+                const response = await fetch('http://localhost:3000/api/properties', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Property added:', result);
+
+                    // Alert for user feedback
+                    alert('Property added successfully! Navigate to the properties page to see it.');
+                    form.reset();
+                    fileList.innerHTML = ''; // Clear file list
+                } else {
+                    const errorData = await response.json();
+                    alert(`Failed to add property: ${errorData.error}`);
+                }
+            } catch (error) {
+                console.error('Error adding property:', error);
+                alert('An error occurred while adding the property.');
+            }
         });
 
         // Handle file input change

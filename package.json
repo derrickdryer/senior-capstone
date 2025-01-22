@@ -1,27 +1,22 @@
 {
-  "name": "senior-capstone",
+  "name": "rest-api",
   "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest db.connect.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "async": "^3.2.6",
-    "axios": "^1.7.7",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "dotenv": "^16.4.7",
-    "express-validator": "^7.2.1",
-    "graphql": "^16.9.0",
-    "jsonwebtoken": "^9.0.2",
-    "mariadb": "^3.4.0",
-    "pg": "^8.12.0",
-    "react": "^18.3.1",
-    "rest": "^2.0.0",
-    "socket.io": "^4.7.5"
+    "express": "^4.21.2",
+    "jest": "^29.7.0",
+    "mysql2": "^3.12.0",
+    "sequelize": "^6.37.5"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "jest-junit": "^16.0.0",
-    "supertest": "^7.0.0"
-  },
-  "scripts": {
-    "test-db-connection": "jest db.connect.test.js"
+    "nodemon": "^3.1.9"
   }
 }
