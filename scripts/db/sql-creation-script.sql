@@ -3,6 +3,17 @@
 CREATE DATABASE IF NOT EXISTS realtor_website;
 USE realtor_website;
 
+CREATE USER 'realtor_website'@'192.168.0.%' IDENTIFIED BY 'secure_password';
+CREATE USER 'realtor_website'@'10.1.33.%' IDENTIFIED BY 'secure_password';
+CREATE USER 'realtor_website'@'localhost' IDENTIFIED BY 'secure_password';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'192.168.0.%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'10.1.33.%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'localhost';
+
+FLUSH PRIVILEGES;
+
+
 -- Table: assets
 CREATE TABLE assets (
     property_id INT AUTO_INCREMENT PRIMARY KEY,
