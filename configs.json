@@ -1,0 +1,9 @@
+{
+    "database": {
+      "user": "realtor_website",
+      "password": "4fGc*sDRYgpKRpDRH^^5",
+      "host": "192.168.0.209",
+      "port": 3306,
+      "name": "realtor_website"
+    }
+  }

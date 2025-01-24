@@ -1,11 +1,32 @@
-const sequelize = require('../config/db');
-const { DataTypes } = require('sequelize');
-const schemas = require('./schemas');
+const { Sequelize, DataTypes } = require('sequelize');
+const config = require('../configs.json'); // Load database config
+const schemasData = require('../models/schemas.json'); // Load JSON schema definitions
 
-// Define models based on schemas
-const models = Object.keys(schemas).reduce((acc, tableName) => {
-  acc[tableName] = sequelize.define(tableName, schemas[tableName], { tableName, timestamps: false });
-  return acc;
-}, {});
+// Initialize Sequelize
+const sequelize = new Sequelize(
+  config.database.name,
+  config.database.user,
+  config.database.password,
+  {
+    host: config.database.host,
+    port: config.database.port,
+    dialect: 'mysql', // Change if needed
+    logging: false,
+  }
+);
 
-module.exports = models;
+// Define models dynamically based on schemas.json
+const models = {};
+
+Object.keys(schemasData.schemas).forEach((tableName) => {
+  models[tableName] = sequelize.define(
+    tableName,
+    Object.keys(schemasData.schemas[tableName]).reduce((acc, field) => {
+      acc[field] = { type: DataTypes.STRING }; // Defaulting all fields to STRING, customize as needed
+      return acc;
+    }, {}),
+    { tableName, timestamps: false }
+  );
+});
+
+module.exports = { models, sequelize };
