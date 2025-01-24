@@ -1,6 +1,16 @@
 {
   "name": "senior-capstone",
   "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest db.connect.test.js",
+    "crud-test": "jest utils.test.ts",
+    "start": "node server/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "async": "^3.2.6",
     "axios": "^1.7.7",
