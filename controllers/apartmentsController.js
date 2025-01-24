@@ -1,6 +1,6 @@
 // controllers/apartmentsController.js
 
-const { apartments } = require('../models');
+const { apartments } = require('../models/schemas');
 
 // Get all apartments
 exports.getAllApartments = async (req, res) => {

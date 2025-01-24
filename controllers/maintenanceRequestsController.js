@@ -1,6 +1,6 @@
 // controllers/maintenanceRequestsController.js
 
-const { maintenance_requests } = require('../models');
+const { maintenance_requests } = require('../models/schemas');
 
 // Get all maintenance requests
 exports.getAllMaintenanceRequests = async (req, res) => {

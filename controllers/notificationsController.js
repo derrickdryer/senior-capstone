@@ -1,6 +1,6 @@
 // controllers/notificationsController.js
 
-const { notifications } = require('../models');
+const { notifications } = require('../models/schemas');
 
 // Get all notifications
 exports.getAllNotifications = async (req, res) => {

@@ -1,6 +1,6 @@
 // controllers/inquiriesController.js
 
-const { inquiries } = require('../models');
+const { inquiries } = require('../models/schemas');
 
 // Get all inquiries
 exports.getAllInquiries = async (req, res) => {

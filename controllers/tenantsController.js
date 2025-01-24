@@ -1,6 +1,6 @@
 // controllers/tenantsController.js
 
-const { tenants } = require('../models');
+const { tenants } = require('../models/schemas');
 
 // Get all tenants
 exports.getAllTenants = async (req, res) => {

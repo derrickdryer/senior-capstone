@@ -1,6 +1,6 @@
 // controllers/assetsController.js
 
-const { assets } = require('../models');
+const { assets } = require('../models/schemas');
 
 // Get all assets
 exports.getAllAssets = async (req, res) => {

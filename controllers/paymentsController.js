@@ -1,6 +1,6 @@
 // controllers/paymentsController.js
 
-const { payments } = require('../models');
+const { payments } = require('../models/schemas');
 
 // Get all payments
 exports.getAllPayments = async (req, res) => {

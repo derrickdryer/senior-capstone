@@ -1,6 +1,6 @@
 // controllers/usersController.js
 
-const { users } = require('../models');
+const { users } = require('../models/schemas');
 
 // Get all users
 exports.getAllUsers = async (req, res) => {

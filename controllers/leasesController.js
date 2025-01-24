@@ -1,6 +1,6 @@
 // controllers/leasesController.js
 
-const { leases } = require('../models');
+const { leases } = require('../models/schemas');
 
 // Get all leases
 exports.getAllLeases = async (req, res) => {
