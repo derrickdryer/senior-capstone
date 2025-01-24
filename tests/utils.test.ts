@@ -2,25 +2,23 @@ const config = require('../configs.json');
 const { endpoints } = require('./crud.test');
 const request = require('supertest');
 
-const host = config.database.host;
-const port = config.database.port;
-const baseUrl = `http://${host}:${port}/rest`;
+const host = 'localhost';
+const port = 3000;
+const baseUrl = `http://${host}:${port}/api`;
 
-const schemas = {}; // Removed TypeScript type annotations
+const schemas = {};
 const createdIds = {};
 
-
 test("Ping API Server", async () => {
-    try {
-      const response = await request(baseUrl).get("/ping");
-      expect(response.status).toBe(200);
-      console.log("✅ Server is running!");
-    } catch (error) {
-      console.error("❌ Server is NOT running. Please start the API server.");
-      throw error;
-    }
-  });
-
+  try {
+    const response = await request(baseUrl).get("/ping");
+    expect(response.status).toBe(200);
+    console.log("✅ Server is running!");
+  } catch (error) {
+    console.error("❌ Server is NOT running. Please start the API server.");
+    throw error;
+  }
+});
 
 const defaultValues = {
   string: `test-${Date.now()}`,
@@ -33,7 +31,7 @@ const defaultValues = {
 
 const fetchEndpointSchema = async (endpoint) => {
   const response = await request(baseUrl).get(`/${endpoint}`).expect(200);
-  const data = response.body.data || response.body;
+  const data = response.body;
   if (!data || (Array.isArray(data) && data.length === 0)) {
     throw new Error(`No data returned from ${endpoint}`);
   }
@@ -61,7 +59,6 @@ const generateObjectFromSchema = (schema) => {
   return obj;
 };
 
-// Function to make POST requests
 const postRequest = async (endpoint, data) => {
   const response = await request(baseUrl)
     .post(`/${endpoint}`)
@@ -69,20 +66,18 @@ const postRequest = async (endpoint, data) => {
     .expect('Content-Type', /json/)
     .expect(201);
 
-  return response.body.data || response.body;
+  return response.body;
 };
 
-// Function to make GET requests
 const getRequest = async (endpoint, id) => {
   const response = await request(baseUrl)
     .get(`/${endpoint}/${id}`)
     .expect('Content-Type', /json/)
     .expect(200);
 
-  return response.body.data || response.body;
+  return response.body;
 };
 
-// Function to make PUT requests
 const putRequest = async (endpoint, id, data) => {
   const response = await request(baseUrl)
     .put(`/${endpoint}/${id}`)
@@ -90,25 +85,22 @@ const putRequest = async (endpoint, id, data) => {
     .expect('Content-Type', /json/)
     .expect(200);
 
-  return response.body.data || response.body;
+  return response.body;
 };
 
-// Function to make DELETE requests
 const deleteRequest = async (endpoint, id) => {
-  await request(baseUrl).delete(`/${endpoint}/${id}`).expect(200);
+  await request(baseUrl).delete(`/${endpoint}/${id}`).expect(204);
 };
 
-// Function to make LIST requests
 const listRequest = async (endpoint) => {
   const response = await request(baseUrl)
     .get(`/${endpoint}`)
     .expect('Content-Type', /json/)
     .expect(200);
 
-  return response.body.data || response.body;
+  return response.body;
 };
 
-// Field validation function
 const validateFields = (actual, expected) => {
   Object.keys(expected).forEach((key) => {
     const { required, type } = expected[key];
@@ -123,7 +115,6 @@ const validateFields = (actual, expected) => {
   });
 };
 
-// Test Suite
 describe('Create Read Update Tests for All Endpoints', () => {
   beforeAll(async () => {
     await Promise.all(
@@ -142,7 +133,7 @@ describe('Create Read Update Tests for All Endpoints', () => {
 
   endpoints.forEach((endpoint) => {
     test(`Create ${endpoint}`, async () => {
-      let createObject = generateObjectFromSchema(schemas[endpoint]);
+      const createObject = generateObjectFromSchema(schemas[endpoint]);
 
       const created = await postRequest(endpoint, createObject);
       createdIds[endpoint] = created.id || created[`${endpoint.slice(0, -1)}_id`];
@@ -159,7 +150,7 @@ describe('Create Read Update Tests for All Endpoints', () => {
 
   endpoints.forEach((endpoint) => {
     test(`Update ${endpoint}`, async () => {
-      let updateObject = generateObjectFromSchema(schemas[endpoint]);
+      const updateObject = generateObjectFromSchema(schemas[endpoint]);
 
       const updated = await putRequest(endpoint, createdIds[endpoint], updateObject);
       validateFields(updated, updateObject);
@@ -179,7 +170,7 @@ describe('Create Read Update Tests for All Endpoints', () => {
 
   endpoints.forEach((endpoint) => {
     test(`Search for ${endpoint}`, async () => {
-      const searchResults = await listRequest(`${endpoint}?search=boingo.com`);
+      const searchResults = await listRequest(`${endpoint}?search=test`);
       expect(searchResults).toBeInstanceOf(Array);
       if (searchResults.length > 0) {
         expect(Object.keys(searchResults[0])).toContain('id');
