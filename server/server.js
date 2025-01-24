@@ -1,7 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
-const { sequelize } = require('../models/schemas'); // Corrected import
+
+dotenv.config();
+const app = express();
+app.use(express.json());
 
 // Import Routes
 const assetsRoutes = require('../routes/assets');
@@ -14,13 +16,7 @@ const usersRoutes = require('../routes/users');
 const notificationsRoutes = require('../routes/notifications');
 const inquiriesRoutes = require('../routes/inquiries');
 
-dotenv.config();
-const app = express();
-
-// Middleware
-app.use(bodyParser.json());
-
-// Routes
+// Register Routes
 app.use('/api/assets', assetsRoutes);
 app.use('/api/apartments', apartmentsRoutes);
 app.use('/api/tenants', tenantsRoutes);
@@ -31,28 +27,11 @@ app.use('/api/users', usersRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
-// Root route
+// Root Route
 app.get('/', (req, res) => {
   res.send('Welcome to the API');
 });
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Internal Server Error', message: err.message });
-  });
-
-// Sync database and start server
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Database connection has been established successfully.');
-    return sequelize.sync({ force: false }); // Set `force: true` to drop tables during dev
-  })
-  .then(() => {
-    console.log('Database synced successfully.');
-    app.listen(process.env.PORT || 3000, () =>
-      console.log(`Server running on http://localhost:${process.env.PORT || 3000}`)
-    );
-  })
-  .catch((err) => console.error('Unable to connect to the database:', err));
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

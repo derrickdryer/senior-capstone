@@ -1,28 +1,12 @@
-// routes/payments.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllPayments,
-  getPaymentById,
-  createPayment,
-  updatePayment,
-  deletePayment
-} = require('../controllers/paymentsController');
+const paymentsController = require('../controllers/paymentsController');
 
-// GET all payments
-router.get('/', getAllPayments);
-
-// GET a single payment by ID
-router.get('/:id', getPaymentById);
-
-// POST create a new payment
-router.post('/', createPayment);
-
-// PUT update a payment by ID
-router.put('/:id', updatePayment);
-
-// DELETE a payment by ID
-router.delete('/:id', deletePayment);
+// Define CRUD routes for payments
+router.get('/', paymentsController.getAllPayments);
+router.get('/:id', paymentsController.getPaymentById);
+router.post('/', paymentsController.createPayment);
+router.put('/:id', paymentsController.updatePayment);
+router.delete('/:id', paymentsController.deletePayment);
 
 module.exports = router;

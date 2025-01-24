@@ -1,60 +1,71 @@
-// controllers/assetsController.js
-
-const { assets } = require('../models/schemas');
+const pool = require('../database'); // Import MySQL connection
 
 // Get all assets
 exports.getAllAssets = async (req, res) => {
   try {
-    const results = await assets.findAll();
-    res.json(results);
+    console.log("✅ Fetching all assets...");
+    const [rows] = await pool.query("SELECT * FROM assets");
+    res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching assets:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Get a single asset by ID
 exports.getAssetById = async (req, res) => {
   try {
-    const asset = await assets.findByPk(req.params.id);
-    if (!asset) return res.status(404).json({ error: 'Asset not found' });
-    res.json(asset);
+    const [rows] = await pool.query("SELECT * FROM assets WHERE property_id = ?", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: "Asset not found" });
+    res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching asset:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Create a new asset
 exports.createAsset = async (req, res) => {
   try {
-    const newAsset = await assets.create(req.body);
-    res.status(201).json(newAsset);
+    const { address, city, state, postal_code, num_apartments } = req.body;
+    const [result] = await pool.query(
+      "INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES (?, ?, ?, ?, ?)",
+      [address, city, state, postal_code, num_apartments]
+    );
+    res.status(201).json({ message: "Asset created successfully", property_id: result.insertId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error creating asset:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
-// Update an existing asset by ID
+// Update an asset by ID
 exports.updateAsset = async (req, res) => {
   try {
-    const asset = await assets.findByPk(req.params.id);
-    if (!asset) return res.status(404).json({ error: 'Asset not found' });
+    const { address, city, state, postal_code, num_apartments } = req.body;
+    const [result] = await pool.query(
+      "UPDATE assets SET address = ?, city = ?, state = ?, postal_code = ?, num_apartments = ? WHERE property_id = ?",
+      [address, city, state, postal_code, num_apartments, req.params.id]
+    );
 
-    await asset.update(req.body);
-    res.json(asset);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Asset not found" });
+
+    res.json({ message: "Asset updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error updating asset:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Delete an asset by ID
 exports.deleteAsset = async (req, res) => {
   try {
-    const asset = await assets.findByPk(req.params.id);
-    if (!asset) return res.status(404).json({ error: 'Asset not found' });
+    const [result] = await pool.query("DELETE FROM assets WHERE property_id = ?", [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Asset not found" });
 
-    await asset.destroy();
-    res.status(204).send();
+    res.json({ message: "Asset deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error deleting asset:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };

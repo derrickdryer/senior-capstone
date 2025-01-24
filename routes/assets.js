@@ -1,28 +1,12 @@
-// routes/assets.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllAssets,
-  getAssetById,
-  createAsset,
-  updateAsset,
-  deleteAsset
-} = require('../controllers/assetsController');
+const assetsController = require('../controllers/assetsController');
 
-// GET all assets
-router.get('/', getAllAssets);
-
-// GET a single asset by ID
-router.get('/:id', getAssetById);
-
-// POST create a new asset
-router.post('/', createAsset);
-
-// PUT update an asset by ID
-router.put('/:id', updateAsset);
-
-// DELETE an asset by ID
-router.delete('/:id', deleteAsset);
+// Define CRUD routes for assets
+router.get('/', assetsController.getAllAssets);
+router.get('/:id', assetsController.getAssetById);
+router.post('/', assetsController.createAsset);
+router.put('/:id', assetsController.updateAsset);
+router.delete('/:id', assetsController.deleteAsset);
 
 module.exports = router;

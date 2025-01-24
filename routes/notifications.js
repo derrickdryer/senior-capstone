@@ -1,28 +1,12 @@
-// routes/notifications.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllNotifications,
-  getNotificationById,
-  createNotification,
-  updateNotification,
-  deleteNotification
-} = require('../controllers/notificationsController');
+const notificationsController = require('../controllers/notificationsController');
 
-// GET all notifications
-router.get('/', getAllNotifications);
-
-// GET a single notification by ID
-router.get('/:id', getNotificationById);
-
-// POST create a new notification
-router.post('/', createNotification);
-
-// PUT update a notification by ID
-router.put('/:id', updateNotification);
-
-// DELETE a notification by ID
-router.delete('/:id', deleteNotification);
+// Define CRUD routes for notifications
+router.get('/', notificationsController.getAllNotifications);
+router.get('/:id', notificationsController.getNotificationById);
+router.post('/', notificationsController.createNotification);
+router.put('/:id', notificationsController.updateNotification);
+router.delete('/:id', notificationsController.deleteNotification);
 
 module.exports = router;

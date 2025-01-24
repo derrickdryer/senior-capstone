@@ -1,60 +1,71 @@
-// controllers/paymentsController.js
-
-const { payments } = require('../models/schemas');
+const pool = require('../database'); // Import MySQL connection
 
 // Get all payments
 exports.getAllPayments = async (req, res) => {
   try {
-    const results = await payments.findAll();
-    res.json(results);
+    console.log("✅ Fetching all payments...");
+    const [rows] = await pool.query("SELECT * FROM payments");
+    res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching payments:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Get a single payment by ID
 exports.getPaymentById = async (req, res) => {
   try {
-    const payment = await payments.findByPk(req.params.id);
-    if (!payment) return res.status(404).json({ error: 'Payment not found' });
-    res.json(payment);
+    const [rows] = await pool.query("SELECT * FROM payments WHERE payment_id = ?", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: "Payment not found" });
+    res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching payment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Create a new payment
 exports.createPayment = async (req, res) => {
   try {
-    const newPayment = await payments.create(req.body);
-    res.status(201).json(newPayment);
+    const { lease_id, payment_date, amount, payment_method, status } = req.body;
+    const [result] = await pool.query(
+      "INSERT INTO payments (lease_id, payment_date, amount, payment_method, status) VALUES (?, ?, ?, ?, ?)",
+      [lease_id, payment_date, amount, payment_method, status]
+    );
+    res.status(201).json({ message: "Payment created successfully", payment_id: result.insertId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error creating payment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
-// Update an existing payment by ID
+// Update a payment by ID
 exports.updatePayment = async (req, res) => {
   try {
-    const payment = await payments.findByPk(req.params.id);
-    if (!payment) return res.status(404).json({ error: 'Payment not found' });
+    const { lease_id, payment_date, amount, payment_method, status } = req.body;
+    const [result] = await pool.query(
+      "UPDATE payments SET lease_id = ?, payment_date = ?, amount = ?, payment_method = ?, status = ? WHERE payment_id = ?",
+      [lease_id, payment_date, amount, payment_method, status, req.params.id]
+    );
 
-    await payment.update(req.body);
-    res.json(payment);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Payment not found" });
+
+    res.json({ message: "Payment updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error updating payment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Delete a payment by ID
 exports.deletePayment = async (req, res) => {
   try {
-    const payment = await payments.findByPk(req.params.id);
-    if (!payment) return res.status(404).json({ error: 'Payment not found' });
+    const [result] = await pool.query("DELETE FROM payments WHERE payment_id = ?", [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Payment not found" });
 
-    await payment.destroy();
-    res.status(204).send();
+    res.json({ message: "Payment deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error deleting payment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };

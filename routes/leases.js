@@ -1,28 +1,12 @@
-// routes/leases.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllLeases,
-  getLeaseById,
-  createLease,
-  updateLease,
-  deleteLease
-} = require('../controllers/leasesController');
+const leasesController = require('../controllers/leasesController');
 
-// GET all leases
-router.get('/', getAllLeases);
-
-// GET a single lease by ID
-router.get('/:id', getLeaseById);
-
-// POST create a new lease
-router.post('/', createLease);
-
-// PUT update a lease by ID
-router.put('/:id', updateLease);
-
-// DELETE a lease by ID
-router.delete('/:id', deleteLease);
+// Define CRUD routes for leases
+router.get('/', leasesController.getAllLeases);
+router.get('/:id', leasesController.getLeaseById);
+router.post('/', leasesController.createLease);
+router.put('/:id', leasesController.updateLease);
+router.delete('/:id', leasesController.deleteLease);
 
 module.exports = router;

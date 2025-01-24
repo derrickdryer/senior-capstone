@@ -1,28 +1,12 @@
-// routes/inquiries.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllInquiries,
-  getInquiryById,
-  createInquiry,
-  updateInquiry,
-  deleteInquiry
-} = require('../controllers/inquiriesController');
+const inquiriesController = require('../controllers/inquiriesController');
 
-// GET all inquiries
-router.get('/', getAllInquiries);
-
-// GET a single inquiry by ID
-router.get('/:id', getInquiryById);
-
-// POST create a new inquiry
-router.post('/', createInquiry);
-
-// PUT update an inquiry by ID
-router.put('/:id', updateInquiry);
-
-// DELETE an inquiry by ID
-router.delete('/:id', deleteInquiry);
+// Define CRUD routes for inquiries
+router.get('/', inquiriesController.getAllInquiries);
+router.get('/:id', inquiriesController.getInquiryById);
+router.post('/', inquiriesController.createInquiry);
+router.put('/:id', inquiriesController.updateInquiry);
+router.delete('/:id', inquiriesController.deleteInquiry);
 
 module.exports = router;

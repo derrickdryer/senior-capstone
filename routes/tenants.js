@@ -1,28 +1,12 @@
-// routes/tenants.js
-
 const express = require('express');
 const router = express.Router();
-const {
-  getAllTenants,
-  getTenantById,
-  createTenant,
-  updateTenant,
-  deleteTenant
-} = require('../controllers/tenantsController');
+const tenantsController = require('../controllers/tenantsController');
 
-// GET all tenants
-router.get('/', getAllTenants);
-
-// GET a single tenant by ID
-router.get('/:id', getTenantById);
-
-// POST create a new tenant
-router.post('/', createTenant);
-
-// PUT update a tenant by ID
-router.put('/:id', updateTenant);
-
-// DELETE a tenant by ID
-router.delete('/:id', deleteTenant);
+// Define CRUD routes for tenants
+router.get('/', tenantsController.getAllTenants);
+router.get('/:id', tenantsController.getTenantById);
+router.post('/', tenantsController.createTenant);
+router.put('/:id', tenantsController.updateTenant);
+router.delete('/:id', tenantsController.deleteTenant);
 
 module.exports = router;

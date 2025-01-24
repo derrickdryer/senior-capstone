@@ -1,60 +1,71 @@
-// controllers/apartmentsController.js
-
-const { apartments } = require('../models/schemas');
+const pool = require('../database'); // Import MySQL connection
 
 // Get all apartments
 exports.getAllApartments = async (req, res) => {
   try {
-    const results = await apartments.findAll();
-    res.json(results);
+    console.log("✅ Fetching all apartments...");
+    const [rows] = await pool.query("SELECT * FROM apartments");
+    res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching apartments:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Get a single apartment by ID
 exports.getApartmentById = async (req, res) => {
   try {
-    const apartment = await apartments.findByPk(req.params.id);
-    if (!apartment) return res.status(404).json({ error: 'Apartment not found' });
-    res.json(apartment);
+    const [rows] = await pool.query("SELECT * FROM apartments WHERE apartment_id = ?", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: "Apartment not found" });
+    res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching apartment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Create a new apartment
 exports.createApartment = async (req, res) => {
   try {
-    const newApartment = await apartments.create(req.body);
-    res.status(201).json(newApartment);
+    const { property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount } = req.body;
+    const [result] = await pool.query(
+      "INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount]
+    );
+    res.status(201).json({ message: "Apartment created successfully", apartment_id: result.insertId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error creating apartment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
-// Update an existing apartment by ID
+// Update an apartment by ID
 exports.updateApartment = async (req, res) => {
   try {
-    const apartment = await apartments.findByPk(req.params.id);
-    if (!apartment) return res.status(404).json({ error: 'Apartment not found' });
+    const { property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount } = req.body;
+    const [result] = await pool.query(
+      "UPDATE apartments SET property_id = ?, unit_number = ?, floor = ?, bedrooms = ?, bathrooms = ?, square_footage = ?, rent_amount = ? WHERE apartment_id = ?",
+      [property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount, req.params.id]
+    );
 
-    await apartment.update(req.body);
-    res.json(apartment);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Apartment not found" });
+
+    res.json({ message: "Apartment updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error updating apartment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Delete an apartment by ID
 exports.deleteApartment = async (req, res) => {
   try {
-    const apartment = await apartments.findByPk(req.params.id);
-    if (!apartment) return res.status(404).json({ error: 'Apartment not found' });
+    const [result] = await pool.query("DELETE FROM apartments WHERE apartment_id = ?", [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Apartment not found" });
 
-    await apartment.destroy();
-    res.status(204).send();
+    res.json({ message: "Apartment deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error deleting apartment:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };

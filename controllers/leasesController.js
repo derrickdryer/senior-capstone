@@ -1,60 +1,71 @@
-// controllers/leasesController.js
-
-const { leases } = require('../models/schemas');
+const pool = require('../database'); // Import MySQL connection
 
 // Get all leases
 exports.getAllLeases = async (req, res) => {
   try {
-    const results = await leases.findAll();
-    res.json(results);
+    console.log("✅ Fetching all leases...");
+    const [rows] = await pool.query("SELECT * FROM leases");
+    res.json(rows);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching leases:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Get a single lease by ID
 exports.getLeaseById = async (req, res) => {
   try {
-    const lease = await leases.findByPk(req.params.id);
-    if (!lease) return res.status(404).json({ error: 'Lease not found' });
-    res.json(lease);
+    const [rows] = await pool.query("SELECT * FROM leases WHERE lease_id = ?", [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: "Lease not found" });
+    res.json(rows[0]);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error fetching lease:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Create a new lease
 exports.createLease = async (req, res) => {
   try {
-    const newLease = await leases.create(req.body);
-    res.status(201).json(newLease);
+    const { tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status } = req.body;
+    const [result] = await pool.query(
+      "INSERT INTO leases (tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status]
+    );
+    res.status(201).json({ message: "Lease created successfully", lease_id: result.insertId });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error creating lease:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
-// Update an existing lease by ID
+// Update a lease by ID
 exports.updateLease = async (req, res) => {
   try {
-    const lease = await leases.findByPk(req.params.id);
-    if (!lease) return res.status(404).json({ error: 'Lease not found' });
+    const { tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status } = req.body;
+    const [result] = await pool.query(
+      "UPDATE leases SET tenant_id = ?, apartment_id = ?, lease_start_date = ?, lease_end_date = ?, monthly_rent = ?, security_deposit = ?, status = ? WHERE lease_id = ?",
+      [tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status, req.params.id]
+    );
 
-    await lease.update(req.body);
-    res.json(lease);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Lease not found" });
+
+    res.json({ message: "Lease updated successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error updating lease:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
 
 // Delete a lease by ID
 exports.deleteLease = async (req, res) => {
   try {
-    const lease = await leases.findByPk(req.params.id);
-    if (!lease) return res.status(404).json({ error: 'Lease not found' });
+    const [result] = await pool.query("DELETE FROM leases WHERE lease_id = ?", [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Lease not found" });
 
-    await lease.destroy();
-    res.status(204).send();
+    res.json({ message: "Lease deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error deleting lease:", error);
+    res.status(500).json({ error: "Internal Server Error", message: error.message });
   }
 };
