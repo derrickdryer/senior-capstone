@@ -6,15 +6,15 @@ const app = express();
 app.use(express.json());
 
 // Import Routes
-const assetsRoutes = require('../routes/assets');
-const apartmentsRoutes = require('../routes/apartments');
-const tenantsRoutes = require('../routes/tenants');
-const leasesRoutes = require('../routes/leases');
-const paymentsRoutes = require('../routes/payments');
-const maintenanceRequestsRoutes = require('../routes/maintenance_requests');
-const usersRoutes = require('../routes/users');
-const notificationsRoutes = require('../routes/notifications');
-const inquiriesRoutes = require('../routes/inquiries');
+const assetsRoutes = require('../../routes/assets');
+const apartmentsRoutes = require('../../routes/apartments');
+const tenantsRoutes = require('../../routes/tenants');
+const leasesRoutes = require('../../routes/leases');
+const paymentsRoutes = require('../../routes/payments');
+const maintenanceRequestsRoutes = require('../../routes/maintenance_requests');
+const usersRoutes = require('../../routes/users');
+const notificationsRoutes = require('../../routes/notifications');
+const inquiriesRoutes = require('../../routes/inquiries');
 
 // Register Routes
 app.use('/api/assets', assetsRoutes);
