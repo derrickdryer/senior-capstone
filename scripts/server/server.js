@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 const app = express();
@@ -27,9 +28,12 @@ app.use('/api/users', usersRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
-// Root Route
+// Serve static files from the "app" directory
+app.use(express.static(path.join(__dirname, '../../app')));
+
+// Serve the index.html file
 app.get('/', (req, res) => {
-  res.send('Welcome to the API');
+  res.sendFile(path.join(__dirname, '../../app/pages/index.html'));
 });
 
 // Start the server

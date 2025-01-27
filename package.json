@@ -1,7 +1,7 @@
 {
   "name": "rest-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "scripts/server/server.js",
   "scripts": {
     "test": "jest db.connect.test.js",
     "crud-test": "jest utils.test.ts",
