@@ -5,7 +5,7 @@
   "scripts": {
     "test": "jest db.connect.test.js",
     "crud-test": "jest utils.test.ts",
-    "start": "node server/server.js"
+    "start": "node scripts/server/server.js"
   },
   "keywords": [],
   "author": "",
