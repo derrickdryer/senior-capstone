@@ -29,11 +29,11 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
 // Serve static files from the "app" directory
-app.use(express.static(path.join(__dirname, '../../app')));
+app.use(express.static(path.join(__dirname, '../../app/pages/')));
 
 // Serve the index.html file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../app/pages/index.html'));
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Start the server
