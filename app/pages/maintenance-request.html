@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Requests</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+  <header>
+    <h1>Maintenance Requests</h1>
+  </header>
+
+  <nav>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="properties.html">Browse Listings</a>
+      <a href="contact.html">Contact</a>
+      <a href="about.html">About Us</a>
+    </div>
+    <div>
+      <a href="login.html" class="btn">Login</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Submit a Maintenance Request</h2>
+    <form id="maintenance-form">
+      <label for="tenant_id">Tenant ID:</label>
+      <input type="number" id="tenant_id" name="tenant_id" required>
+
+      <label for="apartment_id">Apartment ID:</label>
+      <input type="number" id="apartment_id" name="apartment_id" required>
+
+      <label for="request_date">Request Date:</label>
+      <input type="date" id="request_date" name="request_date" required>
+
+      <label for="issue_description">Issue Description:</label>
+      <textarea id="issue_description" name="issue_description" required></textarea>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status" required>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+      </select>
+
+      <label for="completion_date">Completion Date (Optional):</label>
+      <input type="date" id="completion_date" name="completion_date">
+
+      <label for="assigned_to">Assigned To:</label>
+      <input type="text" id="assigned_to" name="assigned_to">
+
+      <button type="submit" class="btn">Submit Request</button>
+    </form>
+
+    <h2>Existing Maintenance Requests</h2>
+    <div id="maintenance-list" class="maintenance-requests">
+      <p id="no-requests-message">Loading maintenance requests...</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const requestList = document.getElementById('maintenance-list');
+      const noRequestsMessage = document.getElementById('no-requests-message');
+      const form = document.getElementById('maintenance-form');
+
+      async function loadRequests() {
+        try {
+          const response = await fetch('/api/maintenance-requests');
+          const requests = await response.json();
+          requestList.innerHTML = '';
+
+          if (requests.length === 0) {
+            noRequestsMessage.textContent = 'No maintenance requests found.';
+            noRequestsMessage.style.display = 'block';
+          } else {
+            noRequestsMessage.style.display = 'none';
+            requests.forEach(request => {
+              const item = document.createElement('div');
+              item.classList.add('request-item');
+              item.innerHTML = `
+                <h3>Request #${request.request_id}</h3>
+                <p><strong>Tenant ID:</strong> ${request.tenant_id}</p>
+                <p><strong>Apartment ID:</strong> ${request.apartment_id}</p>
+                <p><strong>Request Date:</strong> ${request.request_date}</p>
+                <p><strong>Issue:</strong> ${request.issue_description}</p>
+                <p><strong>Status:</strong> ${request.status}</p>
+                <p><strong>Completion Date:</strong> ${request.completion_date || 'N/A'}</p>
+                <p><strong>Assigned To:</strong> ${request.assigned_to || 'Unassigned'}</p>
+              `;
+              requestList.appendChild(item);
+            });
+          }
+        } catch (error) {
+          console.error('❌ Error fetching maintenance requests:', error);
+          noRequestsMessage.textContent = 'Error loading maintenance requests. Please try again later.';
+          noRequestsMessage.style.display = 'block';
+        }
+      }
+
+      form.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = {
+          tenant_id: document.getElementById('tenant_id').value,
+          apartment_id: document.getElementById('apartment_id').value,
+          request_date: document.getElementById('request_date').value,
+          issue_description: document.getElementById('issue_description').value,
+          status: document.getElementById('status').value,
+          completion_date: document.getElementById('completion_date').value || null,
+          assigned_to: document.getElementById('assigned_to').value || null
+        };
+
+        try {
+          const response = await fetch('/api/maintenance-requests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+          });
+
+          if (!response.ok) throw new Error('Failed to create request');
+
+          alert('Maintenance request submitted successfully!');
+          form.reset();
+          loadRequests(); // Reload requests after submission
+        } catch (error) {
+          console.error('❌ Error submitting request:', error);
+          alert('Error submitting request. Please try again.');
+        }
+      });
+
+      loadRequests();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance Requests</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+  <header>
+    <h1>Maintenance Requests</h1>
+  </header>
+
+  <nav>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="properties.html">Browse Listings</a>
+      <a href="maintenance.html">Submit Request</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div>
+      <a href="login.html" class="btn">Login</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>All Maintenance Requests</h2>
+    <table id="maintenance-table">
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Tenant ID</th>
+          <th>Apartment ID</th>
+          <th>Request Date</th>
+          <th>Issue Description</th>
+          <th>Status</th>
+          <th>Completion Date</th>
+          <th>Assigned To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id="no-requests-message">
+          <td colspan="8">Loading maintenance requests...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      const baseUrl = '/api/maintenance-requests';
+      const tableBody = document.querySelector("#maintenance-table tbody");
+      const noRequestsMessage = document.getElementById("no-requests-message");
+
+      async function loadRequests() {
+        try {
+          const response = await fetch(baseUrl);
+          if (!response.ok) throw new Error("Network response was not ok");
+          
+          const requests = await response.json();
+          tableBody.innerHTML = ''; // Clear table content
+
+          if (!requests || requests.length === 0) {
+            noRequestsMessage.innerHTML = "<td colspan='8'>No maintenance requests found.</td>";
+            tableBody.appendChild(noRequestsMessage);
+          } else {
+            requests.forEach(request => {
+              const row = document.createElement('tr');
+              row.innerHTML = `
+                <td>${request.request_id || 'N/A'}</td>
+                <td>${request.tenant_id || 'N/A'}</td>
+                <td>${request.apartment_id || 'N/A'}</td>
+                <td>${request.request_date || 'N/A'}</td>
+                <td>${request.issue_description || 'N/A'}</td>
+                <td>${request.status || 'N/A'}</td>
+                <td>${request.completion_date || 'N/A'}</td>
+                <td>${request.assigned_to || 'Unassigned'}</td>
+              `;
+              tableBody.appendChild(row);
+            });
+          }
+        } catch (error) {
+          console.error('❌ Error fetching maintenance requests:', error);
+          noRequestsMessage.innerHTML = "<td colspan='8'>Error loading data. Please try again.</td>";
+          tableBody.appendChild(noRequestsMessage);
+        }
+      }
+
+      loadRequests();
+    });
+  </script>
+
+</body>
+</html>
