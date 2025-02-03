@@ -29,11 +29,27 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
 // Serve static files from the "app" directory
-app.use(express.static(path.join(__dirname, '../../app/pages/')));
+app.use(express.static(path.join(__dirname, '../../app')));
 
 // Serve the index.html file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  const filePath = path.join(__dirname, '../../app/pages/index.html'); // Go up 2 levels
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error sending file:', err);
+      res.status(err.status || 500).send('Error loading the page');
+    }
+  });
+});
+
+app.get('/maintenance-info', (_, res) => {
+  const filePath = path.join(__dirname, '../../app/pages/maintenance-info.html'); // Go up 2 levels
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error sending file:', err);
+      res.status(err.status || 500).send('Error loading the page');
+    }
+  });
 });
 
 // Start the server
