@@ -17,7 +17,7 @@ COPY . .
 EXPOSE 3000
 
 # Ensure .env variables can be modified
-COPY .env .env
+# COPY .env .env
 
 # Start the application
 CMD ["npm", "start"]
