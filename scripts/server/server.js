@@ -31,23 +31,25 @@ app.use('/api/inquiries', inquiriesRoutes);
 // Serve static files from the "app" directory
 app.use(express.static(path.join(__dirname, '../../app')));
 
-// Serve the index.html file
+// Serve the index.html file at "/"
 app.get('/', (req, res) => {
-  const filePath = path.join(__dirname, '../../app/pages/index.html'); // Go up 2 levels
+  const filePath = path.join(__dirname, '../../app/pages/index.html');
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('Error sending file:', err);
-      res.status(err.status || 500).send('Error loading the page');
     }
   });
 });
 
-app.get('/maintenance-info', (_, res) => {
-  const filePath = path.join(__dirname, '../../app/pages/maintenance-info.html'); // Go up 2 levels
+// **✅ Dynamic Route to Serve All Pages in `app/pages/`**
+app.get('/:page', (req, res) => {
+  const requestedPage = req.params.page;
+  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
+
   res.sendFile(filePath, (err) => {
     if (err) {
-      console.error('Error sending file:', err);
-      res.status(err.status || 500).send('Error loading the page');
+      console.error(`Error loading ${requestedPage}.html:`, err);
+      res.status(404).send('Page not found');
     }
   });
 });
