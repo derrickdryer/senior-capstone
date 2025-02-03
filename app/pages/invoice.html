@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="./styles/main.css">
     <title>Invoice - Russell Properties</title>
 </head>
 <body>
     <!-- Header -->
-    <header>
+    <header role="banner">
         <h1>Russell Properties</h1>
-        <nav>
+        <nav aria-label="Primary Navigation">
             <ul>
-                <li><a href="../../index.html">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="properties.html">Properties</a></li>
                 <li><a href="about.html">About Us</a></li>
                 <li><a href="contact.html">Contact</a></li>
@@ -22,17 +22,17 @@
     </header>
 
     <!-- Main Content -->
-    <main>
+    <main role="main">
         <section id="invoice">
             <div class="container">
                 <h2>Invoice for Rent Payment</h2>
-                
+
                 <!-- Invoice Summary -->
                 <section class="invoice-summary">
                     <h3>Invoice Summary</h3>
-                    <p>Invoice Date: October 31, 2024</p>
-                    <p>Due Date: November 5, 2024</p>
-                    <p>Amount Due: <strong>$1,200</strong></p>
+                    <p><strong>Invoice Date:</strong> October 31, 2024</p>
+                    <p><strong>Due Date:</strong> November 5, 2024</p>
+                    <p><strong>Amount Due:</strong> <span class="amount">$1,200</span></p>
                 </section>
 
                 <!-- Charge Breakdown -->
@@ -43,7 +43,7 @@
                         <li>Utilities: $150</li>
                         <li>Maintenance Fee: $50</li>
                     </ul>
-                    <p><strong>Total Amount Due: $1,200</strong></p>
+                    <p><strong>Total Amount Due:</strong> <span class="amount">$1,200</span></p>
                 </section>
 
                 <!-- Payment Form -->
@@ -52,34 +52,55 @@
                     <form action="/process_payment" method="POST">
                         <label for="payment-method">Payment Method:</label>
                         <select id="payment-method" name="payment-method" required>
+                            <option value="">Select Payment Method</option>
                             <option value="credit-card">Credit Card</option>
                             <option value="debit-card">Debit Card</option>
                             <option value="bank-transfer">Bank Transfer</option>
                         </select>
-                        <label for="card-number">Card Number:</label>
-                        <input type="text" id="card-number" name="card-number" required>
-                        
-                        <label for="expiry-date">Expiry Date:</label>
-                        <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" required>
 
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" name="cvv" required>
+                        <div id="card-details">
+                            <label for="card-number">Card Number:</label>
+                            <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9876 5432" minlength="16" maxlength="16" required>
+                            
+                            <label for="expiry-date">Expiry Date:</label>
+                            <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY" required pattern="(0[1-9]|1[0-2])\/?([0-9]{2})">
+
+                            <label for="cvv">CVV:</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" minlength="3" maxlength="3" required>
+                        </div>
 
                         <button type="submit">Pay Now</button>
                     </form>
                 </section>
-                
+
                 <!-- Payment Confirmation -->
                 <section class="confirmation">
-                    <p>Note: Your payment will be processed securely. Once confirmed, a receipt will be sent to your registered email address.</p>
+                    <p><strong>Note:</strong> Your payment will be processed securely. Once confirmed, a receipt will be sent to your registered email address.</p>
                 </section>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer>
+    <footer role="contentinfo">
         <p>&copy; 2024 Russell Properties. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Show card details only if Credit or Debit card is selected
+        const paymentMethodSelect = document.getElementById('payment-method');
+        const cardDetails = document.getElementById('card-details');
+
+        paymentMethodSelect.addEventListener('change', function () {
+            if (this.value === 'credit-card' || this.value === 'debit-card') {
+                cardDetails.style.display = 'block';
+            } else {
+                cardDetails.style.display = 'none';
+            }
+        });
+
+        // Hide card details by default
+        cardDetails.style.display = 'none';
+    </script>
 </body>
 </html>
