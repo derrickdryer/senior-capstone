@@ -30,20 +30,35 @@
                 <!-- Invoice Summary -->
                 <section class="invoice-summary">
                     <h3>Invoice Summary</h3>
-                    <p><strong>Invoice Date:</strong> October 31, 2024</p>
-                    <p><strong>Due Date:</strong> November 5, 2024</p>
-                    <p><strong>Amount Due:</strong> <span class="amount">$1,200</span></p>
+                    <p><strong>Invoice Date:</strong> <span id="invoice-date"></span></p>
+                    <p><strong>Due Date:</strong> <span id="due-date"></span></p>
+                    <p><strong>Amount Due:</strong> <span class="amount" id="amount-due"></span></p>
+                    <p id="lease-id"></p>
+                    <p id="apartment-id"></p>
+                    <p id="tenant-id"></p>
+                    <p id="start-date"></p>
+                    <p id="end-date"></p>
+                    <p id="monthly-rent"></p>
+                    <p id="payment-status"></p>
                 </section>
 
                 <!-- Charge Breakdown -->
                 <section class="charge-breakdown">
                     <h3>Charge Breakdown</h3>
-                    <ul>
-                        <li>Base Rent: $1,000</li>
-                        <li>Utilities: $150</li>
-                        <li>Maintenance Fee: $50</li>
+                    <ul id="charge-breakdown-list">
+                        <!-- Charges will be inserted here -->
                     </ul>
-                    <p><strong>Total Amount Due:</strong> <span class="amount">$1,200</span></p>
+                    <p><strong>Total Amount Due:</strong> <span class="amount" id="total-amount"></span></p>
+                </section>
+
+                <!-- Payment Information -->
+                <section class="payment-information">
+                    <h3>Payment Details</h3>
+                    <p id="payment-id"></p>
+                    <p id="payment-date"></p>
+                    <p id="payment-amount"></p>
+                    <p id="payment-method"></p>
+                    <p id="payment-status"></p>
                 </section>
 
                 <!-- Payment Form -->
@@ -87,20 +102,71 @@
     </footer>
 
     <script>
-        // Show card details only if Credit or Debit card is selected
-        const paymentMethodSelect = document.getElementById('payment-method');
-        const cardDetails = document.getElementById('card-details');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch user invoice data from the server
+            fetch('/api/user-invoice')
+                .then(response => response.json())
+                .then(data => {
+                    // Update Invoice Summary
+                    document.getElementById('invoice-date').textContent = data.invoiceDate;
+                    document.getElementById('due-date').textContent = data.dueDate;
+                    document.getElementById('amount-due').textContent = `$${data.totalAmount.toFixed(2)}`;
 
-        paymentMethodSelect.addEventListener('change', function () {
-            if (this.value === 'credit-card' || this.value === 'debit-card') {
-                cardDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-            }
+                    // Update Charge Breakdown
+                    const chargeBreakdownList = document.getElementById('charge-breakdown-list');
+                    chargeBreakdownList.innerHTML = ''; 
+                    data.charges.forEach(charge => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = `${charge.description}: $${charge.amount.toFixed(2)}`;
+                        chargeBreakdownList.appendChild(listItem);
+                    });
+
+                    // Update Total Amount
+                    document.getElementById('total-amount').textContent = `$${data.totalAmount.toFixed(2)}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching invoice data:', error);
+                });
+
+            // Fetch lease and payment data from the server
+            fetch('/api/leases-payments')
+                .then(response => response.json())
+                .then(data => {
+                    // Update Lease Information
+                    document.getElementById('lease-id').textContent = `Lease ID: ${data.lease.lease_id}`;
+                    document.getElementById('apartment-id').textContent = `Apartment ID: ${data.lease.apartment_id}`;
+                    document.getElementById('tenant-id').textContent = `Tenant ID: ${data.lease.tenant_id}`;
+                    document.getElementById('start-date').textContent = `Start Date: ${data.lease.start_date}`;
+                    document.getElementById('end-date').textContent = `End Date: ${data.lease.end_date}`;
+                    document.getElementById('monthly-rent').textContent = `Monthly Rent: $${data.lease.monthly_rent}`;
+                    document.getElementById('payment-status').textContent = `Payment Status: ${data.lease.payment_status}`;
+
+                    // Update Payment Information
+                    document.getElementById('payment-id').textContent = `Payment ID: ${data.payment.payment_id}`;
+                    document.getElementById('payment-date').textContent = `Payment Date: ${data.payment.payment_date}`;
+                    document.getElementById('payment-amount').textContent = `Amount: $${data.payment.amount}`;
+                    document.getElementById('payment-method').textContent = `Payment Method: ${data.payment.method}`;
+                    document.getElementById('payment-status').textContent = `Payment Status: ${data.payment.status}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+
+            // Show card details only if Credit or Debit card is selected
+            const paymentMethodSelect = document.getElementById('payment-method');
+            const cardDetails = document.getElementById('card-details');
+
+            paymentMethodSelect.addEventListener('change', function () {
+                if (this.value === 'credit-card' || this.value === 'debit-card') {
+                    cardDetails.style.display = 'block';
+                } else {
+                    cardDetails.style.display = 'none';
+                }
+            });
+
+            // Hide card details by default
+            cardDetails.style.display = 'none';
         });
-
-        // Hide card details by default
-        cardDetails.style.display = 'none';
     </script>
 </body>
 </html>
