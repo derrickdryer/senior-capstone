@@ -44,11 +44,11 @@ app.get('/', (req, res) => {
 // **✅ Dynamic Route to Serve All Pages in `app/pages/`**
 app.get('/:page', (req, res) => {
   const requestedPage = req.params.page;
-  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
+  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}`);
 
   res.sendFile(filePath, (err) => {
     if (err) {
-      console.error(`Error loading ${requestedPage}.html:`, err);
+      console.error(`Error loading ${requestedPage}:`, err);
       res.status(404).send('Page not found');
     }
   });
