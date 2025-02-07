@@ -9,6 +9,15 @@ app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '../../public')));
 
+// Serve JavaScript files with the correct MIME type
+app.use('/components', express.static(path.join(__dirname, '../../app/components'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
+
 // Import Routes
 const assetsRoutes = require('../../routes/assets');
 const apartmentsRoutes = require('../../routes/apartments');
@@ -32,7 +41,7 @@ app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
 // Serve static files from the "app" directory
-app.use(express.static(path.join(__dirname, '../../app')));
+//app.use(express.static(path.join(__dirname, '../../app')));
 
 // Serve the index.html file at "/"
 app.get('/', (req, res) => {

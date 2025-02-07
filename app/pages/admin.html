@@ -36,19 +36,13 @@
     </style>
 </head>
 <body>
+    <script type="module">
+        import { createHeader } from './components/header.js';
+        import { createFooter } from './components/footer.js';
 
-    <header>
-        <h1>Admin Dashboard - Russell Properties</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="properties.html">Properties</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+        document.body.prepend(createHeader());
+        document.body.appendChild(createFooter());
+    </script>
     <main>
         <div class="admin-container">
             <section class="admin-section" id="manage-properties">
@@ -129,10 +123,6 @@
             </section>
         </div>
     </main>
-    <footer>
-        <p>&copy; 2024 Russell Properties. All rights reserved.</p>
-    </footer>
-
 
     <script>
         document.querySelectorAll('.admin-actions button').forEach(button => {

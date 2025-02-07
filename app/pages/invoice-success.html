@@ -7,18 +7,13 @@
     <title>Invoice Paid - Russell Properties</title>
 </head>
 <body>
-    <header>
-        <h1>Russell Properties</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="properties.html">Properties</a></li>
-                <li><a href="about.html">About Us</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html">Login</a></li>
-            </ul>
-        </nav>
-    </header>
+    <script type="module">
+        import { createHeader } from './components/header.js';
+        import { createFooter } from './components/footer.js';
+
+        document.body.prepend(createHeader());
+        document.body.appendChild(createFooter());
+    </script>
     <main>
         <section id="invoice-success">
             <div class="container">
@@ -28,8 +23,5 @@
             </div>
         </section>
     </main>
-    <footer>
-        <p>&copy; 2024 Russell Properties. All rights reserved.</p>
-    </footer>
 </body>
 </html>
