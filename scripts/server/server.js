@@ -6,12 +6,6 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// JavaScript
-app.use((req, res, next) => {
-    res.setHeader('X-Content-Type-Options', 'nosniff');
-    next();
-});
-
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '../../public')));
 
