@@ -14,6 +14,7 @@ app.use('/components', express.static(path.join(__dirname, '../../app/components
     setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
+            console.log(`Setting Content-Type for ${filePath}`);
         }
     }
 }));
