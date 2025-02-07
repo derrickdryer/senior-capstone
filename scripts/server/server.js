@@ -6,6 +6,9 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, '../../public')));
+
 // Import Routes
 const assetsRoutes = require('../../routes/assets');
 const apartmentsRoutes = require('../../routes/apartments');
