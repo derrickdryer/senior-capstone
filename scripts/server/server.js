@@ -3,16 +3,25 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const https = require('https');
+const compression = require('compression');
 
 dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, '../../public')));
+// Serve static files from the "public" directory with caching headers
+app.use(express.static(path.join(__dirname, '../../public'), {
+    maxAge: '1d', // Cache static assets for 1 day
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
-// Serve JavaScript files with the correct MIME type
+// Serve JavaScript files with the correct MIME type and caching headers
 app.use('/components', express.static(path.join(__dirname, '../../app/components'), {
+    maxAge: '1d', // Cache static assets for 1 day
     setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
