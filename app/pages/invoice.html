@@ -14,6 +14,19 @@
         document.body.prepend(createHeader());
         document.body.appendChild(createFooter());
     </script>
+    <!-- Header -->
+    <header role="banner">
+        <h1>Russell Properties</h1>
+        <nav aria-label="Primary Navigation">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="properties.html">Properties</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+        </nav>
+    </header>
 
     <!-- Main Content -->
     <main role="main">
@@ -24,16 +37,8 @@
                 <!-- Invoice Summary -->
                 <section class="invoice-summary">
                     <h3>Invoice Summary</h3>
-                    <p><strong>Invoice Date:</strong> <span id="invoice-date"></span></p>
-                    <p><strong>Due Date:</strong> <span id="due-date"></span></p>
-                    <p><strong>Amount Due:</strong> <span class="amount" id="amount-due"></span></p>
-                    <p id="lease-id"></p>
-                    <p id="apartment-id"></p>
-                    <p id="tenant-id"></p>
-                    <p id="start-date"></p>
-                    <p id="end-date"></p>
-                    <p id="monthly-rent"></p>
-                    <p id="payment-status"></p>
+                    <p><strong>Invoice Date:</strong> <span id="payment_date"></span></p>
+                    <p><strong>Monthly Rent:</strong> <span id="monthly_rent"></span></p>
                 </section>
 
                 <!-- Charge Breakdown -->
@@ -42,17 +47,7 @@
                     <ul id="charge-breakdown-list">
                         <!-- Charges will be inserted here -->
                     </ul>
-                    <p><strong>Total Amount Due:</strong> <span class="amount" id="total-amount"></span></p>
-                </section>
-
-                <!-- Payment Information -->
-                <section class="payment-information">
-                    <h3>Payment Details</h3>
-                    <p id="payment-id"></p>
-                    <p id="payment-date"></p>
-                    <p id="payment-amount"></p>
-                    <p id="payment-method"></p>
-                    <p id="payment-status"></p>
+                    <p><strong>Total Amount Due:</strong> <span id="amount"></span></p>
                 </section>
 
                 <!-- Payment Form -->
@@ -67,7 +62,8 @@
                             <option value="bank-transfer">Bank Transfer</option>
                         </select>
 
-                        <div id="card-details">
+                        <!-- Credit/Debit Card Details -->
+                        <div id="card-details" style="display:none;">
                             <label for="card-number">Card Number:</label>
                             <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9876 5432" minlength="16" maxlength="16" required>
                             
@@ -76,6 +72,18 @@
 
                             <label for="cvv">CVV:</label>
                             <input type="text" id="cvv" name="cvv" placeholder="123" minlength="3" maxlength="3" required>
+                        </div>
+
+                        <!-- Bank Transfer Details -->
+                        <div id="bank-details" style="display:none;">
+                            <label for="bank-account-number">Bank Account Number:</label>
+                            <input type="text" id="bank-account-number" name="bank-account-number" placeholder="123456789" required>
+                            
+                            <label for="bank-routing-number">Bank Routing Number:</label>
+                            <input type="text" id="bank-routing-number" name="bank-routing-number" placeholder="987654321" required>
+                            
+                            <label for="bank-name">Bank Name:</label>
+                            <input type="text" id="bank-name" name="bank-name" placeholder="Bank Name" required>
                         </div>
 
                         <button type="submit">Pay Now</button>
@@ -90,34 +98,14 @@
         </section>
     </main>
 
+    <!-- Footer -->
+    <footer role="contentinfo">
+        <p>&copy; 2024 Russell Properties. All rights reserved.</p>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Fetch user invoice data from the server
-            fetch('/api/user-invoice')
-                .then(response => response.json())
-                .then(data => {
-                    // Update Invoice Summary
-                    document.getElementById('invoice-date').textContent = data.invoiceDate;
-                    document.getElementById('due-date').textContent = data.dueDate;
-                    document.getElementById('amount-due').textContent = `$${data.totalAmount.toFixed(2)}`;
-
-                    // Update Charge Breakdown
-                    const chargeBreakdownList = document.getElementById('charge-breakdown-list');
-                    chargeBreakdownList.innerHTML = ''; 
-                    data.charges.forEach(charge => {
-                        const listItem = document.createElement('li');
-                        listItem.textContent = `${charge.description}: $${charge.amount.toFixed(2)}`;
-                        chargeBreakdownList.appendChild(listItem);
-                    });
-
-                    // Update Total Amount
-                    document.getElementById('total-amount').textContent = `$${data.totalAmount.toFixed(2)}`;
-                })
-                .catch(error => {
-                    console.error('Error fetching invoice data:', error);
-                });
-
-            // Fetch lease and payment data from the server
             fetch('/api/leases-payments')
                 .then(response => response.json())
                 .then(data => {
@@ -125,36 +113,43 @@
                     document.getElementById('lease-id').textContent = `Lease ID: ${data.lease.lease_id}`;
                     document.getElementById('apartment-id').textContent = `Apartment ID: ${data.lease.apartment_id}`;
                     document.getElementById('tenant-id').textContent = `Tenant ID: ${data.lease.tenant_id}`;
-                    document.getElementById('start-date').textContent = `Start Date: ${data.lease.start_date}`;
-                    document.getElementById('end-date').textContent = `End Date: ${data.lease.end_date}`;
-                    document.getElementById('monthly-rent').textContent = `Monthly Rent: $${data.lease.monthly_rent}`;
-                    document.getElementById('payment-status').textContent = `Payment Status: ${data.lease.payment_status}`;
+                    document.getElementById('lease_start-date').textContent = `Start Date: ${data.lease.start_date}`;
+                    document.getElementById('lease_end-date').textContent = `End Date: ${data.lease.end_date}`;
+
+                    // Map rent_amount from the apartments table to display rent
+                    document.getElementById('monthly-rent').textContent = `Monthly Rent: $${data.lease.rent_amount}`;
 
                     // Update Payment Information
                     document.getElementById('payment-id').textContent = `Payment ID: ${data.payment.payment_id}`;
                     document.getElementById('payment-date').textContent = `Payment Date: ${data.payment.payment_date}`;
                     document.getElementById('payment-amount').textContent = `Amount: $${data.payment.amount}`;
-                    document.getElementById('payment-method').textContent = `Payment Method: ${data.payment.method}`;
+                    document.getElementById('payment-method').textContent = `Payment Method: ${data.payment.payment_method}`;
                     document.getElementById('payment-status').textContent = `Payment Status: ${data.payment.status}`;
                 })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+                .catch(error => console.error('Error fetching lease and payment data:', error));
 
-            // Show card details only if Credit or Debit card is selected
+
+            // Show relevant payment details based on selected payment method
             const paymentMethodSelect = document.getElementById('payment-method');
             const cardDetails = document.getElementById('card-details');
+            const bankDetails = document.getElementById('bank-details');
 
             paymentMethodSelect.addEventListener('change', function () {
                 if (this.value === 'credit-card' || this.value === 'debit-card') {
                     cardDetails.style.display = 'block';
+                    bankDetails.style.display = 'none'; // Hide bank details when card is selected
+                } else if (this.value === 'bank-transfer') {
+                    bankDetails.style.display = 'block';
+                    cardDetails.style.display = 'none'; // Hide card details when bank transfer is selected
                 } else {
                     cardDetails.style.display = 'none';
+                    bankDetails.style.display = 'none'; // Hide both if no valid option is selected
                 }
             });
 
-            // Hide card details by default
+            // Hide both details sections by default
             cardDetails.style.display = 'none';
+            bankDetails.style.display = 'none';
         });
     </script>
 </body>
