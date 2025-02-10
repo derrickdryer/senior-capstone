@@ -1,6 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
+const https = require('https');
 
 dotenv.config();
 const app = express();
@@ -14,7 +16,6 @@ app.use('/components', express.static(path.join(__dirname, '../../app/components
     setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
             res.setHeader('Content-Type', 'application/javascript');
-            console.log(`Setting Content-Type for ${path}`);
         }
     }
 }));
@@ -41,20 +42,18 @@ app.use('/api/users', usersRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/inquiries', inquiriesRoutes);
 
-// Serve static files from the "app" directory
-//app.use(express.static(path.join(__dirname, '../../app')));
-
 // Serve the index.html file at "/"
 app.get('/', (req, res) => {
   const filePath = path.join(__dirname, '../../app/pages/index.html');
   res.sendFile(filePath, (err) => {
     if (err) {
       console.error('Error sending file:', err);
+      res.status(500).send('Internal Server Error');
     }
   });
 });
 
-// **✅ Dynamic Route to Serve All Pages in `app/pages/`**
+// Dynamic Route to Serve All Pages in `app/pages/`
 app.get('/:page', (req, res) => {
   const requestedPage = req.params.page;
   const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
@@ -67,6 +66,22 @@ app.get('/:page', (req, res) => {
   });
 });
 
-// Start the server
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error('Global Error Handler:', err);
+  res.status(500).send('Internal Server Error');
+});
+
+// Load SSL certificate and key
+const options = {
+    key: fs.readFileSync(path.join(__dirname, '../../certs/server.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../../certs/server.crt'))
+};
+
+// Start the HTTPS server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+const server = https.createServer(options, app);
+
+server.listen(PORT, () => {
+  console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
+});
