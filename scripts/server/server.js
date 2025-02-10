@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 // **✅ Dynamic Route to Serve All Pages in `app/pages/`**
 app.get('/:page', (req, res) => {
   const requestedPage = req.params.page;
-  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}`);
+  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
 
   res.sendFile(filePath, (err) => {
     if (err) {
