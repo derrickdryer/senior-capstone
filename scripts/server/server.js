@@ -13,8 +13,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../../public'), {
     maxAge: '1d', // Cache static assets for 1 day
     setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
+        if (path.endsWith('.min.js')) {
             res.setHeader('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.min.css')) {
+            res.setHeader('Content-Type', 'text/css');
         }
     }
 }));
@@ -24,6 +26,16 @@ app.use('/components', express.static(path.join(__dirname, '../../app/components
     maxAge: '1d', // Cache static assets for 1 day
     setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
+
+// Serve minified JavaScript files with the correct MIME type and caching headers
+app.use('/components', express.static(path.join(__dirname, '../../app/components'), {
+    maxAge: '1d', // Cache static assets for 1 day
+    setHeaders: (res, path) => {
+        if (path.endsWith('.min.js')) {
             res.setHeader('Content-Type', 'application/javascript');
         }
     }
