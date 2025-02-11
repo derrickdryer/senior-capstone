@@ -15,9 +15,15 @@
     "compression": "^1.7.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "http2": "^3.3.6",
+    "koa": "^2.15.3",
+    "koa-mount": "^4.0.0",
+    "koa-router": "^13.0.1",
+    "koa-static": "^5.0.0",
     "mariadb": "^3.4.0",
     "mysql2": "^3.12.0",
     "sequelize": "^6.37.5",
+    "spdy": "^4.0.2",
     "supertest": "^7.0.0"
   },
   "devDependencies": {
