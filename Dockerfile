@@ -1,13 +1,6 @@
 # Use an official Node.js runtime as a parent image
 FROM node:14
 
-# Set default environment variables
-ENV DB_USER=root
-ENV DB_PASSWORD="SuperSecretPassword"
-ENV DB_HOST=localhost
-ENV DB_PORT=3306
-ENV DB_DATABASE=root
-
 # Set the working directory
 WORKDIR /usr/src/app
 
@@ -24,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]
