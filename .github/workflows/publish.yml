@@ -23,7 +23,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        if [ "${{ github.ref }}" == "refs/heads/test" ]; then
+        if [ "${{ github.ref }}" == "refs/heads/Feat-HTTP2" ]; then
           docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:testing .
         else
           docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
@@ -31,7 +31,7 @@ jobs:
 
     - name: Push Docker image
       run: |
-        if [ "${{ github.ref }}" == "refs/heads/test" ]; then
+        if [ "${{ github.ref }}" == "refs/heads/Feat-HTTP2" ]; then
           docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:testing
         else
           docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
