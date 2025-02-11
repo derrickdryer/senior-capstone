@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const assetsController = require('../controllers/assetsController');
+
+const router = new Router();
 
 // Define CRUD routes for assets
 router.get('/', assetsController.getAllAssets);

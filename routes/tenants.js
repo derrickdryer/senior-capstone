@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const tenantsController = require('../controllers/tenantsController');
+
+const router = new Router();
 
 // Define CRUD routes for tenants
 router.get('/', tenantsController.getAllTenants);

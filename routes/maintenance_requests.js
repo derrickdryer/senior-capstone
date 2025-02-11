@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const maintenanceRequestsController = require('../controllers/maintenanceRequestsController');
+
+const router = new Router();
 
 // Define CRUD routes for maintenance requests
 router.get('/', maintenanceRequestsController.getAllMaintenanceRequests);

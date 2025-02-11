@@ -1,7 +1,9 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const usersController = require('../controllers/usersController');
 
+const router = new Router();
+
+// Define CRUD routes for users
 router.get('/', usersController.getAllUsers);
 router.get('/:id', usersController.getUserById);
 router.post('/', usersController.createUser);

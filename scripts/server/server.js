@@ -1,33 +1,35 @@
-const express = require('express');
+const Koa = require('koa');
+const Router = require('koa-router');
+const serve = require('koa-static');
+const mount = require('koa-mount');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-const https = require('https');
-const compression = require('compression');
+const http2 = require('http2');
 
 dotenv.config();
-const app = express();
-app.use(express.json());
+const app = new Koa();
+const router = new Router();
 
 // Serve static files from the "public" directory with caching headers
-app.use(express.static(path.join(__dirname, '../../public'), {
-    maxAge: '1d', // Cache static assets for 1 day
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        }
+app.use(mount('/public', serve(path.join(__dirname, '../../public'), {
+  maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
     }
-}));
+  }
+})));
 
 // Serve JavaScript files with the correct MIME type and caching headers
-app.use('/components', express.static(path.join(__dirname, '../../app/components'), {
-    maxAge: '1d', // Cache static assets for 1 day
-    setHeaders: (res, path) => {
-        if (path.endsWith('.js')) {
-            res.setHeader('Content-Type', 'application/javascript');
-        }
+app.use(mount('/components', serve(path.join(__dirname, '../../app/components'), {
+  maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
     }
-}));
+  }
+})));
 
 // Import Routes
 const assetsRoutes = require('../../routes/assets');
@@ -41,56 +43,74 @@ const notificationsRoutes = require('../../routes/notifications');
 const inquiriesRoutes = require('../../routes/inquiries');
 
 // Register Routes
-app.use('/api/assets', assetsRoutes);
-app.use('/api/apartments', apartmentsRoutes);
-app.use('/api/tenants', tenantsRoutes);
-app.use('/api/leases', leasesRoutes);
-app.use('/api/payments', paymentsRoutes);
-app.use('/api/maintenance-requests', maintenanceRequestsRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/notifications', notificationsRoutes);
-app.use('/api/inquiries', inquiriesRoutes);
+router.use('/api/assets', assetsRoutes.routes());
+router.use('/api/apartments', apartmentsRoutes.routes());
+router.use('/api/tenants', tenantsRoutes.routes());
+router.use('/api/leases', leasesRoutes.routes());
+router.use('/api/payments', paymentsRoutes.routes());
+router.use('/api/maintenance-requests', maintenanceRequestsRoutes.routes());
+router.use('/api/users', usersRoutes.routes());
+router.use('/api/notifications', notificationsRoutes.routes());
+router.use('/api/inquiries', inquiriesRoutes.routes());
+
+app.use(router.routes()).use(router.allowedMethods());
 
 // Serve the index.html file at "/"
-app.get('/', (req, res) => {
+router.get('/', async (ctx) => {
   const filePath = path.join(__dirname, '../../app/pages/index.html');
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error('Error sending file:', err);
-      res.status(500).send('Internal Server Error');
-    }
-  });
+  ctx.type = 'html';
+  ctx.body = fs.createReadStream(filePath);
 });
 
 // Dynamic Route to Serve All Pages in `app/pages/`
-app.get('/:page', (req, res) => {
-  const requestedPage = req.params.page;
+router.get('/:page', async (ctx) => {
+  const requestedPage = ctx.params.page;
   const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
-
-  res.sendFile(filePath, (err) => {
-    if (err) {
-      console.error(`Error loading ${requestedPage}:`, err);
-      res.status(404).send('Page not found');
+  try {
+    if (fs.existsSync(filePath)) {
+      ctx.type = 'html';
+      ctx.body = fs.createReadStream(filePath);
+    } else {
+      ctx.status = 404;
+      ctx.body = 'Page not found';
     }
-  });
+  } catch (err) {
+    console.error(`Error loading ${requestedPage}:`, err);
+    ctx.status = 500;
+    ctx.body = 'Internal Server Error';
+  }
 });
 
 // Global Error Handler
-app.use((err, req, res, next) => {
+app.on('error', (err, ctx) => {
   console.error('Global Error Handler:', err);
-  res.status(500).send('Internal Server Error');
+  ctx.status = 500;
+  ctx.body = 'Internal Server Error';
 });
 
-// Load SSL certificate and key
-const options = {
+// Load SSL certificate and key if USE_LOCAL_SSL is true
+let server;
+const PORT = process.env.PORT || 3000;
+
+if (process.env.USE_LOCAL_SSL === 'true') {
+  const options = {
     key: fs.readFileSync(path.join(__dirname, '../../certs/server.key')),
     cert: fs.readFileSync(path.join(__dirname, '../../certs/server.crt'))
-};
+  };
+  server = http2.createSecureServer(options, app.callback());
+} else {
+  server = app.listen(PORT, (err) => {
+    if (err) {
+      console.error('Error starting server:', err);
+    } else {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    }
+  });
+}
 
-// Start the HTTPS server
-const PORT = process.env.PORT || 3000;
-const server = https.createServer(options, app);
-
-server.listen(PORT, () => {
-  console.log(`🚀 HTTPS Server running on https://localhost:${PORT}`);
-});
+// Start the server if it's not already listening
+if (!server.listening) {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on ${process.env.USE_LOCAL_SSL === 'true' ? 'https' : 'http'}://localhost:${PORT}`);
+  });
+}

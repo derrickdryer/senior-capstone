@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const inquiriesController = require('../controllers/inquiriesController');
+
+const router = new Router();
 
 // Define CRUD routes for inquiries
 router.get('/', inquiriesController.getAllInquiries);

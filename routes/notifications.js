@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const notificationsController = require('../controllers/notificationsController');
+
+const router = new Router();
 
 // Define CRUD routes for notifications
 router.get('/', notificationsController.getAllNotifications);

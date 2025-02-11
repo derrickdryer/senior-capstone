@@ -1,6 +1,7 @@
-const express = require('express');
-const router = express.Router();
+const Router = require('koa-router');
 const paymentsController = require('../controllers/paymentsController');
+
+const router = new Router();
 
 // Define CRUD routes for payments
 router.get('/', paymentsController.getAllPayments);
