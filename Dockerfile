@@ -14,8 +14,8 @@ RUN npm install
 COPY . .
 
 # Copy SSL certificates
-COPY certs/server.crt /etc/ssl/certs/server.crt
-COPY certs/server.key /etc/ssl/private/server.key
+COPY certs/server.crt /etc/ssl/certs/hidden-it-com.crt
+COPY certs/server.key /etc/ssl/private/hidden-it-com.key
 
 ENV DB_USER=root
 ENV DB_PASSWORD="SuperSecretPassword"
