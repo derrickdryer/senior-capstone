@@ -5,7 +5,7 @@ const mount = require('koa-mount');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-const http2 = require('http2');
+// const http2 = require('http2'); // Commented out as it's not needed for HTTP
 
 dotenv.config();
 const app = new Koa();
@@ -92,13 +92,14 @@ app.on('error', (err, ctx) => {
 let server;
 const PORT = process.env.PORT || 3000;
 
-if (process.env.USE_LOCAL_SSL === 'true') {
-  const options = {
-    key: fs.readFileSync(path.join(__dirname, '../../certs/hidden-it-com.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../../certs/hidden-it-com.crt'))
-  };
-  server = http2.createSecureServer(options, app.callback());
-} else {
+// Commented out SSL/HTTPS related code
+// if (process.env.USE_LOCAL_SSL === 'true') {
+//   const options = {
+//     key: fs.readFileSync(path.join(__dirname, '../../certs/cloudflare.key')),
+//     cert: fs.readFileSync(path.join(__dirname, '../../certs/cloudflare.crt'))
+//   };
+//   server = http2.createSecureServer(options, app.callback());
+// } else {
   server = app.listen(PORT, (err) => {
     if (err) {
       console.error('Error starting server:', err);
@@ -106,11 +107,11 @@ if (process.env.USE_LOCAL_SSL === 'true') {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     }
   });
-}
+// }
 
 // Start the server if it's not already listening
 if (!server.listening) {
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on ${process.env.USE_LOCAL_SSL === 'true' ? 'https' : 'http'}://localhost:${PORT}`);
+    console.log(`🚀 Server running on https://localhost:${PORT}`);
   });
 }
