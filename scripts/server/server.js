@@ -94,8 +94,8 @@ const PORT = process.env.PORT || 3000;
 
 if (process.env.USE_LOCAL_SSL === 'true') {
   const options = {
-    key: fs.readFileSync(path.join(__dirname, '../../certs/server.key')),
-    cert: fs.readFileSync(path.join(__dirname, '../../certs/server.crt'))
+    key: fs.readFileSync(path.join(__dirname, '../../certs/hidden-it-com.key')),
+    cert: fs.readFileSync(path.join(__dirname, '../../certs/hidden-it-com.crt'))
   };
   server = http2.createSecureServer(options, app.callback());
 } else {
