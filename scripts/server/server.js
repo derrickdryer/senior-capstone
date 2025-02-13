@@ -12,24 +12,34 @@ const app = new Koa();
 const router = new Router();
 
 // Serve static files from the "public" directory with caching headers
-app.use(mount('/public', serve(path.join(__dirname, '../../public'), {
-  maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    }
-  }
-})));
+app.use(
+  mount(
+    '/public',
+    serve(path.join(__dirname, '../../public'), {
+      maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+      setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        }
+      },
+    })
+  )
+);
 
 // Serve JavaScript files with the correct MIME type and caching headers
-app.use(mount('/components', serve(path.join(__dirname, '../../app/components'), {
-  maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
-      res.setHeader('Content-Type', 'application/javascript');
-    }
-  }
-})));
+app.use(
+  mount(
+    '/components',
+    serve(path.join(__dirname, '../../app/components'), {
+      maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+      setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        }
+      },
+    })
+  )
+);
 
 // Import Routes
 const assetsRoutes = require('../../routes/assets');
@@ -65,7 +75,10 @@ router.get('/', async (ctx) => {
 // Dynamic Route to Serve All Pages in `app/pages/`
 router.get('/:page', async (ctx) => {
   const requestedPage = ctx.params.page;
-  const filePath = path.join(__dirname, `../../app/pages/${requestedPage}.html`);
+  const filePath = path.join(
+    __dirname,
+    `../../app/pages/${requestedPage}.html`
+  );
   try {
     if (fs.existsSync(filePath)) {
       ctx.type = 'html';
@@ -100,13 +113,13 @@ const PORT = process.env.PORT || 3000;
 //   };
 //   server = http2.createSecureServer(options, app.callback());
 // } else {
-  server = app.listen(PORT, (err) => {
-    if (err) {
-      console.error('Error starting server:', err);
-    } else {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-    }
-  });
+server = app.listen(PORT, (err) => {
+  if (err) {
+    console.error('Error starting server:', err);
+  } else {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+  }
+});
 // }
 
 // Start the server if it's not already listening

@@ -1,176 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maintenance Requests</title>
-  <link rel="stylesheet" href="/public/styles/main.css">
-  <style>
-    .hidden {
-      display: none;
-    }
-    .maintenance-requests {
-      margin-top: 20px;
-    }
-    .request-item {
-      border: 1px solid var(--primary-color);
-      padding: 15px;
-      margin-bottom: 10px;
-      background-color: var(--secondary-color);
-    }
-    .request-item h3 {
-      margin: 0;
-      color: var(--primary-color);
-    }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Maintenance Requests</title>
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+    <style>
+      .hidden {
+        display: none;
+      }
+      .maintenance-requests {
+        margin-top: 20px;
+      }
+      .request-item {
+        border: 1px solid var(--primary-color);
+        padding: 15px;
+        margin-bottom: 10px;
+        background-color: var(--secondary-color);
+      }
+      .request-item h3 {
+        margin: 0;
+        color: var(--primary-color);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Maintenance Requests</h1>
+      </div>
+    </header>
 
-  <header>
-    <div class="container">
-      <h1>Maintenance Requests</h1>
-    </div>
-  </header>
-
-  <main class="container">
-    <h2>Enter Your Tenant ID</h2>
-    <form id="tenant-id-form">
-      <label for="tenant_id_input">Tenant ID:</label>
-      <input type="number" id="tenant_id_input" name="tenant_id" required>
-      <button type="submit" class="btn">Continue</button>
-    </form>
-
-    <div id="request-section" class="hidden">
-      <h2>Submit a Maintenance Request</h2>
-      <form id="maintenance-form">
-        <input type="hidden" id="tenant_id">
-
-        <label for="apartment_id">Apartment ID:</label>
-        <input type="number" id="apartment_id" name="apartment_id" required>
-
-        <label for="request_date">Request Date:</label>
-        <input type="date" id="request_date" name="request_date" required>
-
-        <label for="issue_description">Issue Description:</label>
-        <textarea id="issue_description" name="issue_description" required></textarea>
-
-        <button type="submit" class="btn">Submit Request</button>
+    <main class="container">
+      <h2>Enter Your Tenant ID</h2>
+      <form id="tenant-id-form">
+        <label for="tenant_id_input">Tenant ID:</label>
+        <input
+          type="number"
+          id="tenant_id_input"
+          name="tenant_id"
+          required
+        />
+        <button
+          type="submit"
+          class="btn"
+        >
+          Continue
+        </button>
       </form>
 
-      <h2>Your Maintenance Requests</h2>
-      <div id="maintenance-list" class="maintenance-requests">
-        <p id="no-requests-message">Enter your Tenant ID to view requests.</p>
+      <div
+        id="request-section"
+        class="hidden"
+      >
+        <h2>Submit a Maintenance Request</h2>
+        <form id="maintenance-form">
+          <input
+            type="hidden"
+            id="tenant_id"
+          />
+
+          <label for="apartment_id">Apartment ID:</label>
+          <input
+            type="number"
+            id="apartment_id"
+            name="apartment_id"
+            required
+          />
+
+          <label for="request_date">Request Date:</label>
+          <input
+            type="date"
+            id="request_date"
+            name="request_date"
+            required
+          />
+
+          <label for="issue_description">Issue Description:</label>
+          <textarea
+            id="issue_description"
+            name="issue_description"
+            required
+          ></textarea>
+
+          <button
+            type="submit"
+            class="btn"
+          >
+            Submit Request
+          </button>
+        </form>
+
+        <h2>Your Maintenance Requests</h2>
+        <div
+          id="maintenance-list"
+          class="maintenance-requests"
+        >
+          <p id="no-requests-message">Enter your Tenant ID to view requests.</p>
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
 
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
-    </div>
-  </footer>
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
+      </div>
+    </footer>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      const tenantIdForm = document.getElementById('tenant-id-form');
-      const tenantIdInput = document.getElementById('tenant_id_input');
-      const requestSection = document.getElementById('request-section');
-      const maintenanceForm = document.getElementById('maintenance-form');
-      const requestList = document.getElementById('maintenance-list');
-      const noRequestsMessage = document.getElementById('no-requests-message');
-      let tenantId = null;
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+        const tenantIdForm = document.getElementById('tenant-id-form');
+        const tenantIdInput = document.getElementById('tenant_id_input');
+        const requestSection = document.getElementById('request-section');
+        const maintenanceForm = document.getElementById('maintenance-form');
+        const requestList = document.getElementById('maintenance-list');
+        const noRequestsMessage = document.getElementById(
+          'no-requests-message'
+        );
+        let tenantId = null;
 
-      function formatDate(dateStr) {
-        if (!dateStr) return "N/A";
-        return dateStr.split("T")[0]; // Converts "2025-02-10T05:00:00.000Z" to "2025-02-10"
-      }
+        function formatDate(dateStr) {
+          if (!dateStr) return 'N/A';
+          return dateStr.split('T')[0]; // Converts "2025-02-10T05:00:00.000Z" to "2025-02-10"
+        }
 
-      async function loadRequests() {
-    if (!tenantId) return;
+        async function loadRequests() {
+          if (!tenantId) return;
 
-    try {
-        const response = await fetch(`/api/maintenance-requests?tenant_id=${tenantId}`);
-        const requests = await response.json();
-        requestList.innerHTML = '';
+          try {
+            const response = await fetch(
+              `/api/maintenance-requests?tenant_id=${tenantId}`
+            );
+            const requests = await response.json();
+            requestList.innerHTML = '';
 
-        if (!requests || requests.length === 0) {
-            noRequestsMessage.textContent = 'No maintenance requests found for this Tenant ID.';
-            noRequestsMessage.style.display = 'block';
-        } else {
-            noRequestsMessage.style.display = 'none';
-            requests.forEach(request => {
+            if (!requests || requests.length === 0) {
+              noRequestsMessage.textContent =
+                'No maintenance requests found for this Tenant ID.';
+              noRequestsMessage.style.display = 'block';
+            } else {
+              noRequestsMessage.style.display = 'none';
+              requests.forEach((request) => {
                 if (request.tenant_id !== parseInt(tenantId, 10)) return; // Ensure correct tenant ID
-                
+
                 const item = document.createElement('div');
                 item.classList.add('request-item');
                 item.innerHTML = `
                     <h3>Request #${request.request_id}</h3>
-                    <p><strong>Apartment ID:</strong> ${request.apartment_id}</p>
-                    <p><strong>Request Date:</strong> ${formatDate(request.request_date)}</p>
+                    <p><strong>Apartment ID:</strong> ${
+                      request.apartment_id
+                    }</p>
+                    <p><strong>Request Date:</strong> ${formatDate(
+                      request.request_date
+                    )}</p>
                     <p><strong>Issue:</strong> ${request.issue_description}</p>
                     <p><strong>Status:</strong> ${request.status}</p>
-                    <p><strong>Completion Date:</strong> ${formatDate(request.completion_date)}</p>
-                    <p><strong>Assigned To:</strong> ${request.assigned_to || 'Unassigned'}</p>
+                    <p><strong>Completion Date:</strong> ${formatDate(
+                      request.completion_date
+                    )}</p>
+                    <p><strong>Assigned To:</strong> ${
+                      request.assigned_to || 'Unassigned'
+                    }</p>
                 `;
                 requestList.appendChild(item);
+              });
+            }
+          } catch (error) {
+            console.error('❌ Error fetching maintenance requests:', error);
+            noRequestsMessage.textContent =
+              'Error loading maintenance requests. Please try again later.';
+          }
+        }
+
+        tenantIdForm.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          tenantId = tenantIdInput.value;
+
+          if (!tenantId) {
+            alert('Please enter a valid Tenant ID.');
+            return;
+          }
+
+          document.getElementById('tenant_id').value = tenantId;
+          requestSection.classList.remove('hidden');
+          loadRequests();
+        });
+
+        maintenanceForm.addEventListener('submit', async function (event) {
+          event.preventDefault();
+
+          if (!tenantId) {
+            alert(
+              'Please enter a valid Tenant ID before submitting a request.'
+            );
+            return;
+          }
+
+          const formData = {
+            tenant_id: tenantId,
+            apartment_id: parseInt(
+              document.getElementById('apartment_id').value,
+              10
+            ),
+            request_date: formatDate(
+              document.getElementById('request_date').value
+            ),
+            issue_description:
+              document.getElementById('issue_description').value,
+            status: 'pending', // Default status for all new requests
+          };
+
+          try {
+            const response = await fetch('/api/maintenance-requests', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(formData),
             });
-        }
-    } catch (error) {
-        console.error('❌ Error fetching maintenance requests:', error);
-        noRequestsMessage.textContent = 'Error loading maintenance requests. Please try again later.';
-    }
-}
 
+            if (!response.ok) throw new Error('Failed to create request');
 
-      tenantIdForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-        tenantId = tenantIdInput.value;
-
-        if (!tenantId) {
-          alert("Please enter a valid Tenant ID.");
-          return;
-        }
-
-        document.getElementById('tenant_id').value = tenantId;
-        requestSection.classList.remove('hidden');
-        loadRequests();
+            alert('Maintenance request submitted successfully!');
+            maintenanceForm.reset();
+            loadRequests(); // Reload requests after submission
+          } catch (error) {
+            console.error('❌ Error submitting request:', error);
+            alert('Error submitting request. Please try again.');
+          }
+        });
       });
-
-      maintenanceForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-
-        if (!tenantId) {
-          alert("Please enter a valid Tenant ID before submitting a request.");
-          return;
-        }
-
-        const formData = {
-          tenant_id: tenantId,
-          apartment_id: parseInt(document.getElementById('apartment_id').value, 10),
-          request_date: formatDate(document.getElementById('request_date').value),
-          issue_description: document.getElementById('issue_description').value,
-          status: "pending" // Default status for all new requests
-        };
-
-        try {
-          const response = await fetch('/api/maintenance-requests', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-          });
-
-          if (!response.ok) throw new Error('Failed to create request');
-
-          alert('Maintenance request submitted successfully!');
-          maintenanceForm.reset();
-          loadRequests(); // Reload requests after submission
-        } catch (error) {
-          console.error('❌ Error submitting request:', error);
-          alert('Error submitting request. Please try again.');
-        }
-      });
-    });
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>

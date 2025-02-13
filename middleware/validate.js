@@ -1,7 +1,10 @@
 const { body, validationResult } = require('express-validator');
 
 exports.validateTenant = [
-  body('first_name').isString().notEmpty().withMessage('First name is required'),
+  body('first_name')
+    .isString()
+    .notEmpty()
+    .withMessage('First name is required'),
   body('email').isEmail().withMessage('Invalid email address'),
   (req, res, next) => {
     const errors = validationResult(req);

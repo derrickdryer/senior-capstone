@@ -1,160 +1,167 @@
 /* CSS Variables for easy customization */
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #d2d2d2;
-    --accent-color: #e74c3c;
-    --background-color: #ffffff;
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --transition-speed: 0.3s;
-    --max-width: 1600px;
-    --padding: 20px;
+  --primary-color: #2c3e50;
+  --secondary-color: #d2d2d2;
+  --accent-color: #e74c3c;
+  --background-color: #ffffff;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --transition-speed: 0.3s;
+  --max-width: 1600px;
+  --padding: 20px;
 }
 
 /* Reset default styles */
-*, *::before, *::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body, h1, h2, p, ul, li {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+body,
+h1,
+h2,
+p,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* General styles */
 body {
-    font-family: var(--font-family);
-    line-height: 1.6;
-    color: var(--primary-color);
-    background-color: var(--background-color);
+  font-family: var(--font-family);
+  line-height: 1.6;
+  color: var(--primary-color);
+  background-color: var(--background-color);
 }
 
 .container {
-    width: 100%;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: var(--padding);
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--padding);
 }
 
 /* Header styles */
 header {
-    background: var(--primary-color);
-    color: var(--secondary-color);
-    padding: 15px 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    width: 100%;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 header h1 {
-    font-size: 1.8rem;
-    margin-left: 20px;
+  font-size: 1.8rem;
+  margin-left: 20px;
 }
 
 header nav {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-right: 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 20px;
 }
 
 header nav ul {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 
 header nav ul li a {
-    color: var(--secondary-color);
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background var(--transition-speed);
+  color: var(--secondary-color);
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background var(--transition-speed);
 }
 
 header nav ul li a:hover {
-    background: var(--accent-color);
+  background: var(--accent-color);
 }
 
 .menu-icon {
-    display: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: var(--secondary-color);
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--secondary-color);
 }
 
 /* Main content styles */
 main {
-    padding: 40px 20px;
-    max-width: var(--max-width);
-    margin: 0 auto;
+  padding: 40px 20px;
+  max-width: var(--max-width);
+  margin: 0 auto;
 }
 
 section#contact {
-    text-align: center;
-    margin-bottom: 40px;
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 section#contact h2 {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
 }
 
 section#contact p {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
 }
 
 section#contact form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
 }
 
 section#contact form label {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    align-self: flex-start;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  align-self: flex-start;
 }
 
 section#contact form input,
 section#contact form textarea {
-    width: 100%;
-    max-width: 500px;
-    padding: 10px;
-    border: 1px solid var(--secondary-color);
-    border-radius: 4px;
-    font-size: 1rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 section#contact form button {
-    padding: 10px 20px;
-    background: var(--primary-color);
-    color: var(--secondary-color);
-    border: none;
-    border-radius: 4px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background var(--transition-speed);
+  padding: 10px 20px;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background var(--transition-speed);
 }
 
 section#contact form button:hover {
-    background: var(--accent-color);
+  background: var(--accent-color);
 }
 
 /* Footer styles */
 footer {
-    background: var(--primary-color);
-    color: var(--secondary-color);
-    text-align: center;
-    padding: 15px 0;
-    width: 100%;
-    position: fixed;
-    bottom: 0;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  text-align: center;
+  padding: 15px 0;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
 }

@@ -1,43 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/contact.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/contact.css"
+    />
     <title>Contact Us - Russell Properties</title>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
     <!-- Main Content -->
     <main>
-        <!-- Contact Section -->
-        <section id="contact">
-            <div class="container">
-                <h2>Contact Us</h2>
-                <p>If you have any questions or need further information, please feel free to contact us:</p>
-                <p>Email: <a href="mailto:info@russellproperties.com">info@russellproperties.com</a></p>
-                <p>Phone: <a href="tel:+11234567890">(123) 456-7890</a></p>
-                <form>
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" required>
-                    
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                    
-                    <label for="message">Message:</label>
-                    <textarea id="message" name="message" rows="4" required></textarea>
-                    
-                    <button type="submit">Send Message</button>
-                </form>
-            </div>
-        </section>
+      <!-- Contact Section -->
+      <section id="contact">
+        <div class="container">
+          <h2>Contact Us</h2>
+          <p>
+            If you have any questions or need further information, please feel
+            free to contact us:
+          </p>
+          <p>
+            Email:
+            <a href="mailto:info@russellproperties.com"
+              >info@russellproperties.com</a
+            >
+          </p>
+          <p>Phone: <a href="tel:+11234567890">(123) 456-7890</a></p>
+          <form>
+            <label for="name">Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+            />
+
+            <label for="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+            />
+
+            <label for="message">Message:</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              required
+            ></textarea>
+
+            <button type="submit">Send Message</button>
+          </form>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>

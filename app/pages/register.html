@@ -1,47 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Register - Russell Properties</title>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
     <!-- Main Content -->
     <main>
-        <!-- Registration Section -->
-        <section id="register">
-            <div class="container">
-                <h2>Create an Account</h2>
-                <form>
-                    <label for="first_name">First Name:</label>
-                    <input type="text" id="first_name" name="first_name" required>
+      <!-- Registration Section -->
+      <section id="register">
+        <div class="container">
+          <h2>Create an Account</h2>
+          <form>
+            <label for="first_name">First Name:</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              required
+            />
 
-                    <label for="last_name">Last Name:</label>
-                    <input type="text" id="last_name" name="last_name" required>
+            <label for="last_name">Last Name:</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              required
+            />
 
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+            <label for="email">Email:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+            />
 
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+            <label for="username">Username:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+            />
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+            />
 
-                    <button type="submit">Register</button>
-                </form>
-                <p>Already have an account? <a href="login.html">Login here</a></p>
-            </div>
-        </section>
+            <button type="submit">Register</button>
+          </form>
+          <p>Already have an account? <a href="login.html">Login here</a></p>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>

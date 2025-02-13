@@ -1,140 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Maintenance Requests</title>
-  <link rel="stylesheet" href="/public/styles/main.css">
-  <style>
-    #maintenance-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    #maintenance-table th, #maintenance-table td {
-      border: 1px solid var(--primary-color);
-      padding: 12px;
-      text-align: left;
-    }
-    #maintenance-table th {
-      background-color: var(--primary-color);
-      color: var(--secondary-color);
-    }
-    #maintenance-table tbody tr:nth-child(even) {
-      background-color: var(--secondary-color);
-    }
-    #maintenance-table tbody tr:hover {
-      background-color: rgba(231, 76, 60, 0.2);
-    }
-    .table-responsive {
-      overflow-x: auto;
-    }
-    .edit-btn, .delete-btn {
-      cursor: pointer;
-      padding: 5px 10px;
-      border: none;
-      color: white;
-    }
-    .edit-btn { background-color: #f39c12; }
-    .delete-btn { background-color: #e74c3c; }
-  </style>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Maintenance Requests</title>
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+    <style>
+      #maintenance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      #maintenance-table th,
+      #maintenance-table td {
+        border: 1px solid var(--primary-color);
+        padding: 12px;
+        text-align: left;
+      }
+      #maintenance-table th {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+      }
+      #maintenance-table tbody tr:nth-child(even) {
+        background-color: var(--secondary-color);
+      }
+      #maintenance-table tbody tr:hover {
+        background-color: rgba(231, 76, 60, 0.2);
+      }
+      .table-responsive {
+        overflow-x: auto;
+      }
+      .edit-btn,
+      .delete-btn {
+        cursor: pointer;
+        padding: 5px 10px;
+        border: none;
+        color: white;
+      }
+      .edit-btn {
+        background-color: #f39c12;
+      }
+      .delete-btn {
+        background-color: #e74c3c;
+      }
+    </style>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
-  <header>
-    <div class="container">
-      <h1>Maintenance Requests Information</h1>
-    </div>
-  </header>
+    <header>
+      <div class="container">
+        <h1>Maintenance Requests Information</h1>
+      </div>
+    </header>
 
-  <main class="container">
-    <h2>All Maintenance Request Information</h2>
+    <main class="container">
+      <h2>All Maintenance Request Information</h2>
 
-    <!-- Add New Request Form -->
-    <form id="add-request-form">
-      <input type="number" id="tenant_id" placeholder="Tenant ID" required>
-      <input type="number" id="apartment_id" placeholder="Apartment ID" required>
-      <input type="date" id="request_date" required>
-      <input type="text" id="issue_description" placeholder="Issue Description" required>
-      <select id="status">
-        <option value="pending">Pending</option>
-        <option value="in_progress">In Progress</option>
-        <option value="completed">Completed</option>
-      </select>
-      <input type="date" id="completion_date">
-      <input type="text" id="assigned_to" placeholder="Assigned To">
-      <button type="submit">Add Request</button>
-    </form>
+      <!-- Add New Request Form -->
+      <form id="add-request-form">
+        <input
+          type="number"
+          id="tenant_id"
+          placeholder="Tenant ID"
+          required
+        />
+        <input
+          type="number"
+          id="apartment_id"
+          placeholder="Apartment ID"
+          required
+        />
+        <input
+          type="date"
+          id="request_date"
+          required
+        />
+        <input
+          type="text"
+          id="issue_description"
+          placeholder="Issue Description"
+          required
+        />
+        <select id="status">
+          <option value="pending">Pending</option>
+          <option value="in_progress">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+        <input
+          type="date"
+          id="completion_date"
+        />
+        <input
+          type="text"
+          id="assigned_to"
+          placeholder="Assigned To"
+        />
+        <button type="submit">Add Request</button>
+      </form>
 
-    <div class="table-responsive">
-      <table id="maintenance-table">
-        <thead>
-          <tr>
-            <th>Request ID</th>
-            <th>Tenant ID</th>
-            <th>Apartment ID</th>
-            <th>Request Date</th>
-            <th>Issue Description</th>
-            <th>Status</th>
-            <th>Completion Date</th>
-            <th>Assigned To</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="no-requests-message">
-            <td colspan="9">Loading maintenance requests...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
-  
-  <footer>
-    <div class="container">
-      <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
-    </div>
-  </footer>
+      <div class="table-responsive">
+        <table id="maintenance-table">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Tenant ID</th>
+              <th>Apartment ID</th>
+              <th>Request Date</th>
+              <th>Issue Description</th>
+              <th>Status</th>
+              <th>Completion Date</th>
+              <th>Assigned To</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="no-requests-message">
+              <td colspan="9">Loading maintenance requests...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', async function () {
-      const baseUrl = '/api/maintenance-requests';
-      const tableBody = document.querySelector("#maintenance-table tbody");
-      const addRequestForm = document.getElementById("add-request-form");
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
+      </div>
+    </footer>
 
-      function formatDate(dateStr) {
-        if (!dateStr) return null;
-        return dateStr.split("T")[0]; // Convert "2025-02-10T05:00:00.000Z" to "2025-02-10"
-      }
+    <script>
+      document.addEventListener('DOMContentLoaded', async function () {
+        const baseUrl = '/api/maintenance-requests';
+        const tableBody = document.querySelector('#maintenance-table tbody');
+        const addRequestForm = document.getElementById('add-request-form');
 
-      async function loadRequests() {
-        try {
-          const response = await fetch(baseUrl);
-          if (!response.ok) throw new Error("Network response was not ok");
-
-          const requests = await response.json();
-          tableBody.innerHTML = ''; 
-
-          if (!requests || requests.length === 0) {
-            tableBody.innerHTML = "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
-          } else {
-            requests.forEach(request => createTableRow(request));
-          }
-        } catch (error) {
-          console.error('❌ Error fetching maintenance requests:', error);
+        function formatDate(dateStr) {
+          if (!dateStr) return null;
+          return dateStr.split('T')[0]; // Convert "2025-02-10T05:00:00.000Z" to "2025-02-10"
         }
-      }
 
-      function createTableRow(request) {
-        const row = document.createElement('tr');
-        row.innerHTML = `
+        async function loadRequests() {
+          try {
+            const response = await fetch(baseUrl);
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const requests = await response.json();
+            tableBody.innerHTML = '';
+
+            if (!requests || requests.length === 0) {
+              tableBody.innerHTML =
+                "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
+            } else {
+              requests.forEach((request) => createTableRow(request));
+            }
+          } catch (error) {
+            console.error('❌ Error fetching maintenance requests:', error);
+          }
+        }
+
+        function createTableRow(request) {
+          const row = document.createElement('tr');
+          row.innerHTML = `
           <td>${request.request_id}</td>
           <td contenteditable="true">${request.tenant_id}</td>
           <td contenteditable="true">${request.apartment_id}</td>
@@ -142,12 +181,20 @@
           <td contenteditable="true">${request.issue_description}</td>
           <td>
             <select class="status-dropdown">
-              <option value="pending" ${request.status === "pending" ? "selected" : ""}>Pending</option>
-              <option value="in_progress" ${request.status === "in_progress" ? "selected" : ""}>In Progress</option>
-              <option value="completed" ${request.status === "completed" ? "selected" : ""}>Completed</option>
+              <option value="pending" ${
+                request.status === 'pending' ? 'selected' : ''
+              }>Pending</option>
+              <option value="in_progress" ${
+                request.status === 'in_progress' ? 'selected' : ''
+              }>In Progress</option>
+              <option value="completed" ${
+                request.status === 'completed' ? 'selected' : ''
+              }>Completed</option>
             </select>
           </td>
-          <td contenteditable="true">${formatDate(request.completion_date) || ''}</td>
+          <td contenteditable="true">${
+            formatDate(request.completion_date) || ''
+          }</td>
           <td contenteditable="true">${request.assigned_to || 'Unassigned'}</td>
           <td>
             <button class="edit-btn">Save</button>
@@ -155,73 +202,89 @@
           </td>
         `;
 
-        row.querySelector(".edit-btn").addEventListener("click", () => updateRequest(request.request_id, row));
-        row.querySelector(".delete-btn").addEventListener("click", () => deleteRequest(request.request_id, row));
+          row
+            .querySelector('.edit-btn')
+            .addEventListener('click', () =>
+              updateRequest(request.request_id, row)
+            );
+          row
+            .querySelector('.delete-btn')
+            .addEventListener('click', () =>
+              deleteRequest(request.request_id, row)
+            );
 
-        tableBody.appendChild(row);
-      }
-
-      async function updateRequest(id, row) {
-        const updatedRequest = {
-          request_id: id,
-          tenant_id: parseInt(row.children[1].innerText, 10),
-          apartment_id: parseInt(row.children[2].innerText, 10),
-          request_date: formatDate(row.children[3].innerText),
-          issue_description: row.children[4].innerText,
-          status: row.children[5].querySelector("select").value,
-          completion_date: formatDate(row.children[6].innerText) || null,
-          assigned_to: row.children[7].innerText || null
-        };
-
-        try {
-          const response = await fetch(`${baseUrl}/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(updatedRequest),
-          });
-
-          if (!response.ok) throw new Error("Failed to update request");
-          alert("Request updated successfully!");
-        } catch (error) {
-          console.error("Error updating request:", error);
+          tableBody.appendChild(row);
         }
-      }
 
-      async function deleteRequest(id, row) {
-        if (confirm("Are you sure you want to delete this request?")) {
+        async function updateRequest(id, row) {
+          const updatedRequest = {
+            request_id: id,
+            tenant_id: parseInt(row.children[1].innerText, 10),
+            apartment_id: parseInt(row.children[2].innerText, 10),
+            request_date: formatDate(row.children[3].innerText),
+            issue_description: row.children[4].innerText,
+            status: row.children[5].querySelector('select').value,
+            completion_date: formatDate(row.children[6].innerText) || null,
+            assigned_to: row.children[7].innerText || null,
+          };
+
           try {
-            await fetch(`${baseUrl}/${id}`, { method: "DELETE" });
-            row.remove();
+            const response = await fetch(`${baseUrl}/${id}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedRequest),
+            });
+
+            if (!response.ok) throw new Error('Failed to update request');
+            alert('Request updated successfully!');
           } catch (error) {
-            console.error("Error deleting request:", error);
+            console.error('Error updating request:', error);
           }
         }
-      }
 
-      addRequestForm.addEventListener("submit", async function (e) {
-        e.preventDefault();
+        async function deleteRequest(id, row) {
+          if (confirm('Are you sure you want to delete this request?')) {
+            try {
+              await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
+              row.remove();
+            } catch (error) {
+              console.error('Error deleting request:', error);
+            }
+          }
+        }
 
-        const formData = {
-          tenant_id: parseInt(document.getElementById("tenant_id").value, 10),
-          apartment_id: parseInt(document.getElementById("apartment_id").value, 10),
-          request_date: formatDate(document.getElementById("request_date").value),
-          issue_description: document.getElementById("issue_description").value,
-          status: document.getElementById("status").value,
-          completion_date: formatDate(document.getElementById("completion_date").value) || null,
-          assigned_to: document.getElementById("assigned_to").value || null
-        };
+        addRequestForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
 
-        await fetch(baseUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          const formData = {
+            tenant_id: parseInt(document.getElementById('tenant_id').value, 10),
+            apartment_id: parseInt(
+              document.getElementById('apartment_id').value,
+              10
+            ),
+            request_date: formatDate(
+              document.getElementById('request_date').value
+            ),
+            issue_description:
+              document.getElementById('issue_description').value,
+            status: document.getElementById('status').value,
+            completion_date:
+              formatDate(document.getElementById('completion_date').value) ||
+              null,
+            assigned_to: document.getElementById('assigned_to').value || null,
+          };
+
+          await fetch(baseUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+
+          loadRequests();
         });
 
         loadRequests();
       });
-
-      loadRequests();
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

@@ -1,8 +1,8 @@
 // app/components/header.js
 
 export function createHeader() {
-    const header = document.createElement('header');
-    header.innerHTML = `
+  const header = document.createElement('header');
+  header.innerHTML = `
         <h1>Russell Properties LLC (Development Build)</h1>
         <nav>
             <ul>
@@ -14,7 +14,7 @@ export function createHeader() {
             </ul>
         </nav>
     `;
-    return header;
+  return header;
 }
 
 // Usage example

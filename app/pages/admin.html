@@ -1,136 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Admin Dashboard - Russell Properties</title>
     <style>
-        .admin-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .admin-section {
-            margin-bottom: 30px;
-        }
-        .admin-section h2 {
-            margin-bottom: 10px;
-        }
-        .admin-section table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .admin-section table th, .admin-section table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        .admin-section table th {
-            background-color: #f2f2f2;
-        }
-        .admin-actions button {
-            margin-right: 5px;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
+      .admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .admin-section {
+        margin-bottom: 30px;
+      }
+      .admin-section h2 {
+        margin-bottom: 10px;
+      }
+      .admin-section table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .admin-section table th,
+      .admin-section table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      .admin-section table th {
+        background-color: #f2f2f2;
+      }
+      .admin-actions button {
+        margin-right: 5px;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
     <main>
-        <div class="admin-container">
-            <section class="admin-section" id="manage-properties">
-                <h2>Manage Properties</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Property ID</th>
-                            <th>Title</th>
-                            <th>Price</th>
-                            <th>Address</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Luxury Villa</td>
-                            <td>$1,200,000</td>
-                            <td>123 Luxury St, Beverly Hills, CA</td>
-                            <td class="admin-actions">
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Modern Apartment</td>
-                            <td>$850,000</td>
-                            <td>456 Modern Ave, New York, NY</td>
-                            <td class="admin-actions">
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="admin-section" id="manage-users">
-                <h2>Manage Users</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>johndoe</td>
-                            <td>johndoe@example.com</td>
-                            <td>Admin</td>
-                            <td class="admin-actions">
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>janedoe</td>
-                            <td>janedoe@example.com</td>
-                            <td>User</td>
-                            <td class="admin-actions">
-                                <button>Edit</button>
-                                <button>Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-            <section class="admin-section" id="site-activity">
-                <h2>Site Activity</h2>
-                <p>Recent activity logs and actions can be displayed here for monitoring purposes.</p>
-            </section>
-        </div>
+      <div class="admin-container">
+        <section
+          class="admin-section"
+          id="manage-properties"
+        >
+          <h2>Manage Properties</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Property ID</th>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Address</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Luxury Villa</td>
+                <td>$1,200,000</td>
+                <td>123 Luxury St, Beverly Hills, CA</td>
+                <td class="admin-actions">
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Modern Apartment</td>
+                <td>$850,000</td>
+                <td>456 Modern Ave, New York, NY</td>
+                <td class="admin-actions">
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section
+          class="admin-section"
+          id="manage-users"
+        >
+          <h2>Manage Users</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>johndoe</td>
+                <td>johndoe@example.com</td>
+                <td>Admin</td>
+                <td class="admin-actions">
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>janedoe</td>
+                <td>janedoe@example.com</td>
+                <td>User</td>
+                <td class="admin-actions">
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section
+          class="admin-section"
+          id="site-activity"
+        >
+          <h2>Site Activity</h2>
+          <p>
+            Recent activity logs and actions can be displayed here for
+            monitoring purposes.
+          </p>
+        </section>
+      </div>
     </main>
 
     <script>
-        document.querySelectorAll('.admin-actions button').forEach(button => {
-            button.addEventListener('click', function() {
-                const action = this.textContent.toLowerCase();
-                alert(`Performing ${action} action...`);
-            });
+      document.querySelectorAll('.admin-actions button').forEach((button) => {
+        button.addEventListener('click', function () {
+          const action = this.textContent.toLowerCase();
+          alert(`Performing ${action} action...`);
         });
+      });
     </script>
-</body>
+  </body>
 </html>

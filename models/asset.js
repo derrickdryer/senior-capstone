@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Asset = sequelize.define('Asset', {
+  const Asset = sequelize.define(
+    'Asset',
+    {
       property_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,9 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       num_apartments: {
         type: DataTypes.INTEGER,
         allowNull: false,
-      }
-    }, { timestamps: true });
-  
-    return Asset;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Asset;
+};

@@ -1,66 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Login - Russell Properties</title>
 
     <script>
-        // JavaScript function to check credentials
-        function validateLogin(event) {
-            event.preventDefault(); // Prevents form submission
-            
-            // Hardcoded base user credentials
-            const baseUsername = "admin";
-            const basePassword = "password123";
+      // JavaScript function to check credentials
+      function validateLogin(event) {
+        event.preventDefault(); // Prevents form submission
 
-            // Get the input values
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+        // Hardcoded base user credentials
+        const baseUsername = 'admin';
+        const basePassword = 'password123';
 
-            // Check if input matches base credentials
-            if (username === baseUsername && password === basePassword) {
-                alert("Login successful!");
-                sessionStorage.setItem("isAuthenticated", "true"); // Set authenticated status
-                window.location.href = "user_dashboard.html"; // Redirect to user page
-            } else {
-                alert("Invalid username or password. Please try again.");
-            }
+        // Get the input values
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        // Check if input matches base credentials
+        if (username === baseUsername && password === basePassword) {
+          alert('Login successful!');
+          sessionStorage.setItem('isAuthenticated', 'true'); // Set authenticated status
+          window.location.href = 'user_dashboard.html'; // Redirect to user page
+        } else {
+          alert('Invalid username or password. Please try again.');
         }
+      }
     </script>
-    
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
     <!-- Main Content -->
     <main>
-        <!-- Login Section -->
-        <section id="login">
-            <div class="container">
-                <h2>Login</h2>
-                <form>
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+      <!-- Login Section -->
+      <section id="login">
+        <div class="container">
+          <h2>Login</h2>
+          <form>
+            <label for="username">Username:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+            />
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+            />
 
-                    <button type="submit">Login</button>
-                </form>
-                <p><a href="register.html">Create an account</a> | <a href="forgot_password.html">Forgot your password?</a></p>
-                <h2>Dev Admin Credentials</h2>
-                <p>Username: admin</p>
-                <p>Password: password123</p>
-            </div>
-        </section>
+            <button type="submit">Login</button>
+          </form>
+          <p>
+            <a href="register.html">Create an account</a> |
+            <a href="forgot_password.html">Forgot your password?</a>
+          </p>
+          <h2>Dev Admin Credentials</h2>
+          <p>Username: admin</p>
+          <p>Password: password123</p>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>

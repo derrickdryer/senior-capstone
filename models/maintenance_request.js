@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const MaintenanceRequest = sequelize.define('MaintenanceRequest', {
+  const MaintenanceRequest = sequelize.define(
+    'MaintenanceRequest',
+    {
       request_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -32,9 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       assigned_to: {
         type: DataTypes.STRING(50),
         allowNull: true,
-      }
-    }, { timestamps: true });
-  
-    return MaintenanceRequest;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return MaintenanceRequest;
+};

@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const User = sequelize.define('User', {
+  const User = sequelize.define(
+    'User',
+    {
       user_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -29,9 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       mfa_secret: {
         type: DataTypes.STRING(255),
         allowNull: true,
-      }
-    }, { timestamps: true });
-  
-    return User;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return User;
+};

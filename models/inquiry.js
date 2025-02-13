@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Inquiry = sequelize.define('Inquiry', {
+  const Inquiry = sequelize.define(
+    'Inquiry',
+    {
       inquiry_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,9 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       response_date: {
         type: DataTypes.DATE,
         allowNull: true,
-      }
-    }, { timestamps: true });
-  
-    return Inquiry;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Inquiry;
+};

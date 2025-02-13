@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Notification = sequelize.define('Notification', {
+  const Notification = sequelize.define(
+    'Notification',
+    {
       notification_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,9 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       read_status: {
         type: DataTypes.STRING(255),
         allowNull: false,
-      }
-    }, { timestamps: true });
-  
-    return Notification;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Notification;
+};

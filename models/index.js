@@ -4,12 +4,14 @@ require('dotenv').config(); // Load .env
 const dbUrl = process.env.DB_CONNECTION_STRING;
 
 if (!dbUrl) {
-  throw new Error("❌ Database connection string is missing. Check your .env file.");
+  throw new Error(
+    '❌ Database connection string is missing. Check your .env file.'
+  );
 }
 
 const sequelize = new Sequelize(dbUrl, {
   dialect: 'mariadb', // Ensure this matches your database
-  logging: false // Set to true for SQL query logs
+  logging: false, // Set to true for SQL query logs
 });
 
 // Import Models
@@ -19,7 +21,10 @@ const Apartment = require('./apartment')(sequelize, DataTypes);
 const Tenant = require('./tenant')(sequelize, DataTypes);
 const Lease = require('./lease')(sequelize, DataTypes);
 const Payment = require('./payment')(sequelize, DataTypes);
-const MaintenanceRequest = require('./maintenance_request')(sequelize, DataTypes);
+const MaintenanceRequest = require('./maintenance_request')(
+  sequelize,
+  DataTypes
+);
 const Notification = require('./notification')(sequelize, DataTypes);
 const Inquiry = require('./inquiry')(sequelize, DataTypes);
 
@@ -35,7 +40,7 @@ const db = {
   Payment,
   MaintenanceRequest,
   Notification,
-  Inquiry
+  Inquiry,
 };
 
 module.exports = db;

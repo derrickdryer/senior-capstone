@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Tenant = sequelize.define('Tenant', {
+  const Tenant = sequelize.define(
+    'Tenant',
+    {
       tenant_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -21,9 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       phone_number: {
         type: DataTypes.STRING(15),
         allowNull: false,
-      }
-    }, { timestamps: true });
-  
-    return Tenant;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Tenant;
+};

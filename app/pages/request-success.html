@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Request Submitted - Russell Properties</title>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
     <main>
-        <section id="request-success">
-            <div class="container">
-                <h2>Request Submitted Successfully</h2>
-                <p>Your request or complaint has been submitted successfully. Our team will review it and get back to you as soon as possible.</p>
-                <a href="user.html">Return to Your Account</a>
-            </div>
-        </section>
+      <section id="request-success">
+        <div class="container">
+          <h2>Request Submitted Successfully</h2>
+          <p>
+            Your request or complaint has been submitted successfully. Our team
+            will review it and get back to you as soon as possible.
+          </p>
+          <a href="user.html">Return to Your Account</a>
+        </div>
+      </section>
     </main>
-</body>
+  </body>
 </html>

@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Payment = sequelize.define('Payment', {
+  const Payment = sequelize.define(
+    'Payment',
+    {
       payment_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,9 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM('completed', 'pending', 'failed'),
         allowNull: false,
-      }
-    }, { timestamps: true });
-  
-    return Payment;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Payment;
+};

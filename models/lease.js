@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const Lease = sequelize.define('Lease', {
+  const Lease = sequelize.define(
+    'Lease',
+    {
       lease_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -32,9 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM('active', 'terminated', 'pending'),
         allowNull: false,
-      }
-    }, { timestamps: true });
-  
-    return Lease;
-  };
-  
+      },
+    },
+    { timestamps: true }
+  );
+
+  return Lease;
+};

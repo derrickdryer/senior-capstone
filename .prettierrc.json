@@ -1,0 +1,10 @@
+{
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "singleQuote": true,
+  "useTabs": false,
+  "singleAttributePerLine": true,
+  "htmlWhitespaceSensitivity": "css",
+  "bracketSameLine": false,
+  "semi": true
+}
