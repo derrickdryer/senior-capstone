@@ -56,17 +56,23 @@
             }
 
             try {
-                const response = await fetch('/api/login', {
+                console.log('Attempting to log in with:', { username, password });
+
+                const response = await fetch('/api/users', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ username, password })
                 });
 
+                console.log('Response status:', response.status); // Debug logging
+
                 if (!response.ok) {
-                    throw new Error('Invalid username or password');
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Invalid username or password');
                 }
 
                 const result = await response.json();
+                console.log('Response result:', result); // Debug logging
 
                 if (result.success) {
                     sessionStorage.setItem('isAuthenticated', 'true');
