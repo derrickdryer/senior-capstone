@@ -5,7 +5,7 @@ const mount = require('koa-mount');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-// const http2 = require('http2'); // Commented out as it's not needed for HTTP
+const http2 = require('http2'); // Use http2 module
 
 dotenv.config();
 const app = new Koa();
@@ -101,30 +101,14 @@ app.on('error', (err, ctx) => {
   ctx.body = 'Internal Server Error';
 });
 
-// Load SSL certificate and key if USE_LOCAL_SSL is true
-let server;
+// Create HTTP/2 server
 const PORT = process.env.PORT || 3000;
+const server = http2.createServer(app.callback());
 
-// Commented out SSL/HTTPS related code
-// if (process.env.USE_LOCAL_SSL === 'true') {
-//   const options = {
-//     key: fs.readFileSync(path.join(__dirname, '../../certs/cloudflare.key')),
-//     cert: fs.readFileSync(path.join(__dirname, '../../certs/cloudflare.crt'))
-//   };
-//   server = http2.createSecureServer(options, app.callback());
-// } else {
-server = app.listen(PORT, (err) => {
+server.listen(PORT, (err) => {
   if (err) {
     console.error('Error starting server:', err);
   } else {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
   }
 });
-// }
-
-// Start the server if it's not already listening
-if (!server.listening) {
-  server.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-}
