@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - Feat-HTTP2
 
 jobs:
   build:
@@ -22,17 +21,7 @@ jobs:
         password: ${{ secrets.GHCR_PAT }}
 
     - name: Build Docker image
-      run: |
-        if [ "${{ github.ref }}" == "refs/heads/Feat-HTTP2" ]; then
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:testing .
-        else
-          docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
-        fi
+      run: docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest .
 
     - name: Push Docker image
-      run: |
-        if [ "${{ github.ref }}" == "refs/heads/Feat-HTTP2" ]; then
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:testing
-        else
-          docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-        fi
+      run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
