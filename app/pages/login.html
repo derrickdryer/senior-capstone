@@ -27,6 +27,7 @@
                     <input type="password" id="password" name="password" required>
 
                     <button type="submit">Login</button>
+                    <p id="errorMessage" style="color: red; display: none;"></p>
                 </form>
                 <p>
                     <a href="register.html">Create an account</a> |
@@ -38,10 +39,21 @@
 
     <script>
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault(); // Prevent form submission
 
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Clear previous errors
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+
+            if (!username || !password) {
+                errorMessage.textContent = 'Username and password are required.';
+                errorMessage.style.display = 'block';
+                return;
+            }
 
             try {
                 const response = await fetch('/api/login', {
@@ -50,19 +62,24 @@
                     body: JSON.stringify({ username, password })
                 });
 
+                if (!response.ok) {
+                    throw new Error('Invalid username or password');
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('Login successful!');
                     sessionStorage.setItem('isAuthenticated', 'true');
                     sessionStorage.setItem('role', result.role);
                     window.location.href = 'user.html';
                 } else {
-                    alert('Invalid username or password. Please try again.');
+                    errorMessage.textContent = result.message || 'Invalid username or password.';
+                    errorMessage.style.display = 'block';
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again later.');
+                console.error('Login Error:', error);
+                errorMessage.textContent = 'An error occurred. Please try again later.';
+                errorMessage.style.display = 'block';
             }
         });
     </script>
