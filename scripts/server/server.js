@@ -112,6 +112,6 @@ const PORT = process.env.PORT || 3000;
 // Start the server if it's not already listening
 if (!server.listening) {
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on https://localhost:${PORT}`);
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
   });
 }

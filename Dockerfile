@@ -14,15 +14,15 @@ RUN npm install
 COPY . .
 
 # Copy SSL certificates
-COPY certs/server.crt /etc/ssl/certs/hidden-it-com.crt
-COPY certs/server.key /etc/ssl/private/hidden-it-com.key
+#COPY certs/server.crt /etc/ssl/certs/hidden-it-com.crt
+#COPY certs/server.key /etc/ssl/private/hidden-it-com.key
 
 ENV DB_USER=root
 ENV DB_PASSWORD="SuperSecretPassword"
 ENV DB_HOST=IP
 ENV DB_PORT=3306
 ENV DB_DATABASE=root
-ENV USE_LOCAL_SSL=false
+#ENV USE_LOCAL_SSL=false
 
 # Expose the port the app runs on
 EXPOSE 3000
