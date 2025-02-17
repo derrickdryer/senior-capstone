@@ -1,93 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/public/styles/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Login - Russell Properties</title>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
-
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
     <main>
-        <section id="login">
-            <div class="container">
-                <h2>Login</h2>
-                <form id="loginForm">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+      <section id="login">
+        <div class="container">
+          <h2>Login</h2>
+          <form id="loginForm">
+            <label for="username">Username:</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+            />
 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+            <label for="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+            />
 
-                    <button type="submit">Login</button>
-                    <p id="errorMessage" style="color: red; display: none;"></p>
-                </form>
-                <p>
-                    <a href="register.html">Create an account</a> |
-                    <a href="forgot_password.html">Forgot your password?</a>
-                </p>
-            </div>
-        </section>
+            <button type="submit">Login</button>
+            <p
+              id="errorMessage"
+              style="color: red; display: none"
+            ></p>
+            <p
+              id="successMessage"
+              style="color: green; display: none"
+            ></p>
+          </form>
+          <p>
+            <a href="register.html">Create an account</a> |
+            <a href="forgot_password.html">Forgot your password?</a>
+          </p>
+        </div>
+      </section>
     </main>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent form submission
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent form submission
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Clear previous errors
-            errorMessage.style.display = 'none';
-            errorMessage.textContent = '';
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value.trim();
+          const errorMessage = document.getElementById('errorMessage');
+          const successMessage = document.getElementById('successMessage');
 
-            if (!username || !password) {
-                errorMessage.textContent = 'Username and password are required.';
-                errorMessage.style.display = 'block';
-                return;
+          // Clear previous messages
+          errorMessage.style.display = 'none';
+          errorMessage.textContent = '';
+          successMessage.style.display = 'none';
+          successMessage.textContent = '';
+
+          if (!username || !password) {
+            errorMessage.textContent = 'Username and password are required.';
+            errorMessage.style.display = 'block';
+            return;
+          }
+
+          try {
+            console.log('Attempting to log in with:', { username, password });
+
+            // Fetch the user by username using the correct API endpoint
+            const response = await fetch(`/api/users/by-username/${username}`, {
+              method: 'GET',
+              headers: { 'Content-Type': 'application/json' },
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || 'Invalid username or password');
             }
 
-            try {
-                console.log('Attempting to log in with:', { username, password });
+            const user = await response.json();
+            console.log('Response user:', user);
 
-                const response = await fetch('/api/users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-
-                console.log('Response status:', response.status); // Debug logging
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || 'Invalid username or password');
-                }
-
-                const result = await response.json();
-                console.log('Response result:', result); // Debug logging
-
-                if (result.success) {
-                    sessionStorage.setItem('isAuthenticated', 'true');
-                    sessionStorage.setItem('role', result.role);
-                    window.location.href = 'user.html';
-                } else {
-                    errorMessage.textContent = result.message || 'Invalid username or password.';
-                    errorMessage.style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Login Error:', error);
-                errorMessage.textContent = 'An error occurred. Please try again later.';
-                errorMessage.style.display = 'block';
+            // Verify password (in production, this should be handled on the server)
+            if (user.password !== password) {
+              errorMessage.textContent = 'Invalid username or password.';
+              errorMessage.style.display = 'block';
+              return;
             }
+
+            // Save login state with persistent storage
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('role', user.role);
+
+            // Display success message instead of redirecting
+            successMessage.textContent = 'Login success!';
+            successMessage.style.display = 'block';
+
+            // Commented out the redirect for now
+            // window.location.href = 'user.html';
+          } catch (error) {
+            console.error('Login Error:', error);
+            errorMessage.textContent =
+              'An error occurred. Please try again later.';
+            errorMessage.style.display = 'block';
+          }
         });
     </script>
-</body>
+  </body>
 </html>

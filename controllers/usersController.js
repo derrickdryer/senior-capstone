@@ -33,6 +33,28 @@ exports.getUserById = async (ctx) => {
   }
 };
 
+exports.getUserByName = async (ctx) => {
+  try {
+    const { username } = ctx.params;
+    const [rows] = await pool.query(
+      'SELECT * FROM users WHERE username = ? LIMIT 1',
+      [username]
+    );
+
+    if (rows.length === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
+    ctx.status = 200;
+    ctx.body = rows[0];
+  } catch (error) {
+    console.error('❌ Error fetching user by username:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
 // Create a new user
 exports.createUser = async (ctx) => {
   try {

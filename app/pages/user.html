@@ -76,14 +76,9 @@
     </main>
 
     <script>
-      // Check if the user is authenticated
-      document.addEventListener('DOMContentLoaded', function () {
-        const isAuthenticated =
-          sessionStorage.getItem('isAuthenticated') === 'true';
-        if (!isAuthenticated) {
-          window.location.href = 'login.html'; // Redirect to login page if not logged in
-        }
-      });
+      if (localStorage.getItem('isAuthenticated') !== 'true') {
+        window.location.href = 'login.html';
+      }
     </script>
   </body>
 </html>

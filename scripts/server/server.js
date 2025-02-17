@@ -2,6 +2,7 @@ const Koa = require('koa');
 const Router = require('koa-router');
 const serve = require('koa-static');
 const mount = require('koa-mount');
+const bodyParser = require('koa-bodyparser');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -10,6 +11,8 @@ const fs = require('fs');
 dotenv.config();
 const app = new Koa();
 const router = new Router();
+
+app.use(bodyParser());
 
 // Serve static files from the "public" directory with caching headers
 app.use(
