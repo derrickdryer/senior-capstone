@@ -112,6 +112,7 @@
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('role', user.role);
             localStorage.setItem('user_id', user.user_id);
+            //updateHeader();
 
             // Display success message instead of redirecting
             successMessage.textContent = 'Login success!';
@@ -119,6 +120,7 @@
 
             // Commented out the redirect for now
             // window.location.href = '/user';
+            window.location.href = '/index';
           } catch (error) {
             console.error('Login Error:', error);
             errorMessage.textContent =
