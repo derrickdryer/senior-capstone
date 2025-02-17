@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+    <title>Property Details - Russell Properties</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
+
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
+    </script>
+
+    <!-- Main Content -->
+    <main>
+      <section id="property-details">
+        <!-- Dynamic property details will be inserted here -->
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Extract property id from URL (assuming URL is like /property/1)
+        const pathParts = window.location.pathname.split('/');
+        const propertyId = pathParts[2];
+        const detailsSection = document.querySelector('#property-details');
+
+        try {
+          // Fetch property details from /api/assets/:id
+          const response = await fetch(`/api/assets/${propertyId}`);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const property = await response.json();
+
+          // Insert property details into the DOM and include a placeholder for apartments list.
+          detailsSection.innerHTML = `
+            <h1>${property.address}</h1>
+            <p>${property.city}, ${property.state} ${property.postal_code}</p>
+            <p>${property.num_apartments} apartments</p>
+            <section id="apartments">
+              <h2>Apartments</h2>
+              <ul id="apartments-list">
+                <!-- Dynamic apartment items will be inserted here -->
+              </ul>
+            </section>
+          `;
+
+          // Fetch all apartments that have a foreign key back to this property.
+          const aptsResponse = await fetch(
+            `/api/apartments?property_id=${propertyId}`
+          );
+          if (!aptsResponse.ok) {
+            throw new Error('Network response for apartments was not ok');
+          }
+          const apartments = await aptsResponse.json();
+          const apartmentsList = document.querySelector('#apartments-list');
+          apartmentsList.innerHTML = '';
+
+          apartments.forEach((apartment) => {
+            const aptItem = document.createElement('li');
+            aptItem.innerHTML = `
+              <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
+              <p>Bedrooms: ${apartment.bedrooms} | Bathrooms: ${apartment.bathrooms}</p>
+              <p>Square Footage: ${apartment.square_footage} sq ft</p>
+              <p>Rent: $${apartment.rent_amount}</p>
+            `;
+            apartmentsList.appendChild(aptItem);
+          });
+        } catch (error) {
+          console.error(
+            'Error fetching property details or apartments:',
+            error
+          );
+          detailsSection.innerHTML = '<p>Error loading property details.</p>';
+        }
+      });
+    </script>
+  </body>
+</html>

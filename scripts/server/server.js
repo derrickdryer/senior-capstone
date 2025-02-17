@@ -94,6 +94,13 @@ router.get('/:page', async (ctx) => {
   }
 });
 
+// Place this new route before the catch-all dynamic page route.
+router.get('/property/:id', async (ctx) => {
+  const filePath = path.join(__dirname, '../../app/pages/property.html');
+  ctx.type = 'html';
+  ctx.body = fs.createReadStream(filePath);
+});
+
 // Global Error Handler
 app.on('error', (err, ctx) => {
   console.error('Global Error Handler:', err);
