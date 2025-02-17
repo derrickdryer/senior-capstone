@@ -298,3 +298,18 @@ section#additional-properties ul.single-column-list li img {
 #search button:hover {
   background-color: var(--accent-color);
 }
+
+#logout-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: var(--secondary-color);
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--transition-speed);
+}
+
+#logout-btn:hover {
+  background-color: var(--accent-color);
+}

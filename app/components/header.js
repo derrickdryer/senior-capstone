@@ -13,8 +13,8 @@ export function createHeader() {
     if (role === 'tenant') {
       extraButtons += `<li><a href="/tenant">Tenant</a></li>`;
     }
-    // Add Logout button regardless of role
-    extraButtons += `<li><button id="logout-btn">Logout</button></li>`;
+    // Add Logout link regardless of role
+    extraButtons += `<li><a href="#" id="logout-btn">Logout</a></li>`;
   }
 
   header.innerHTML = `
@@ -34,7 +34,8 @@ export function createHeader() {
   // Add logout functionality if logged in
   if (isLoggedIn) {
     const logoutBtn = header.querySelector('#logout-btn');
-    logoutBtn.addEventListener('click', () => {
+    logoutBtn.addEventListener('click', (event) => {
+      event.preventDefault();
       localStorage.clear();
       updateHeader(); // re-render header after logout
       window.location.href = '/login';
