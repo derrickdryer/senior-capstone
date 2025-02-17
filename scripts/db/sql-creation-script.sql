@@ -3,19 +3,20 @@
 CREATE DATABASE IF NOT EXISTS realtor_website;
 USE realtor_website;
 
-CREATE USER 'realtor_website'@'192.168.0.%' IDENTIFIED BY 'secure_password';
-CREATE USER 'realtor_website'@'10.1.33.%' IDENTIFIED BY 'secure_password';
-CREATE USER 'realtor_website'@'localhost' IDENTIFIED BY 'secure_password';
+-- Create users
+CREATE USER IF NOT EXISTS 'realtor_website'@'192.168.0.%' IDENTIFIED BY 'secure_password';
+CREATE USER IF NOT EXISTS 'realtor_website'@'10.1.33.%' IDENTIFIED BY 'secure_password';
+CREATE USER IF NOT EXISTS 'realtor_website'@'localhost' IDENTIFIED BY 'secure_password';
 
+-- Grant privileges
 GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'192.168.0.%';
 GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'10.1.33.%';
 GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'localhost';
 
 FLUSH PRIVILEGES;
 
-
 -- Table: assets
-CREATE TABLE assets (
+CREATE TABLE IF NOT EXISTS assets (
     property_id INT AUTO_INCREMENT PRIMARY KEY,
     address VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
@@ -25,7 +26,7 @@ CREATE TABLE assets (
 );
 
 -- Table: apartments
-CREATE TABLE apartments (
+CREATE TABLE IF NOT EXISTS apartments (
     apartment_id INT AUTO_INCREMENT PRIMARY KEY,
     property_id INT NOT NULL,
     unit_number VARCHAR(10) NOT NULL,
@@ -38,7 +39,7 @@ CREATE TABLE apartments (
 );
 
 -- Table: tenants
-CREATE TABLE tenants (
+CREATE TABLE IF NOT EXISTS tenants (
     tenant_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -47,7 +48,7 @@ CREATE TABLE tenants (
 );
 
 -- Table: leases
-CREATE TABLE leases (
+CREATE TABLE IF NOT EXISTS leases (
     lease_id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT NOT NULL,
     apartment_id INT NOT NULL,
@@ -61,7 +62,7 @@ CREATE TABLE leases (
 );
 
 -- Table: payments
-CREATE TABLE payments (
+CREATE TABLE IF NOT EXISTS payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     lease_id INT NOT NULL,
     payment_date DATE NOT NULL,
@@ -72,7 +73,7 @@ CREATE TABLE payments (
 );
 
 -- Table: maintenance_requests
-CREATE TABLE maintenance_requests (
+CREATE TABLE IF NOT EXISTS maintenance_requests (
     request_id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT NOT NULL,
     apartment_id INT NOT NULL,
@@ -86,7 +87,7 @@ CREATE TABLE maintenance_requests (
 );
 
 -- Table: users
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     property_id INT,
     role ENUM('manager', 'maintenance', 'tenant') NOT NULL,
@@ -98,7 +99,7 @@ CREATE TABLE users (
 );
 
 -- Table: notifications
-CREATE TABLE notifications (
+CREATE TABLE IF NOT EXISTS notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     notification_type VARCHAR(255) NOT NULL,
@@ -109,7 +110,7 @@ CREATE TABLE notifications (
 );
 
 -- Table: inquiries
-CREATE TABLE inquiries (
+CREATE TABLE IF NOT EXISTS inquiries (
     inquiry_id INT AUTO_INCREMENT PRIMARY KEY,
     tenant_id INT,
     property_id INT,
@@ -123,3 +124,59 @@ CREATE TABLE inquiries (
     FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE,
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
+
+-- Insert dummy data into assets
+INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES
+('123 Main St', 'Springfield', 'IL', '62701', 10),
+('456 Elm St', 'Springfield', 'IL', '62702', 8),
+('789 Oak St', 'Springfield', 'IL', '62703', 12);
+
+-- Insert dummy data into apartments
+INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES
+(1, '1A', 1, 2, 1, 850.00, 1200.00),
+(1, '1B', 1, 3, 2, 1050.00, 1500.00),
+(2, '2A', 2, 1, 1, 650.00, 900.00),
+(2, '2B', 2, 2, 1, 800.00, 1100.00),
+(3, '3A', 3, 3, 2, 1200.00, 1800.00);
+
+-- Insert dummy data into tenants
+INSERT INTO tenants (first_name, last_name, email, phone_number) VALUES
+('John', 'Doe', 'john.doe@example.com', '555-1234'),
+('Jane', 'Smith', 'jane.smith@example.com', '555-5678'),
+('Alice', 'Johnson', 'alice.johnson@example.com', '555-8765');
+
+-- Insert dummy data into leases
+INSERT INTO leases (tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status) VALUES
+(1, 1, '2025-01-01', '2025-12-31', 1200.00, 1200.00, 'active'),
+(2, 2, '2025-02-01', '2026-01-31', 1500.00, 1500.00, 'active'),
+(3, 3, '2025-03-01', '2026-02-28', 900.00, 900.00, 'active');
+
+-- Insert dummy data into payments
+INSERT INTO payments (lease_id, payment_date, amount, payment_method, status) VALUES
+(1, '2025-02-01', 1200.00, 'credit_card', 'completed'),
+(2, '2025-02-01', 1500.00, 'bank_transfer', 'completed'),
+(3, '2025-02-01', 900.00, 'check', 'completed');
+
+-- Insert dummy data into maintenance_requests
+INSERT INTO maintenance_requests (tenant_id, apartment_id, request_date, issue_description, status, completion_date, assigned_to) VALUES
+(1, 1, '2025-02-01', 'Leaky faucet', 'completed', '2025-02-02', 'Bob'),
+(2, 2, '2025-02-03', 'Broken window', 'in_progress', NULL, 'Alice'),
+(3, 3, '2025-02-05', 'No hot water', 'pending', NULL, NULL);
+
+-- Insert dummy data into users
+INSERT INTO users (property_id, role, username, password, phone_number, mfa_secret) VALUES
+(1, 'manager', 'manager1', 'password1', '555-1111', 'secret1'),
+(2, 'maintenance', 'maintenance1', 'password2', '555-2222', 'secret2'),
+(3, 'tenant', 'tenant1', 'password3', '555-3333', 'secret3');
+
+-- Insert dummy data into notifications
+INSERT INTO notifications (user_id, notification_type, content, sent_date, read_status) VALUES
+(1, 'info', 'Your rent is due', '2025-02-01', 'unread'),
+(2, 'warning', 'Maintenance required', '2025-02-02', 'read'),
+(3, 'alert', 'Lease expiring soon', '2025-02-03', 'unread');
+
+-- Insert dummy data into inquiries
+INSERT INTO inquiries (tenant_id, property_id, apartment_id, inquiry_content, response_date, first_name, last_name, phone_number) VALUES
+(1, 1, 1, 'Is the apartment still available?', '2025-02-01', 'John', 'Doe', '555-1234'),
+(2, 2, 2, 'Can I schedule a viewing?', '2025-02-02', 'Jane', 'Smith', '555-5678'),
+(3, 3, 3, 'What is the pet policy?', '2025-02-03', 'Alice', 'Johnson', '555-8765');
