@@ -2,14 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <title>User Account - Russell Properties</title>
   </head>
   <body>
@@ -25,21 +19,20 @@
     <main>
       <section id="user-account">
         <div class="container">
-          <h2>Welcome, [User's Name]</h2>
+          <h2 id="welcomeMessage">Welcome, User</h2>
 
           <!-- Account Details -->
           <section>
             <h3>Account Details</h3>
-            <p>Email: user@example.com</p>
-            <p>Phone: (123) 456-7890</p>
-            <p>Address: 1234 Property Lane, Cityville, ST 12345</p>
+            <p><strong>Email:</strong> <span id="userEmail">Loading...</span></p>
+            <p><strong>Phone:</strong> <span id="userPhone">Loading...</span></p>
+            <p><strong>Address:</strong> <span id="userAddress">Loading...</span></p>
           </section>
 
           <!-- Rent Payment -->
           <section id="rent-payment">
             <h3>Pay Rent</h3>
-            <p>Amount Due: $1,200</p>
-            <form action="invoice-success.html">
+            <form action="invoice">
               <button type="submit">View Invoice & Pay</button>
             </form>
           </section>
@@ -47,28 +40,8 @@
           <!-- Submit Requests -->
           <section id="requests">
             <h3>Submit Request</h3>
-            <form
-              action="request-success.html"
-              method="POST"
-            >
-              <label for="request-type">Request Type:</label>
-              <select
-                id="request-type"
-                name="request-type"
-                required
-              >
-                <option value="maintenance">Maintenance</option>
-                <option value="complaint">Complaint</option>
-                <option value="other">Other</option>
-              </select>
-              <label for="description">Description:</label>
-              <textarea
-                id="description"
-                name="description"
-                rows="4"
-                required
-              ></textarea>
-              <button type="submit">Submit Request</button>
+            <form action="maintenance-request">
+              <button type="submit">Create Maintenance Request</button>
             </form>
           </section>
         </div>
@@ -76,9 +49,41 @@
     </main>
 
     <script>
+      // Redirect if not authenticated
+      const token = sessionStorage.getItem('authToken');
+      if (!token) 
+        window.location.href = 'login.html';
       if (localStorage.getItem('isAuthenticated') !== 'true') {
         window.location.href = '/login';
       }
+
+      // Fetch user data
+      async function fetchUserData() {
+        try {
+          const response = await fetch('/api/user', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+
+          const user = await response.json();
+
+          // Update UI with user details
+          document.getElementById('welcomeMessage').textContent = `Welcome, ${user.username}`;
+          document.getElementById('userEmail').textContent = user.email;
+          document.getElementById('userPhone').textContent = user.phone_number || 'Not provided';
+          document.getElementById('userAddress').textContent = user.property_id || 'Not provided';
+
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          alert('Failed to load user data.');
+        }
+      }
+
+      fetchUserData();
     </script>
   </body>
 </html>
