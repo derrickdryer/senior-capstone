@@ -60,7 +60,7 @@
       // Fetch user data
       async function fetchUserData() {
         try {
-          const response = await fetch('/api/user', {
+          const response = await fetch('/api/users', {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
           });
@@ -73,7 +73,7 @@
 
           // Update UI with user details
           document.getElementById('welcomeMessage').textContent = `Welcome, ${user.username}`;
-          document.getElementById('userEmail').textContent = user.email;
+          document.getElementById('userEmail').textContent = user.email || 'Not provided';
           document.getElementById('userPhone').textContent = user.phone_number || 'Not provided';
           document.getElementById('userAddress').textContent = user.property_id || 'Not provided';
 
