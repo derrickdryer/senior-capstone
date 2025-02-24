@@ -14,6 +14,25 @@ exports.getAllApartments = async (ctx) => {
   }
 };
 
+// Get apartments by property ID
+exports.getApartmentsByProperty = async (ctx) => {
+  try {
+    console.log(`✅ Fetching apartments for property_id: ${ctx.params.propertyId}`);
+    const [rows] = await pool.query(
+      'SELECT * FROM apartments WHERE property_id = ?',
+      [ctx.params.propertyId]
+    );
+
+    ctx.status = 200;
+    ctx.body = rows;
+  } catch (error) {
+    console.error('❌ Error fetching apartments by property:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+
 // Get a single apartment by ID
 exports.getApartmentById = async (ctx) => {
   try {

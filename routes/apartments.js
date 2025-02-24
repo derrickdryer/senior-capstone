@@ -9,5 +9,7 @@ router.get('/:id', apartmentsController.getApartmentById);
 router.post('/', apartmentsController.createApartment);
 router.put('/:id', apartmentsController.updateApartment);
 router.delete('/:id', apartmentsController.deleteApartment);
+router.get('/property/:propertyId', apartmentsController.getApartmentsByProperty);
+
 
 module.exports = router;
