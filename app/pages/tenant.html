@@ -44,16 +44,14 @@
           <!-- Rent Payment -->
           <section id="rent-payment">
             <h3>Pay Rent</h3>
-            <form action="invoice.html">
-              <button type="submit">View Invoice & Pay</button>
+            <a href="/invoice">View Invoice & Pay</a>
             </form>
           </section>
 
           <!-- Submit Requests -->
           <section id="requests">
             <h3>Submit Request</h3>
-            <form action="maintenance-request.html">
-              <button type="submit">Create Maintenance Request</button>
+            <a href="/invoice">Create Maintenance Request</a>
             </form>
           </section>
         </div>
@@ -101,7 +99,7 @@
         fetchUserData();
       } else {
         alert('Unauthorized access. Please log in as a tenant.');
-        window.location.href = '/login.html';
+        window.location.href = '/login';
       }
     </script>
   </body>
