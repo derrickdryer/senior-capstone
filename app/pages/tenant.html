@@ -16,7 +16,6 @@
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
-
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
     </script>
@@ -26,7 +25,6 @@
       <section id="user-account">
         <div class="container">
           <h2 id="welcomeMessage">Welcome, User</h2>
-
           <!-- Account Details -->
           <section>
             <h3>Account Details</h3>
@@ -45,28 +43,24 @@
           <section id="rent-payment">
             <h3>Pay Rent</h3>
             <a href="/invoice">View Invoice & Pay</a>
-            </form>
           </section>
 
           <!-- Submit Requests -->
           <section id="requests">
             <h3>Submit Request</h3>
             <a href="/invoice">Create Maintenance Request</a>
-            </form>
           </section>
         </div>
       </section>
     </main>
 
-    <script>
-      // Check if user is authenticated and has the role of tenant
-      const isAuthenticated =
-        localStorage.getItem('isAuthenticated') === 'true';
-      const userRole = localStorage.getItem('role');
-      const userId = localStorage.getItem('user_id');
+    <script type="module">
+      import { requireAuth, getUserId } from '/scripts/auth.js';
 
-      if (isAuthenticated && userRole === 'tenant') {
-        // Fetch user data
+      // Ensure only a tenant can access this page.
+      if (requireAuth('tenant')) {
+        const userId = getUserId();
+
         async function fetchUserData() {
           try {
             const response = await fetch(`/api/users/${userId}`, {
@@ -79,8 +73,6 @@
             }
 
             const user = await response.json();
-
-            // Update UI with user details
             document.getElementById(
               'welcomeMessage'
             ).textContent = `Welcome, ${user.username}`;
@@ -97,9 +89,6 @@
         }
 
         fetchUserData();
-      } else {
-        alert('Unauthorized access. Please log in as a tenant.');
-        window.location.href = '/login';
       }
     </script>
   </body>

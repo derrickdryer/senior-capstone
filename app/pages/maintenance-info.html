@@ -50,40 +50,46 @@
         background-color: #e74c3c;
       }
       .info-button {
-    display: inline-block;
-    padding: 10px 15px;
-    border: 2px solid #333; /* Border for the box */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #f8f9fa; /* Light background */
-    color: #333; /* Dark text */
-    text-decoration: none; /* Remove underline */
-    font-weight: bold;
-  }
+        display: inline-block;
+        padding: 10px 15px;
+        border: 2px solid #333; /* Border for the box */
+        border-radius: 5px; /* Rounded corners */
+        background-color: #f8f9fa; /* Light background */
+        color: #333; /* Dark text */
+        text-decoration: none; /* Remove underline */
+        font-weight: bold;
+      }
 
-  .info-button:hover {
-    background-color: #ddd; /* Slightly darker on hover */
-  }
+      .info-button:hover {
+        background-color: #ddd; /* Slightly darker on hover */
+      }
     </style>
   </head>
   <body>
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
+      import { requireAuth } from '/scripts/auth.js';
 
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
+      requireAuth('manager', 'maintenance');
     </script>
 
     <header>
       <div class="container">
         <h1>Maintenance Requests Information</h1>
         <nav>
-            <ul>
-              <li>
-                <a href="/admin" class="info-button">Back to Admin Dashboard</a>
-              </li>
-            </ul>
-          </nav>
+          <ul>
+            <li>
+              <a
+                href="/admin"
+                class="info-button"
+                >Back to Admin Dashboard</a
+              >
+            </li>
+          </ul>
+        </nav>
       </div>
     </header>
 

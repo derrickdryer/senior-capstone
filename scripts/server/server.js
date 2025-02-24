@@ -44,6 +44,21 @@ app.use(
   )
 );
 
+// Serve JavaScript files with the correct MIME type and caching headers
+app.use(
+  mount(
+    '/scripts',
+    serve(path.join(__dirname, '../../app/scripts'), {
+      maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+      setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        }
+      },
+    })
+  )
+);
+
 // Import Routes
 const assetsRoutes = require('../../routes/assets');
 const apartmentsRoutes = require('../../routes/apartments');
