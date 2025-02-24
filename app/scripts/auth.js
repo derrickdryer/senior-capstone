@@ -19,3 +19,9 @@ export function requireAuth(...allowedRoles) {
 export function getUserId() {
   return localStorage.getItem('user_id');
 }
+
+/*
+USAGE
+import { requireAuth } from '/scripts/auth.js';
+requireAuth('tenant'); OR requireAuth('tenant', 'manager');
+*/
