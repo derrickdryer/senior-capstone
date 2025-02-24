@@ -4,11 +4,11 @@ CREATE DATABASE IF NOT EXISTS realtor_website;
 USE realtor_website;
 
 -- Create users
-CREATE USER IF NOT EXISTS 'realtor_website'@'192.168.0.%' IDENTIFIED BY 'secure_password';
+CREATE USER IF NOT EXISTS 'realtor_website'@'%' IDENTIFIED BY 'secure_password'; -- For testing purposes only, remove for production
 CREATE USER IF NOT EXISTS 'realtor_website'@'localhost' IDENTIFIED BY 'secure_password';
 
 -- Grant privileges
-GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'192.168.0.%';
+GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'%'; -- For testing purposes only, remove for production
 GRANT SELECT, INSERT, UPDATE, DELETE ON realtor_website.* TO 'realtor_website'@'localhost';
 
 FLUSH PRIVILEGES;
