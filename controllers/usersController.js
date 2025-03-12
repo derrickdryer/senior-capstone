@@ -1,4 +1,4 @@
-const { comparePassword } = require('../utils/passwordUtils');
+const { hashPassword, comparePassword } = require('../utils/passwordUtils');
 const pool = require('../database');
 
 // Get all users
@@ -14,6 +14,7 @@ exports.getAllUsers = async (ctx) => {
   }
 };
 
+// Login a user and verify password with hashed password
 exports.login = async (ctx) => {
   try {
     const { username, password } = ctx.request.body;
@@ -46,6 +47,49 @@ exports.login = async (ctx) => {
     };
   } catch (error) {
     console.error('❌ Error during login:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+// Register a new user
+exports.register = async (ctx) => {
+  try {
+    const { email, username, password } = ctx.request.body;
+
+    if (!email || !username || !password) {
+      ctx.status = 400;
+      ctx.body = { error: 'All fields are required.' };
+      return;
+    }
+
+    // Check if the username or email already exists
+    const [existingUser] = await pool.query(
+      'SELECT * FROM users WHERE username = ? OR email = ?',
+      [username, email]
+    );
+    if (existingUser.length > 0) {
+      ctx.status = 409;
+      ctx.body = { error: 'Username or email already exists.' };
+      return;
+    }
+
+    // Hash the password
+    const hashedPassword = await hashPassword(password);
+
+    // Insert the new user into the database
+    const result = await pool.query(
+      'INSERT INTO users (email, username, password, role) VALUES (?, ?, ?, ?)',
+      [email, username, hashedPassword, 'tenant']
+    );
+
+    ctx.status = 201;
+    ctx.body = {
+      message: 'Registration successful!',
+      user_id: result[0].insertId,
+    };
+  } catch (error) {
+    console.error('❌ Error during registration:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

@@ -27,23 +27,7 @@
       <section id="register">
         <div class="container">
           <h2>Create an Account</h2>
-          <form>
-            <label for="first_name">First Name:</label>
-            <input
-              type="text"
-              id="first_name"
-              name="first_name"
-              required
-            />
-
-            <label for="last_name">Last Name:</label>
-            <input
-              type="text"
-              id="last_name"
-              name="last_name"
-              required
-            />
-
+          <form id="registerForm">
             <label for="email">Email:</label>
             <input
               type="email"
@@ -68,11 +52,124 @@
               required
             />
 
+            <label for="confirmPassword">Confirm Password:</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              required
+            />
+
+            <label>
+              <input
+                type="checkbox"
+                id="showPassword"
+              />
+              Show Password
+            </label>
+
             <button type="submit">Register</button>
+            <p
+              id="errorMessage"
+              style="color: red; display: none"
+            ></p>
+            <p
+              id="successMessage"
+              style="color: green; display: none"
+            ></p>
           </form>
           <p>Already have an account? <a href="/login">Login here</a></p>
         </div>
       </section>
     </main>
+
+    <script>
+      document
+        .getElementById('registerForm')
+        .addEventListener('submit', async function (event) {
+          event.preventDefault(); // Prevent form submission
+
+          const email = document.getElementById('email').value.trim();
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value.trim();
+          const confirmPassword = document
+            .getElementById('confirmPassword')
+            .value.trim();
+          const errorMessage = document.getElementById('errorMessage');
+          const successMessage = document.getElementById('successMessage');
+
+          // Clear previous messages
+          errorMessage.style.display = 'none';
+          errorMessage.textContent = '';
+          successMessage.style.display = 'none';
+          successMessage.textContent = '';
+
+          if (!email || !username || !password || !confirmPassword) {
+            errorMessage.textContent = 'All fields are required.';
+            errorMessage.style.display = 'block';
+            return;
+          }
+
+          if (password !== confirmPassword) {
+            errorMessage.textContent = 'Passwords do not match.';
+            errorMessage.style.display = 'block';
+            document.getElementById('confirmPassword').value = '';
+            return;
+          }
+
+          try {
+            console.log('Attempting to register with:', {
+              email,
+              username,
+              password,
+            });
+
+            // Send registration request to the server
+            const response = await fetch('/api/users/register', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, username, password }),
+            });
+
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              throw new Error(errorText || 'Registration failed');
+            }
+
+            const result = await response.json();
+            console.log('Registration result:', result);
+
+            // Display success message
+            successMessage.textContent =
+              'Registration successful! You can now log in.';
+            successMessage.style.display = 'block';
+
+            // Optionally, redirect to the login page
+            // window.location.href = '/login';
+          } catch (error) {
+            console.error('Registration Error:', error);
+            errorMessage.textContent =
+              'An error occurred. Please try again later.';
+            errorMessage.style.display = 'block';
+          }
+        });
+
+      document
+        .getElementById('showPassword')
+        .addEventListener('change', function (event) {
+          const passwordField = document.getElementById('password');
+          const confirmPasswordField =
+            document.getElementById('confirmPassword');
+          if (event.target.checked) {
+            passwordField.type = 'text';
+            confirmPasswordField.type = 'text';
+          } else {
+            passwordField.type = 'password';
+            confirmPasswordField.type = 'password';
+          }
+        });
+    </script>
   </body>
 </html>
