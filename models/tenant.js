@@ -24,9 +24,25 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(15),
         allowNull: false,
       },
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+          model: 'users',
+          key: 'user_id',
+        },
+        onDelete: 'SET NULL',
+      },
     },
     { timestamps: true }
   );
+
+  Tenant.associate = (models) => {
+    Tenant.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      onDelete: 'SET NULL',
+    });
+  };
 
   return Tenant;
 };

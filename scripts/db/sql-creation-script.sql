@@ -3,6 +3,15 @@
 CREATE DATABASE IF NOT EXISTS realtor_website;
 USE realtor_website;
 
+-- Table: users
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    role ENUM('manager', 'maintenance', 'tenant') NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL
+);
+
 -- Table: assets
 CREATE TABLE IF NOT EXISTS assets (
     property_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -32,7 +41,9 @@ CREATE TABLE IF NOT EXISTS tenants (
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
-    phone_number VARCHAR(15) NOT NULL
+    phone_number VARCHAR(15) NOT NULL,
+    user_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 -- Table: leases
@@ -74,15 +85,6 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
 
--- Table: users
-CREATE TABLE IF NOT EXISTS users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    role ENUM('manager', 'maintenance', 'tenant') NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-);
-
 -- Table: notifications
 CREATE TABLE IF NOT EXISTS notifications (
     notification_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -110,6 +112,13 @@ CREATE TABLE IF NOT EXISTS inquiries (
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
 
+-- Insert dummy data into users
+INSERT INTO users (role, username, password, email) VALUES
+('manager', 'manager1', '$2b$10$kB88Uv2gq.Ql61GLr4Yhc.SeoyR6vr1qZ87np5oLYlznl6doCaHwa', 'manager1@example.com'), 
+('maintenance', 'maintenance1', '$2b$10$lU7RabR1fMM/0jSMWtCFQOMcy4k7OPyolZNccCOYRhZ1ZBk8MpNaG', 'maintenance1@example.com'),
+('tenant', 'tenant1', '$2b$10$x3jIxgCkfA0s1UMkYVpC9edTY.Gxdx.P304qOzKbtRK3/adHjYUhS', 'tenant1@example.com');
+
+
 -- Insert dummy data into assets
 INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES
 ('123 Main St', 'Springfield', 'IL', '62701', 10),
@@ -117,7 +126,7 @@ INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES
 ('789 Oak St', 'Springfield', 'IL', '62703', 12);
 
 -- Insert dummy data into apartments
-INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES
+INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES  
 (1, '1A', 1, 2, 1, 850.00, 1200.00),
 (1, '1B', 1, 3, 2, 1050.00, 1500.00),
 (2, '2A', 2, 1, 1, 650.00, 900.00),
@@ -125,10 +134,10 @@ INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, sq
 (3, '3A', 3, 3, 2, 1200.00, 1800.00);
 
 -- Insert dummy data into tenants
-INSERT INTO tenants (first_name, last_name, email, phone_number) VALUES
-('John', 'Doe', 'john.doe@example.com', '555-1234'),
-('Jane', 'Smith', 'jane.smith@example.com', '555-5678'),
-('Alice', 'Johnson', 'alice.johnson@example.com', '555-8765');
+INSERT INTO tenants (first_name, last_name, email, phone_number, user_id) VALUES
+('John', 'Doe', 'john.doe@example.com', '555-1234', 3),
+('Jane', 'Smith', 'jane.smith@example.com', '555-5678', 3),
+('Alice', 'Johnson', 'alice.johnson@example.com', '555-8765', 3);
 
 -- Insert dummy data into leases
 INSERT INTO leases (tenant_id, apartment_id, lease_start_date, lease_end_date, monthly_rent, security_deposit, status) VALUES
@@ -147,12 +156,6 @@ INSERT INTO maintenance_requests (tenant_id, apartment_id, request_date, issue_d
 (1, 1, '2025-02-01', 'Leaky faucet', 'completed', '2025-02-02', 'Bob'),
 (2, 2, '2025-02-03', 'Broken window', 'in_progress', NULL, 'Alice'),
 (3, 3, '2025-02-05', 'No hot water', 'pending', NULL, NULL);
-
--- Insert dummy data into users
-INSERT INTO users (role, username, password, email) VALUES
-('manager', 'manager1', '$2b$10$kB88Uv2gq.Ql61GLr4Yhc.SeoyR6vr1qZ87np5oLYlznl6doCaHwa', 'manager1@example.com'), 
-('maintenance', 'maintenance1', '$2b$10$lU7RabR1fMM/0jSMWtCFQOMcy4k7OPyolZNccCOYRhZ1ZBk8MpNaG', 'maintenance1@example.com'),
-('tenant', 'tenant1', '$2b$10$x3jIxgCkfA0s1UMkYVpC9edTY.Gxdx.P304qOzKbtRK3/adHjYUhS', 'tenant1@example.com');
 
 -- Insert dummy data into notifications
 INSERT INTO notifications (user_id, notification_type, content, sent_date, read_status) VALUES

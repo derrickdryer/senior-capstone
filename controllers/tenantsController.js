@@ -38,10 +38,11 @@ exports.getTenantById = async (ctx) => {
 // Create a new tenant
 exports.createTenant = async (ctx) => {
   try {
-    const { first_name, last_name, email, phone_number } = ctx.request.body;
+    const { first_name, last_name, email, phone_number, user_id } =
+      ctx.request.body;
     const [result] = await pool.query(
-      'INSERT INTO tenants (first_name, last_name, email, phone_number) VALUES (?, ?, ?, ?)',
-      [first_name, last_name, email, phone_number]
+      'INSERT INTO tenants (first_name, last_name, email, phone_number, user_id) VALUES (?, ?, ?, ?, ?)',
+      [first_name, last_name, email, phone_number, user_id]
     );
     ctx.status = 201;
     ctx.body = {
@@ -58,10 +59,11 @@ exports.createTenant = async (ctx) => {
 // Update a tenant by ID
 exports.updateTenant = async (ctx) => {
   try {
-    const { first_name, last_name, email, phone_number } = ctx.request.body;
+    const { first_name, last_name, email, phone_number, user_id } =
+      ctx.request.body;
     const [result] = await pool.query(
-      'UPDATE tenants SET first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE tenant_id = ?',
-      [first_name, last_name, email, phone_number, ctx.params.id]
+      'UPDATE tenants SET first_name = ?, last_name = ?, email = ?, phone_number = ?, user_id = ? WHERE tenant_id = ?',
+      [first_name, last_name, email, phone_number, user_id, ctx.params.id]
     );
 
     if (result.affectedRows === 0) {
