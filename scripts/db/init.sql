@@ -81,13 +81,10 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
 -- Table: users
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
-    property_id INT,
     role ENUM('manager', 'maintenance', 'tenant') NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(15) NOT NULL,
-    mfa_secret VARCHAR(255),
-    FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE SET NULL
+    email VARCHAR(100) NOT NULL,
 );
 
 -- Table: notifications
