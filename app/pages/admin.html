@@ -40,6 +40,7 @@
         background-color: rgba(231, 76, 60, 0.2);
       }
       .edit-btn,
+      .update-password-btn,
       .delete-btn {
         cursor: pointer;
         padding: 5px 10px;
@@ -48,6 +49,9 @@
       }
       .edit-btn {
         background-color: #f39c12; /* orange */
+      }
+      .update-password-btn {
+        background-color: #f15cd8; /* pink */
       }
       .delete-btn {
         background-color: #e74c3c; /* red */
@@ -311,7 +315,6 @@
               <th>Role</th>
               <th>Username</th>
               <th>Email</th>
-              <th>Password</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -329,8 +332,8 @@
         <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
       </div>
     </footer>
-
-    <script>
+    <script type="module">
+      import bcrypt from 'https://cdn.skypack.dev/bcryptjs';
       /**
        * Utility function to format a date string (e.g., "2025-02-10T05:00:00.000Z")
        * into "YYYY-MM-DD". Returns null if the date is invalid or empty.
@@ -710,10 +713,12 @@
         <td contenteditable="true">${user.role || ''}</td>
         <td contenteditable="true">${user.username || ''}</td>
         <td contenteditable="true">${user.email || ''}</td>
-        <td contenteditable="true">${user.password || ''}</td>
         <td>
           <button class="edit-btn">Save</button>
           <button class="delete-btn">Delete</button>
+          <button class="update-password-btn" data-user-id="${
+            user.user_id
+          }">Update Password</button>
         </td>
       `;
 
@@ -724,6 +729,14 @@
           row
             .querySelector('.delete-btn')
             .addEventListener('click', () => deleteUser(user.user_id, row));
+          row
+            .querySelector('.update-password-btn')
+            .addEventListener('click', () => {
+              const newPassword = prompt('Enter new password:');
+              if (newPassword) {
+                updatePassword(user.user_id, newPassword);
+              }
+            });
 
           userTableBody.appendChild(row);
         }
@@ -731,11 +744,16 @@
         // Handle "Add User" form submission
         addUserForm.addEventListener('submit', async function (event) {
           event.preventDefault();
+          const password = document
+            .getElementById('user_password')
+            .value.trim();
+          const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
+
           const formData = {
             role: document.getElementById('user_role').value.trim(),
             username: document.getElementById('user_username').value.trim(),
             email: document.getElementById('user_email').value.trim(),
-            password: document.getElementById('user_password').value.trim(),
+            password: hashedPassword, // Use the hashed password
           };
 
           try {
@@ -765,7 +783,6 @@
             role: row.children[1].innerText.trim(),
             username: row.children[2].innerText.trim(),
             email: row.children[3].innerText.trim(),
-            password: row.children[4].innerText.trim(),
           };
 
           try {
@@ -782,6 +799,24 @@
           } catch (error) {
             console.error('Error updating user:', error);
             alert('❌ Failed to update user.');
+          }
+        }
+
+        // Update user password (PUT request)
+        async function updatePassword(id, password) {
+          try {
+            const response = await fetch(`${usersUrl}/${id}/password`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password }),
+            });
+
+            if (!response.ok) throw new Error('Failed to update password');
+
+            alert('✅ Password updated successfully!');
+          } catch (error) {
+            console.error('Error updating password:', error);
+            alert('❌ Failed to update password.');
           }
         }
 

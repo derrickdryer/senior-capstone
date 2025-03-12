@@ -14,6 +14,32 @@ exports.getAllUsers = async (ctx) => {
   }
 };
 
+// Update user password
+exports.updatePassword = async (ctx) => {
+  try {
+    const { password } = ctx.request.body;
+    const hashedPassword = await hashPassword(password);
+
+    const result = await pool.query(
+      'UPDATE users SET password = ? WHERE user_id = ?',
+      [hashedPassword, ctx.params.id]
+    );
+
+    if (result.affectedRows === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Password updated successfully' };
+  } catch (error) {
+    console.error('❌ Error updating password:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
 // Login a user and verify password with hashed password
 exports.login = async (ctx) => {
   try {

@@ -12,6 +12,7 @@ router.get('/:id', usersController.getUserById);
 router.post('/', usersController.createUser);
 router.put('/:id', usersController.updateUser);
 router.delete('/:id', usersController.deleteUser);
+router.put('/users/:id/password', usersController.updatePassword);
 router.post('/login', usersController.login);
 router.post('/register', usersController.register);
 
