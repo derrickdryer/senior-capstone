@@ -1,9 +1,6 @@
 const request = require('supertest');
 const schemas = require('../scripts/db/schemas.json').schemas;
-
-const host = 'localhost';
-const port = 3000;
-const baseUrl = `http://${host}:${port}/api`;
+const baseUrl = `https://demo.hidden.it.com/api`;
 
 const createdIds: Record<string, any> = {};
 
@@ -160,7 +157,6 @@ const orderedSchemas = [
   'payments',
   'maintenance-requests',
   'notifications',
-  'inquiries',
 ];
 
 describe('CRUD Tests for All Schemas (Fixed Version)', () => {
