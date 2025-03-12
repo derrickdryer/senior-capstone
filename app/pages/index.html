@@ -15,47 +15,69 @@
         document.body.appendChild(createFooter());
     </script>
 
-  <div class="container">
-    <div class="hero">
-    <h2>Featured Properties</h2>
-    <div id="property-list" class="featured-properties">
-      <p id="no-properties-message">No featured properties available.</p>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Welcome to Russell Properties LLC</h1>
+            <p>Your trusted real estate partner. Explore premium properties and find your perfect home.</p>
+            <a href="/login" class="btn primary">Login to Explore More</a>
+        </div>
+
+        <!-- About Section -->
+        <section class="about">
+            <h2>Why Choose Us?</h2>
+            <p>We offer expertly curated real estate solutions, helping buyers, sellers, and investors navigate the market effortlessly.</p>
+        </section>
+
+        <!-- Featured Properties -->
+        <section class="featured-section">
+            <h2>Featured Properties</h2>
+            <div id="property-list" class="featured-properties">
+                <p id="no-properties-message">No featured properties available.</p>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <div class="cta">
+            <h2>Start Your Journey Today</h2>
+            <p>Sign up and unlock exclusive listings and investment opportunities.</p>
+            <a href="/register" class="btn secondary">Register Now</a>
+        </div>
     </div>
-    <h2>Find Your Dream Home!</h1>
-      <p>Browse through our extensive property listings today.</p>
-      <a href="/properties" class="btn">Browse Properties</a>
-    </div>
-  </div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const propertyList = document.getElementById('property-list');
-      const noPropertiesMessage = document.getElementById('no-properties-message');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const propertyList = document.getElementById('property-list');
+            const noPropertiesMessage = document.getElementById('no-properties-message');
 
-      function loadProperties() {
-        const properties = JSON.parse(localStorage.getItem('featuredProperties')) || [];
-        propertyList.innerHTML = '';
+            function loadProperties() {
+                const properties = JSON.parse(localStorage.getItem('featuredProperties')) || [];
+                propertyList.innerHTML = '';
 
-        if (properties.length === 0) {
-          noPropertiesMessage.style.display = 'block';
-        } else {
-          noPropertiesMessage.style.display = 'none';
-          properties.forEach(property => {
-            const item = document.createElement('div');
-            item.classList.add('property-item');
-            item.innerHTML = `
-              <h3>${property.title}</h3>
-              <p>${property.description}</p>
-              <img src="${property.image}" alt="${property.title}">
-            `;
-            propertyList.appendChild(item);
-          });
-        }
-      }
+                if (properties.length === 0) {
+                    noPropertiesMessage.style.display = 'block';
+                } else {
+                    noPropertiesMessage.style.display = 'none';
+                    properties.forEach(property => {
+                        const item = document.createElement('div');
+                        item.classList.add('property-item');
+                        item.innerHTML = `
+                            <div class="property-card">
+                                <img src="${property.image}" alt="${property.title}" class="property-image">
+                                <div class="property-info">
+                                    <h3>${property.title}</h3>
+                                    <p>${property.description}</p>
+                                    <p><strong>Price:</strong> $${property.price.toLocaleString()}</p>
+                                </div>
+                            </div>
+                        `;
+                        propertyList.appendChild(item);
+                    });
+                }
+            }
 
-      loadProperties();
-    });
-  </script>
-
+            loadProperties();
+        });
+    </script>
 </body>
 </html>
