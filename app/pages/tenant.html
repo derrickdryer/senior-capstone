@@ -56,9 +56,22 @@
           <!-- Tenants -->
           <section id="tenants">
             <h3>Tenants</h3>
-            <ul id="tenant-list">
-              <li>Loading tenants...</li>
-            </ul>
+            <table>
+              <thead>
+                <tr>
+                  <th>Lease ID</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Tenants</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tenant-list">
+                <tr>
+                  <td colspan="5">Loading tenants...</td>
+                </tr>
+              </tbody>
+            </table>
           </section>
         </div>
       </section>
@@ -176,7 +189,8 @@
             tenantList.innerHTML = '';
 
             if (tenants.length === 0) {
-              tenantList.innerHTML = '<li>No tenants found.</li>';
+              tenantList.innerHTML =
+                '<tr><td colspan="5">No tenants found.</td></tr>';
             } else {
               const leaseMap = new Map();
 
@@ -201,53 +215,32 @@
               });
 
               leaseMap.forEach(({ lease, tenants }) => {
-                const leaseItem = document.createElement('li');
-                leaseItem.innerHTML = `
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Lease ID</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Tenants</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>${lease.lease_id}</td>
-                        <td>${dateFormatter.format(
-                          new Date(lease.lease_start_date)
-                        )}</td>
-                        <td>${dateFormatter.format(
-                          new Date(lease.lease_end_date)
-                        )}</td>
-                        <td>
-                          <ul>
-                            ${tenants
-                              .map(
-                                (tenant) =>
-                                  `<li>${tenant.first_name} ${tenant.last_name}</li>`
-                              )
-                              .join('')}
-                          </ul>
-                        </td>
-                        <td>
-                          <button onclick="viewLease(${
-                            lease.lease_id
-                          })">View Lease</button>
-                          <button onclick="viewInvoice(${
-                            lease.lease_id
-                          })">View Invoice & Pay</button>
-                          <button onclick="createRequest(${
-                            lease.lease_id
-                          })">Create Maintenance Request</button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                `;
-                tenantList.appendChild(leaseItem);
+                const leaseRow = document.createElement('tr');
+                leaseRow.innerHTML = `
+            <td>${lease.lease_id}</td>
+            <td>${dateFormatter.format(new Date(lease.lease_start_date))}</td>
+            <td>${dateFormatter.format(new Date(lease.lease_end_date))}</td>
+            <td>
+              <ul>
+                ${tenants
+                  .map(
+                    (tenant) =>
+                      `<li>${tenant.first_name} ${tenant.last_name}</li>`
+                  )
+                  .join('')}
+              </ul>
+            </td>
+            <td>
+              <button onclick="viewLease(${lease.lease_id})">View Lease</button>
+              <button onclick="viewInvoice(${
+                lease.lease_id
+              })">View Invoice & Pay</button>
+              <button onclick="createRequest(${
+                lease.lease_id
+              })">Create Maintenance Request</button>
+            </td>
+          `;
+                tenantList.appendChild(leaseRow);
               });
             }
           } catch (error) {
