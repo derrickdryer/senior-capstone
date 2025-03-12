@@ -71,6 +71,7 @@ exports.getUserById = async (ctx) => {
   }
 };
 
+// Get a single user by username
 exports.getUserByName = async (ctx) => {
   try {
     const { username } = ctx.params;
@@ -78,7 +79,6 @@ exports.getUserByName = async (ctx) => {
       'SELECT * FROM users WHERE username = ? LIMIT 1',
       [username]
     );
-
     if (rows.length === 0) {
       ctx.status = 404;
       ctx.body = { error: 'User not found' };
@@ -96,11 +96,10 @@ exports.getUserByName = async (ctx) => {
 // Create a new user
 exports.createUser = async (ctx) => {
   try {
-    const { property_id, role, username, password, phone_number, mfa_secret } =
-      ctx.request.body;
+    const { role, username, password, email } = ctx.request.body;
     const result = await pool.query(
-      'INSERT INTO users (property_id, role, username, password, phone_number, mfa_secret) VALUES (?, ?, ?, ?, ?, ?)',
-      [property_id, role, username, password, phone_number, mfa_secret]
+      'INSERT INTO users (role, username, password, email) VALUES (?, ?, ?, ?)',
+      [role, username, password, email]
     );
     ctx.status = 201;
     ctx.body = {
@@ -117,20 +116,16 @@ exports.createUser = async (ctx) => {
 // Update a user by ID
 exports.updateUser = async (ctx) => {
   try {
-    const { property_id, role, username, password, phone_number, mfa_secret } =
-      ctx.request.body;
-    await pool.query(
-      'UPDATE users SET property_id = ?, role = ?, username = ?, password = ?, phone_number = ?, mfa_secret = ? WHERE user_id = ?',
-      [
-        property_id,
-        role,
-        username,
-        password,
-        phone_number,
-        mfa_secret,
-        ctx.params.id,
-      ]
+    const { role, username, password, email } = ctx.request.body;
+    const result = await pool.query(
+      'UPDATE users SET role = ?, username = ?, password = ?, email = ? WHERE user_id = ?',
+      [role, username, password, email, ctx.params.id]
     );
+    if (result[0].affectedRows === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
     ctx.status = 200;
     ctx.body = { message: 'User updated successfully' };
   } catch (error) {
@@ -143,7 +138,14 @@ exports.updateUser = async (ctx) => {
 // Delete a user by ID
 exports.deleteUser = async (ctx) => {
   try {
-    await pool.query('DELETE FROM users WHERE user_id = ?', [ctx.params.id]);
+    const result = await pool.query('DELETE FROM users WHERE user_id = ?', [
+      ctx.params.id,
+    ]);
+    if (result[0].affectedRows === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
     ctx.status = 200;
     ctx.body = { message: 'User deleted successfully' };
   } catch (error) {

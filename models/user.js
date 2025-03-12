@@ -7,33 +7,28 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      property_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       role: {
         type: DataTypes.ENUM('manager', 'maintenance', 'tenant'),
         allowNull: false,
       },
       username: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
+        type: DataTypes.STRING,
         unique: true,
+        allowNull: false,
       },
       password: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      phone_number: {
-        type: DataTypes.STRING(15),
-        allowNull: true,
-      },
-      mfa_secret: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
-    { timestamps: true }
+    {
+      tableName: 'users',
+      timestamps: false,
+    }
   );
 
   return User;

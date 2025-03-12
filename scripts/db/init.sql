@@ -1,6 +1,10 @@
 -- Database: realtor_website
-
 CREATE DATABASE IF NOT EXISTS realtor_website;
+
+-- Explicitly allow remote connections from any IP (% wildcard)
+CREATE USER IF NOT EXISTS 'realtor_website'@'%' IDENTIFIED BY 'PASSWORD';
+GRANT ALL PRIVILEGES ON realtor_website.* TO 'realtor_website'@'%';
+
 USE realtor_website;
 
 -- Table: assets
@@ -77,10 +81,13 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
 -- Table: users
 CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT,
     role ENUM('manager', 'maintenance', 'tenant') NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    mfa_secret VARCHAR(255),
+    FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE SET NULL
 );
 
 -- Table: notifications
@@ -117,7 +124,7 @@ INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES
 ('789 Oak St', 'Springfield', 'IL', '62703', 12);
 
 -- Insert dummy data into apartments
-INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES
+INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES  
 (1, '1A', 1, 2, 1, 850.00, 1200.00),
 (1, '1B', 1, 3, 2, 1050.00, 1500.00),
 (2, '2A', 2, 1, 1, 650.00, 900.00),

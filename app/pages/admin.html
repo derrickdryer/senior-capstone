@@ -283,22 +283,15 @@
           required
         />
         <input
-          type="number"
-          id="user_property_id"
-          placeholder="Property ID"
-          required
-        />
-        <input
           type="text"
           id="user_role"
           placeholder="Role"
           required
         />
-        <!-- FIXED: Changed to text input -->
         <input
           type="text"
-          id="user_phone_number"
-          placeholder="Phone Number"
+          id="user_email"
+          placeholder="Email"
           required
         />
         <input
@@ -307,11 +300,6 @@
           placeholder="Password"
           required
         />
-        <input
-          type="text"
-          id="user_mfa_secret"
-          placeholder="MFA Secret (optional)"
-        />
         <button type="submit">Add User</button>
       </form>
 
@@ -319,13 +307,11 @@
         <table id="user-table">
           <thead>
             <tr>
-              <th>User ID</th>
-              <th>Property ID</th>
+              <th>ID</th>
               <th>Role</th>
               <th>Username</th>
+              <th>Email</th>
               <th>Password</th>
-              <th>Phone Number</th>
-              <th>MFA Secret</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -720,18 +706,16 @@
         function createUserRow(user) {
           const row = document.createElement('tr');
           row.innerHTML = `
-      <td>${user.user_id}</td>
-      <td contenteditable="true">${user.property_id || ''}</td>
-      <td contenteditable="true">${user.role || ''}</td>
-      <td contenteditable="true">${user.username || ''}</td>
-      <td contenteditable="true">${user.password || ''}</td>
-      <td contenteditable="true">${user.phone_number || ''}</td>
-      <td contenteditable="true">${user.mfa_secret || ''}</td>
-      <td>
-        <button class="edit-btn">Save</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    `;
+        <td>${user.user_id}</td>
+        <td contenteditable="true">${user.role || ''}</td>
+        <td contenteditable="true">${user.username || ''}</td>
+        <td contenteditable="true">${user.email || ''}</td>
+        <td contenteditable="true">${user.password || ''}</td>
+        <td>
+          <button class="edit-btn">Save</button>
+          <button class="delete-btn">Delete</button>
+        </td>
+      `;
 
           // Attach event listeners for editing and deleting
           row
@@ -744,42 +728,15 @@
           userTableBody.appendChild(row);
         }
 
-        // Handle "Add User" form submission (FIXED)
+        // Handle "Add User" form submission
         addUserForm.addEventListener('submit', async function (event) {
           event.preventDefault();
-
-          const username = document
-            .getElementById('user_username')
-            .value.trim();
-          const propertyId = document
-            .getElementById('user_property_id')
-            .value.trim();
-          const role = document.getElementById('user_role').value.trim(); // ✅ Now accepts any string
-          const phoneNumber = document
-            .getElementById('user_phone_number')
-            .value.trim();
-          const password = document
-            .getElementById('user_password')
-            .value.trim();
-          const mfaSecret =
-            document.getElementById('user_mfa_secret').value.trim() || null;
-
-          // ✅ Check if all required fields are filled
-          if (!username || !propertyId || !role || !phoneNumber || !password) {
-            alert('⚠️ Please fill in all required fields.');
-            return;
-          }
-
           const formData = {
-            username: username,
-            property_id: parseInt(propertyId, 10),
-            role: role, // ✅ Fixed: Now sends role as plain text
-            phone_number: phoneNumber,
-            password: password,
-            mfa_secret: mfaSecret,
+            role: document.getElementById('user_role').value.trim(),
+            username: document.getElementById('user_username').value.trim(),
+            email: document.getElementById('user_email').value.trim(),
+            password: document.getElementById('user_password').value.trim(),
           };
-
-          console.log('🟢 Sending User Data:', formData); // Debugging log
 
           try {
             const response = await fetch(usersUrl, {
@@ -805,12 +762,10 @@
         // Send updated data to the server (PUT request)
         async function updateUser(id, row) {
           const updatedData = {
-            property_id: parseInt(row.children[1].innerText.trim(), 10),
-            role: row.children[2].innerText.trim(),
-            username: row.children[3].innerText.trim(),
+            role: row.children[1].innerText.trim(),
+            username: row.children[2].innerText.trim(),
+            email: row.children[3].innerText.trim(),
             password: row.children[4].innerText.trim(),
-            phone_number: row.children[5].innerText.trim(),
-            mfa_secret: row.children[6].innerText.trim(),
           };
 
           try {
