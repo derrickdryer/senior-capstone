@@ -1,3 +1,4 @@
+const { comparePassword } = require('../utils/passwordUtils');
 const pool = require('../database');
 
 // Get all users
@@ -8,6 +9,43 @@ exports.getAllUsers = async (ctx) => {
     ctx.body = rows;
   } catch (error) {
     console.error('❌ Error fetching users:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+exports.login = async (ctx) => {
+  try {
+    const { username, password } = ctx.request.body;
+
+    const [rows] = await pool.query(
+      'SELECT * FROM users WHERE username = ? LIMIT 1',
+      [username]
+    );
+
+    if (rows.length === 0) {
+      ctx.status = 401;
+      ctx.body = { error: 'Invalid username or password' };
+      return;
+    }
+
+    const user = rows[0];
+    const isMatch = await comparePassword(password, user.password);
+
+    if (!isMatch) {
+      ctx.status = 401;
+      ctx.body = { error: 'Invalid username or password' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = {
+      message: 'Login successful',
+      user_id: user.user_id,
+      role: user.role,
+    };
+  } catch (error) {
+    console.error('❌ Error during login:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
