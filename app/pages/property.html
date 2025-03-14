@@ -13,6 +13,7 @@
     <title>Property Details - Russell Properties</title>
   </head>
   <body>
+    <!-- Documentation: This page fetches property details (by property_id) and displays related apartment listings -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -28,23 +29,24 @@
       </section>
     </main>
 
+    <!-- Documentation: The script uses DOMContentLoaded to trigger fetching of property details and apartments -->
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         const pathParts = window.location.pathname.split('/');
         const propertyId = pathParts[2]; // Extract property_id from URL
         const detailsSection = document.querySelector('#property-details');
-    
+
         try {
           // Fetch property details
           const propertiesResponse = await fetch('/api/assets');
           const properties = await propertiesResponse.json();
-          const property = properties.find(p => p.property_id == propertyId);
-    
+          const property = properties.find((p) => p.property_id == propertyId);
+
           if (!property) {
             detailsSection.innerHTML = `<p>⚠️ Property not found. Please return to <a href="/properties">Properties</a>.</p>`;
             return;
           }
-    
+
           // Insert property details
           detailsSection.innerHTML = `
             <h1>${property.address}</h1>
@@ -57,19 +59,21 @@
               </ul>
             </section>
           `;
-    
+
           // Fetch only apartments linked to this property
-          const aptsResponse = await fetch(`/api/apartments/property/${propertyId}`);
+          const aptsResponse = await fetch(
+            `/api/apartments/property/${propertyId}`
+          );
           if (!aptsResponse.ok) throw new Error('Error fetching apartments');
-    
+
           const apartments = await aptsResponse.json();
           const apartmentsList = document.querySelector('#apartments-list');
           apartmentsList.innerHTML = '';
-    
+
           if (apartments.length === 0) {
             apartmentsList.innerHTML = `<li>No apartments available.</li>`;
           } else {
-            apartments.forEach(apartment => {
+            apartments.forEach((apartment) => {
               const aptItem = document.createElement('li');
               aptItem.innerHTML = `
                 <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
@@ -81,7 +85,10 @@
             });
           }
         } catch (error) {
-          console.error('Error fetching property details or apartments:', error);
+          console.error(
+            'Error fetching property details or apartments:',
+            error
+          );
           detailsSection.innerHTML = '<p>Error loading property details.</p>';
         }
       });

@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Invoice payment confirmation page for Russell Properties. Displays success message after invoice payment."
+    />
     <link
       rel="stylesheet"
       href="/public/styles/main.css"
@@ -13,6 +18,7 @@
     <title>Invoice Paid - Russell Properties</title>
   </head>
   <body>
+    <!-- Load header and footer components for consistent navigation -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -21,6 +27,8 @@
       document.body.appendChild(createFooter());
     </script>
     <main>
+      <!-- Documentation: This page displays a payment success message and provides a link to return to the user account -->
+      <!-- Invoice Success Section: Informs the user that the invoice payment was successful -->
       <section id="invoice-success">
         <div class="container">
           <h2>Payment Successful</h2>

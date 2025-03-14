@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Get in touch with Russell Properties for inquiries or support regarding our services."
+    />
     <link
       rel="stylesheet"
       href="/public/styles/contact.css"
@@ -13,6 +18,7 @@
     <title>Contact Us - Russell Properties</title>
   </head>
   <body>
+    <!-- Load header and footer components -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -23,7 +29,7 @@
 
     <!-- Main Content -->
     <main>
-      <!-- Contact Section -->
+      <!-- Contact Section: Provides users with contact info and a contact form -->
       <section id="contact">
         <div class="container">
           <h2>Contact Us</h2>
@@ -38,6 +44,7 @@
             >
           </p>
           <p>Phone: <a href="tel:+11234567890">(123) 456-7890</a></p>
+          <!-- Contact Form: Users can submit their name, email, and message -->
           <form>
             <label for="name">Name:</label>
             <input

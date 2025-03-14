@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Documentation:
+         Invoice Page for Rent Payment.
+         This page displays a summary of rent payment, charge breakdown, and a payment form with dynamic fields.
+         This page contains:
+           - Header and Footer injection via imported components.
+           - Invoice Summary: Displays invoice date and monthly rent.
+           - Charge Breakdown: Lists individual charges and total amount due.
+           - Payment Section: A form that dynamically displays fields for credit/debit card or bank transfer.
+           - Payment Confirmation: A note on payment processing.
+         JavaScript fetches data from '/api/leases-payments' and updates various DOM elements accordingly.
+    -->
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -23,6 +34,7 @@
 
     <!-- Main Content -->
     <main role="main">
+      <!-- Documentation: Invoice section with summary, breakdown, payment form, and confirmation -->
       <section id="invoice">
         <div class="container">
           <h2>Invoice for Rent Payment</h2>
@@ -54,6 +66,7 @@
               action="/process_payment"
               method="POST"
             >
+              <!-- Documentation: Select payment method and provide relevant payment details -->
               <label for="payment-method">Payment Method:</label>
               <select
                 id="payment-method"
@@ -154,6 +167,7 @@
     </main>
 
     <script>
+      // Documentation: Fetch invoice and lease/payment data, then update DOM elements accordingly.
       document.addEventListener('DOMContentLoaded', function () {
         // Fetch user invoice data from the server
         fetch('/api/leases-payments')

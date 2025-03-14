@@ -24,6 +24,7 @@
     <!-- Main Content -->
     <main>
       <section id="properties">
+        <!-- Documentation: This page lists multiple properties by fetching data from /api/assets, rendering each property as a clickable item -->
         <ul>
           <!-- Dynamic property items will be inserted here -->
         </ul>
@@ -31,6 +32,7 @@
     </main>
 
     <script>
+      <!-- Documentation: The inline script listens for DOMContentLoaded to load and display property cards dynamically -->
       document.addEventListener('DOMContentLoaded', async function () {
         try {
           const response = await fetch('/api/assets');

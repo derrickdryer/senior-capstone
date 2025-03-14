@@ -13,6 +13,7 @@
     <title>User Account - Russell Properties</title>
   </head>
   <body>
+    <!-- Documentation: The first inline script below handles header & footer injection -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -22,6 +23,7 @@
 
     <!-- Main Content -->
     <main>
+      <!-- Documentation: The 'user-account' section displays account details and lists tenant leases -->
       <section id="user-account">
         <div class="container">
           <h2 id="welcomeMessage">Welcome, User</h2>
@@ -77,6 +79,8 @@
       </section>
     </main>
 
+    <!-- Documentation: The second inline script contains authentication checks,
+     fetchUserData(), updateEmail(), updatePassword(), fetchLeases(), and fetchTenants() functions -->
     <script type="module">
       import { requireAuth, getUserId } from '/scripts/auth.js';
       const token = sessionStorage.getItem('token');

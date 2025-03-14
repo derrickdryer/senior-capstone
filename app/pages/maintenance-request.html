@@ -36,6 +36,7 @@
         <h1>Maintenance Requests</h1>
       </div>
     </header>
+    <!-- Documentation: This page allows tenants to enter a Tenant ID and view/submit maintenance requests -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -122,6 +123,7 @@
       </div>
     </footer>
 
+    <!-- Documentation: The inline script defines helper functions (e.g. formatDate) to format time and handles form submissions for loading and submitting requests -->
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         const tenantIdForm = document.getElementById('tenant-id-form');

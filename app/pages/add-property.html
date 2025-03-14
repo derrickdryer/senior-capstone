@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Add new property details to Russell Properties. Submit form with details and optional images."
+    />
     <link
       rel="stylesheet"
       href="/public/styles/main.css"
@@ -31,19 +36,25 @@
     </style>
   </head>
   <body>
+    <!-- Load reusable header and footer components -->
     <script type="module">
+      // Import components to build a standardized layout
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
 
+      // Prepend header and append footer for consistent UI
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
     </script>
 
     <!-- Main Content -->
     <main>
+      <!-- Section: Property Form (Collect property details and images) -->
+      <!-- Documentation: This page lets users add a new property along with optional image uploads -->
       <section id="add-property-form">
         <div class="container">
           <h2>Add a New Property</h2>
+          <!-- Property form with relevant input fields and file upload -->
           <form id="property-form">
             <label for="title">Property Title:</label>
             <input
@@ -127,25 +138,28 @@
       </section>
     </main>
 
-    <!-- JavaScript -->
+    <!-- JavaScript: Handle form submission and file management -->
+    <!-- Documentation: The inline script at the bottom handles form submission via FormData and updates the file list display for selected images -->
     <script>
+      // Get DOM elements for the form and file input
       const form = document.getElementById('property-form');
       const imagesInput = document.getElementById('images');
       const fileList = document.getElementById('file-list');
 
-      // Handle form submission
+      // Handle form submission: prevent default, append files, and call API
       form.addEventListener('submit', async function (event) {
         event.preventDefault();
 
         const formData = new FormData(form);
         const images = imagesInput.files;
 
-        // Append files to formData
+        // Append selected files to formData
         Array.from(images).forEach((file) => {
           formData.append('images', file);
         });
 
         try {
+          // Send property data to the backend API
           const response = await fetch('http://localhost:3000/api/properties', {
             method: 'POST',
             body: formData,
@@ -171,9 +185,9 @@
         }
       });
 
-      // Handle file input change
+      // Update file list display when files are selected
       imagesInput.addEventListener('change', function () {
-        fileList.innerHTML = ''; // Clear previous list
+        fileList.innerHTML = ''; // Reset file list
         Array.from(imagesInput.files).forEach((file, index) => {
           const listItem = document.createElement('div');
           listItem.className = 'file-list-item';
@@ -191,7 +205,7 @@
         });
       });
 
-      // Remove file function
+      // Remove file from the input and update the file list display
       function removeFile(index) {
         const dataTransfer = new DataTransfer();
         const files = Array.from(imagesInput.files);
@@ -200,7 +214,7 @@
         files.forEach((file) => dataTransfer.items.add(file));
         imagesInput.files = dataTransfer.files;
 
-        // Update file list display
+        // Refresh file list after removal
         fileList.innerHTML = '';
         Array.from(imagesInput.files).forEach((file, index) => {
           const listItem = document.createElement('div');

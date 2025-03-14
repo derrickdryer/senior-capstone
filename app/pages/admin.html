@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Admin Dashboard for Russell Properties. Manage properties, apartments, and users efficiently."
+    />
     <title>Admin Dashboard - Russell Properties</title>
     <link
       rel="stylesheet"
@@ -116,7 +121,7 @@
     </style>
   </head>
   <body>
-    <!-- Use the same approach as the example: load header and footer components -->
+    <!-- Load header, footer, and auth scripts -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -126,7 +131,8 @@
       document.body.appendChild(createFooter());
       requireAuth('manager');
     </script>
-    <!-- Page Header -->
+    <!-- Documentation: This Admin Dashboard is used by managers to add/update/delete properties, apartments, and user accounts. -->
+    <!-- Page Header: Displays Admin Dashboard navigation -->
     <header>
       <div class="container">
         <h1>Admin Dashboard</h1>
@@ -145,7 +151,8 @@
     </header>
 
     <main class="container">
-      <!-- PROPERTIES SECTION -->
+      <!-- Documentation: Each section (Properties, Apartments, Users) contains a form and table with inline editing, with corresponding event handlers in the script -->
+      <!-- PROPERTIES SECTION: Add and manage property data -->
       <h2>Add New Property</h2>
       <form id="add-property-form">
         <input
@@ -203,7 +210,7 @@
         </table>
       </div>
 
-      <!-- APARTMENTS SECTION -->
+      <!-- APARTMENTS SECTION: Add and manage apartment data -->
       <h2>Add New Apartment</h2>
       <form id="add-apartment-form">
         <input
@@ -277,7 +284,7 @@
         </table>
       </div>
 
-      <!-- USERS SECTION -->
+      <!-- USERS SECTION: Add and manage user accounts -->
       <h2>Add New User</h2>
       <form id="add-user-form">
         <input

@@ -1,10 +1,20 @@
+// ======================================================================
+// File: utils.test.ts
+// Description: This test suite verifies CRUD operations for API endpoints
+//              based on the schema definitions provided in schemas.json.
+//              Utility functions generate test data dynamically based on the schema.
+// Dependencies: supertest for API requests, schemas from schemas.json.
+// Usage: Run this test to validate the API endpoints for assets, users, apartments,
+//        tenants, leases, payments, maintenance requests, notifications, and inquiries.
+// ======================================================================
+
 const request = require('supertest');
 const schemas = require('../scripts/db/schemas.json').schemas;
 const baseUrl = `https://demo.hidden.it.com/api`;
 
 const createdIds: Record<string, any> = {};
 
-// ** Generate Default Data from Schema **
+// Generate Default Data from Schema: creates a test object based on the provided schema.
 const generateObjectFromSchema = (
   endpoint: string,
   schema: Record<string, string>
@@ -18,6 +28,7 @@ const generateObjectFromSchema = (
   Object.keys(schema).forEach((field) => {
     const fieldType = schema[field];
 
+    // Skip auto-generated or non-editable fields.
     if (
       field.endsWith('_id') ||
       field === 'id' ||
@@ -27,6 +38,7 @@ const generateObjectFromSchema = (
       return;
     }
 
+    // Generate test data based on the field's type.
     if (fieldType.startsWith('VARCHAR') || fieldType === 'TEXT') {
       obj[field] = `test-${Date.now()}`.slice(
         0,
@@ -45,7 +57,7 @@ const generateObjectFromSchema = (
     }
   });
 
-  // ** Assign Dependencies **
+  // Assign dependencies based on the endpoint type.
   if (endpoint === 'apartments') {
     if (!createdIds['assets'])
       throw new Error(`❌ Missing asset_id for apartments.`);
@@ -93,7 +105,7 @@ const generateObjectFromSchema = (
   return obj;
 };
 
-// ** CRUD Request Helpers **
+// CRUD Request Helpers: functions to abstract HTTP operations
 const postRequest = async (endpoint: string, data: any) => {
   try {
     console.log(
@@ -133,21 +145,26 @@ const postRequest = async (endpoint: string, data: any) => {
 };
 
 const getRequest = async (endpoint: string, id: any) => {
+  // Retrieve a resource by its ID.
   await request(baseUrl).get(`/${endpoint}/${id}`).expect(200);
 };
 
 const putRequest = async (endpoint: string, id: any, data: any) => {
+  // Update a resource by its ID.
   await request(baseUrl).put(`/${endpoint}/${id}`).send(data).expect(200);
 };
 
 const deleteRequest = async (endpoint: string, id: any) => {
+  // Delete a resource by its ID.
   await request(baseUrl).delete(`/${endpoint}/${id}`).expect(200);
 };
 
 const listRequest = async (endpoint: string) => {
+  // List all resources for an endpoint.
   await request(baseUrl).get(`/${endpoint}`).expect(200);
 };
 
+// Define the order in which schemas are processed.
 const orderedSchemas = [
   'assets',
   'users',
@@ -160,13 +177,14 @@ const orderedSchemas = [
 ];
 
 describe('CRUD Tests for All Schemas (Fixed Version)', () => {
+  // Test listing resources.
   orderedSchemas.forEach((endpoint) => {
     test(`List ${endpoint}`, async () => {
       await listRequest(endpoint);
     });
   });
 
-  // ** Create in correct order **
+  // Test creation of resources in the correct dependency order.
   orderedSchemas.forEach((endpoint) => {
     test(`Create ${endpoint}`, async () => {
       if (!schemas[endpoint]) {
@@ -182,7 +200,7 @@ describe('CRUD Tests for All Schemas (Fixed Version)', () => {
     });
   });
 
-  // ** Read **
+  // Test read operations.
   orderedSchemas.forEach((endpoint) => {
     test(`Read ${endpoint}`, async () => {
       if (!createdIds[endpoint]) {
@@ -194,7 +212,7 @@ describe('CRUD Tests for All Schemas (Fixed Version)', () => {
     });
   });
 
-  // ** Update **
+  // Test update operations.
   orderedSchemas.forEach((endpoint) => {
     test(`Update ${endpoint}`, async () => {
       if (!createdIds[endpoint]) {
@@ -210,7 +228,7 @@ describe('CRUD Tests for All Schemas (Fixed Version)', () => {
     });
   });
 
-  // ** Delete in reverse order **
+  // Test deletion of resources in reverse order.
   orderedSchemas.reverse().forEach((endpoint) => {
     test(`Delete ${endpoint}`, async () => {
       if (!createdIds[endpoint]) {
