@@ -22,6 +22,7 @@ ENV DB_PASSWORD="SuperSecretPassword"
 ENV DB_HOST=IP
 ENV DB_PORT=3306
 ENV DB_DATABASE=root
+ENV JWT_SECRET=secret
 #ENV USE_LOCAL_SSL=false
 
 # Expose the port the app runs on

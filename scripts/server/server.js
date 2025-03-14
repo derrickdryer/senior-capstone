@@ -6,7 +6,6 @@ const bodyParser = require('koa-bodyparser');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-// const http2 = require('http2'); // Commented out as it's not needed for HTTP
 
 dotenv.config();
 const app = new Koa();
@@ -69,6 +68,7 @@ const maintenanceRequestsRoutes = require('../../routes/maintenance_requests');
 const usersRoutes = require('../../routes/users');
 const notificationsRoutes = require('../../routes/notifications');
 const inquiriesRoutes = require('../../routes/inquiries');
+const loginRoutes = require('../../routes/login'); // Ensure this line is correct
 
 // Register Routes
 router.use('/api/assets', assetsRoutes.routes());
@@ -80,6 +80,7 @@ router.use('/api/maintenance-requests', maintenanceRequestsRoutes.routes());
 router.use('/api/users', usersRoutes.routes());
 router.use('/api/notifications', notificationsRoutes.routes());
 router.use('/api/inquiries', inquiriesRoutes.routes());
+router.use('/api/login', loginRoutes.routes()); // Ensure this line is correct
 
 app.use(router.routes()).use(router.allowedMethods());
 

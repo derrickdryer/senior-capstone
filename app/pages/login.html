@@ -42,15 +42,15 @@
             />
 
             <button type="submit">Login</button>
-            <p
-              id="errorMessage"
-              style="color: red; display: none"
-            ></p>
-            <p
-              id="successMessage"
-              style="color: green; display: none"
-            ></p>
           </form>
+          <p
+            id="errorMessage"
+            style="color: red; display: none"
+          ></p>
+          <p
+            id="successMessage"
+            style="color: green; display: none"
+          ></p>
           <p>
             <a href="/register">Create an account</a> |
             <a href="/forgot_password">Forgot your password?</a>
@@ -83,23 +83,8 @@
           const errorMessage = document.getElementById('errorMessage');
           const successMessage = document.getElementById('successMessage');
 
-          // Clear previous messages
-          errorMessage.style.display = 'none';
-          errorMessage.textContent = '';
-          successMessage.style.display = 'none';
-          successMessage.textContent = '';
-
-          if (!username || !password) {
-            errorMessage.textContent = 'Username and password are required.';
-            errorMessage.style.display = 'block';
-            return;
-          }
-
           try {
-            console.log('Attempting to log in with:', { username, password });
-
-            // Send login request to the server
-            const response = await fetch('/api/users/login', {
+            const response = await fetch('/api/login', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ username, password }),
@@ -109,16 +94,12 @@
 
             if (!response.ok) {
               const errorText = await response.text();
-              throw new Error(errorText || 'Invalid username or password');
+              throw new Error(errorText || 'Login failed');
             }
 
             const result = await response.json();
             console.log('Login result:', result);
-
-            // Save login state with persistent storage
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('role', result.role);
-            localStorage.setItem('user_id', result.user_id);
+            sessionStorage.setItem('token', result.token);
 
             // Display success message instead of redirecting
             successMessage.textContent = 'Login success!';
