@@ -2,58 +2,77 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - Russell Properties</title>
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <style>
-      /* TABLE STYLES (applies to all tables in a .table-responsive wrapper) */
+      /* TABLE STYLES */
       .table-responsive {
-        overflow-x: auto;
+        max-height: 400px;
         overflow-y: auto;
+        overflow-x: auto;
         margin-bottom: 2rem;
+        border: 1px solid var(--primary-color, #333);
       }
-      table {
+
+      .table-responsive table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 20px;
       }
-      th,
-      td {
+
+      .table-responsive thead {
+        position: sticky;
+        top: 0;
+        background-color: var(--primary-color, #333);
+        color: var(--secondary-color, #fff);
+        z-index: 2;
+      }
+
+      th, td {
         border: 1px solid var(--primary-color, #333);
         padding: 12px;
         text-align: left;
       }
+
       th {
         background-color: var(--primary-color, #333);
         color: var(--secondary-color, #fff);
       }
+
       tbody tr:nth-child(even) {
         background-color: var(--secondary-color, #f9f9f9);
       }
+
       tbody tr:hover {
         background-color: rgba(231, 76, 60, 0.2);
       }
-      .edit-btn,
-      .delete-btn {
+
+      /* Search Bar Styles */
+      .search-bar {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      /* Form and Button Styles */
+      .edit-btn, .delete-btn {
         cursor: pointer;
         padding: 5px 10px;
         border: none;
         color: white;
       }
+
       .edit-btn {
-        background-color: #f39c12; /* orange */
-      }
-      .delete-btn {
-        background-color: #e74c3c; /* red */
+        background-color: #f39c12;
       }
 
-      /* Basic Form Styles */
+      .delete-btn {
+        background-color: #e74c3c;
+      }
+
       form {
         margin-top: 1rem;
         margin-bottom: 1rem;
@@ -61,11 +80,12 @@
         flex-wrap: wrap;
         gap: 10px;
       }
-      form input,
-      form select {
+
+      form input, form select {
         padding: 8px;
         flex: 1 1 200px;
       }
+
       form button {
         background-color: var(--primary-color, #333);
         color: var(--secondary-color, #fff);
@@ -73,46 +93,24 @@
         padding: 10px 20px;
         cursor: pointer;
       }
-      form button:hover {
-        opacity: 0.9;
-      }
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-      }
-
-      main {
-        flex: 1;
-      }
-
-      footer {
-        position: relative;
-        bottom: 0;
-        width: 100%;
-      }
 
       .info-button {
         display: inline-block;
         padding: 10px 15px;
-        border: 2px solid #333; /* Border for the box */
-        border-radius: 5px; /* Rounded corners */
-        background-color: #f8f9fa; /* Light background */
-        color: #333; /* Dark text */
-        text-decoration: none; /* Remove underline */
+        border: 2px solid #333;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        color: #333;
+        text-decoration: none;
         font-weight: bold;
       }
 
       .info-button:hover {
-        background-color: #ddd; /* Slightly darker on hover */
+        background-color: #ddd;
       }
     </style>
   </head>
   <body>
-    <!-- Use the same approach as the example: load header and footer components -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -122,18 +120,14 @@
       document.body.appendChild(createFooter());
       requireAuth('manager');
     </script>
-    <!-- Page Header -->
+
     <header>
       <div class="container">
         <h1>Admin Dashboard</h1>
         <nav>
           <ul>
             <li>
-              <a
-                href="/maintenance-info"
-                class="info-button"
-                >Check ALL Maintenance Requests</a
-              >
+              <a href="/maintenance-info" class="info-button">Check ALL Maintenance Requests</a>
             </li>
           </ul>
         </nav>
@@ -144,39 +138,15 @@
       <!-- PROPERTIES SECTION -->
       <h2>Add New Property</h2>
       <form id="add-property-form">
-        <input
-          type="text"
-          id="property_address"
-          placeholder="Address"
-          required
-        />
-        <input
-          type="text"
-          id="property_city"
-          placeholder="City"
-          required
-        />
-        <input
-          type="text"
-          id="property_state"
-          placeholder="State"
-          required
-        />
-        <input
-          type="text"
-          id="property_postal_code"
-          placeholder="Postal Code"
-          required
-        />
-        <input
-          type="number"
-          id="property_num_apartments"
-          placeholder="Number of Apartments"
-          required
-        />
+        <input type="text" id="property_address" placeholder="Address" required />
+        <input type="text" id="property_city" placeholder="City" required />
+        <input type="text" id="property_state" placeholder="State" required />
+        <input type="text" id="property_postal_code" placeholder="Postal Code" required />
+        <input type="number" id="property_num_apartments" placeholder="Number of Apartments" required />
         <button type="submit">Add Property</button>
       </form>
 
+      <input type="text" id="search-property" placeholder="Search properties..." class="search-bar">
       <div class="table-responsive">
         <table id="property-table">
           <thead>
@@ -191,7 +161,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Fallback row while data is loading -->
             <tr id="no-properties-message">
               <td colspan="6">Loading properties...</td>
             </tr>
@@ -202,53 +171,17 @@
       <!-- APARTMENTS SECTION -->
       <h2>Add New Apartment</h2>
       <form id="add-apartment-form">
-        <input
-          type="number"
-          id="apartment_property_id"
-          placeholder="Property ID"
-          required
-        />
-        <input
-          type="text"
-          id="apartment_unit_number"
-          placeholder="Unit Number"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_floor"
-          placeholder="Floor"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_bedrooms"
-          placeholder="Bedrooms"
-          step="0.5"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_bathrooms"
-          placeholder="Bathrooms"
-          step="0.5"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_square_footage"
-          placeholder="Square Footage"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_rent_amount"
-          placeholder="Rent Amount"
-          required
-        />
+        <input type="number" id="apartment_property_id" placeholder="Property ID" required />
+        <input type="text" id="apartment_unit_number" placeholder="Unit Number" required />
+        <input type="number" id="apartment_floor" placeholder="Floor" required />
+        <input type="number" id="apartment_bedrooms" placeholder="Bedrooms" step="0.5" required />
+        <input type="number" id="apartment_bathrooms" placeholder="Bathrooms" step="0.5" required />
+        <input type="number" id="apartment_square_footage" placeholder="Square Footage" required />
+        <input type="number" id="apartment_rent_amount" placeholder="Rent Amount" required />
         <button type="submit">Add Apartment</button>
       </form>
 
+      <input type="text" id="search-apartment" placeholder="Search apartments..." class="search-bar">
       <div class="table-responsive">
         <table id="apartment-table">
           <thead>
@@ -265,7 +198,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Fallback row while data is loading -->
             <tr id="no-apartments-message">
               <td colspan="9">Loading apartments...</td>
             </tr>
@@ -276,45 +208,16 @@
       <!-- USERS SECTION -->
       <h2>Add New User</h2>
       <form id="add-user-form">
-        <input
-          type="text"
-          id="user_username"
-          placeholder="Username"
-          required
-        />
-        <input
-          type="number"
-          id="user_property_id"
-          placeholder="Property ID"
-          required
-        />
-        <input
-          type="text"
-          id="user_role"
-          placeholder="Role"
-          required
-        />
-        <!-- FIXED: Changed to text input -->
-        <input
-          type="text"
-          id="user_phone_number"
-          placeholder="Phone Number"
-          required
-        />
-        <input
-          type="password"
-          id="user_password"
-          placeholder="Password"
-          required
-        />
-        <input
-          type="text"
-          id="user_mfa_secret"
-          placeholder="MFA Secret (optional)"
-        />
+        <input type="text" id="user_username" placeholder="Username" required />
+        <input type="number" id="user_property_id" placeholder="Property ID" required />
+        <input type="text" id="user_role" placeholder="Role" required />
+        <input type="text" id="user_phone_number" placeholder="Phone Number" required />
+        <input type="password" id="user_password" placeholder="Password" required />
+        <input type="text" id="user_mfa_secret" placeholder="MFA Secret (optional)" />
         <button type="submit">Add User</button>
       </form>
 
+      <input type="text" id="search-user" placeholder="Search users..." class="search-bar">
       <div class="table-responsive">
         <table id="user-table">
           <thead>
@@ -345,511 +248,228 @@
     </footer>
 
     <script>
-      /**
-       * Utility function to format a date string (e.g., "2025-02-10T05:00:00.000Z")
-       * into "YYYY-MM-DD". Returns null if the date is invalid or empty.
-       */
-      function formatDate(dateStr) {
-        if (!dateStr) return null;
-        // Already in YYYY-MM-DD form or T format
-        return dateStr.split('T')[0];
+      // SEARCH FUNCTIONALITY
+      function setupSearch(inputId, tableId) {
+        const searchInput = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+        
+        searchInput.addEventListener('input', function() {
+          const filter = this.value.toLowerCase();
+          const rows = table.querySelectorAll('tbody tr');
+          
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            let matches = false;
+            cells.forEach(cell => {
+              if (cell.textContent.toLowerCase().includes(filter)) {
+                matches = true;
+              }
+            });
+            row.style.display = matches ? '' : 'none';
+          });
+        });
       }
-      // -----------------------------------------------------
-      //               PROPERTIES ( /assets )
-      // -----------------------------------------------------
-      document.addEventListener('DOMContentLoaded', async function () {
+
+      // PROPERTIES CRUD
+      document.addEventListener('DOMContentLoaded', async function() {
         const propertyForm = document.getElementById('add-property-form');
-        const propertyTableBody = document.querySelector(
-          '#property-table tbody'
-        );
-        const noPropertiesMessage = document.getElementById(
-          'no-properties-message'
-        );
-        let selectedPropertyId = null; // If filtering is needed in the future
+        const propertyTableBody = document.querySelector('#property-table tbody');
+        const noPropertiesMessage = document.getElementById('no-properties-message');
 
-        // Format date helper (for any timestamp fields)
-        function formatDate(dateStr) {
-          if (!dateStr) return 'N/A';
-          return dateStr.split('T')[0];
-        }
-
-        // Load & display all properties
         async function loadProperties() {
           try {
             const response = await fetch('/api/assets');
-            if (!response.ok) {
-              throw new Error('Error fetching properties');
-            }
             const properties = await response.json();
             propertyTableBody.innerHTML = '';
-
-            if (!properties || properties.length === 0) {
-              noPropertiesMessage.textContent = 'No properties found.';
+            
+            if (properties.length === 0) {
               noPropertiesMessage.style.display = 'block';
             } else {
               noPropertiesMessage.style.display = 'none';
-              properties.forEach((property) => createPropertyRow(property));
-            }
-          } catch (error) {
-            console.error('❌ Error loading properties:', error);
-            noPropertiesMessage.textContent =
-              'Error loading properties. Please try again later.';
-          }
-        }
-
-        // Create a row in the properties table
-        function createPropertyRow(property) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-      <td>${property.property_id}</td>
-      <td contenteditable="true">${property.address || ''}</td>
-      <td contenteditable="true">${property.city || ''}</td>
-      <td contenteditable="true">${property.state || ''}</td>
-      <td contenteditable="true">${property.postal_code || ''}</td>
-      <td contenteditable="true">${property.num_apartments || 0}</td>
-      <td>
-        <button class="edit-btn">Save</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    `;
-
-          // Attach event listeners for editing and deleting
-          row
-            .querySelector('.edit-btn')
-            .addEventListener('click', () =>
-              updateProperty(property.property_id, row)
-            );
-          row
-            .querySelector('.delete-btn')
-            .addEventListener('click', () =>
-              deleteProperty(property.property_id, row)
-            );
-
-          propertyTableBody.appendChild(row);
-        }
-
-        // Send updated data to the server (PUT request)
-        async function updateProperty(id, row) {
-          const updatedData = {
-            address: row.children[1].innerText.trim(),
-            city: row.children[2].innerText.trim(),
-            state: row.children[3].innerText.trim(),
-            postal_code: row.children[4].innerText.trim(),
-            num_apartments: parseInt(row.children[5].innerText.trim(), 10), // Ensure it's an integer
-          };
-
-          try {
-            const response = await fetch(`/api/assets/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(updatedData),
-            });
-
-            if (!response.ok) throw new Error('Failed to update property');
-
-            alert('Property updated successfully!');
-            loadProperties(); // Reload properties after update
-          } catch (error) {
-            console.error('Error updating property:', error);
-            alert('Failed to update property.');
-          }
-        }
-
-        // Delete a property (DELETE request)
-        async function deleteProperty(id, row) {
-          if (confirm('Are you sure you want to delete this property?')) {
-            try {
-              const response = await fetch(`/api/assets/${id}`, {
-                method: 'DELETE',
+              properties.forEach(property => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${property.property_id}</td>
+                  <td contenteditable="true">${property.address}</td>
+                  <td contenteditable="true">${property.city}</td>
+                  <td contenteditable="true">${property.state}</td>
+                  <td contenteditable="true">${property.postal_code}</td>
+                  <td contenteditable="true">${property.num_apartments}</td>
+                  <td>
+                    <button class="edit-btn" data-id="${property.property_id}">Save</button>
+                    <button class="delete-btn" data-id="${property.property_id}">Delete</button>
+                  </td>
+                `;
+                propertyTableBody.appendChild(row);
               });
-              if (!response.ok) throw new Error('Failed to delete property');
-
-              row.remove();
-              alert('Property deleted successfully!');
-            } catch (error) {
-              console.error('Error deleting property:', error);
-              alert('Failed to delete property.');
             }
+          } catch (error) {
+            console.error('Error loading properties:', error);
           }
         }
 
-        // Handle "Add Property" form submission (POST request)
-        propertyForm.addEventListener('submit', async function (event) {
-          event.preventDefault();
-
+        propertyForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
           const formData = {
-            address: document.getElementById('property_address').value.trim(),
-            city: document.getElementById('property_city').value.trim(),
-            state: document.getElementById('property_state').value.trim(),
-            postal_code: document
-              .getElementById('property_postal_code')
-              .value.trim(),
-            num_apartments: parseInt(
-              document.getElementById('property_num_apartments').value.trim(),
-              10
-            ), // Ensure it's an integer
+            address: document.getElementById('property_address').value,
+            city: document.getElementById('property_city').value,
+            state: document.getElementById('property_state').value,
+            postal_code: document.getElementById('property_postal_code').value,
+            num_apartments: document.getElementById('property_num_apartments').value
           };
 
           try {
-            const response = await fetch('/api/assets', {
+            await fetch('/api/assets', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formData),
+              body: JSON.stringify(formData)
             });
-
-            if (!response.ok) {
-              throw new Error('Error adding property');
-            }
-
-            alert('Property added successfully!');
-            propertyForm.reset();
-            loadProperties(); // Refresh table after adding
+            loadProperties();
           } catch (error) {
             console.error('Error adding property:', error);
-            alert('Failed to add property.');
           }
         });
 
-        // Load properties on page load
+        // Load initial data
         loadProperties();
       });
 
-      // -----------------------------------------------------
-      //                  APARTMENTS
-      // -----------------------------------------------------
-      document.addEventListener('DOMContentLoaded', async function () {
-        const apartmentsUrl = '/api/apartments';
-        const apartmentTableBody = document.querySelector(
-          '#apartment-table tbody'
-        );
-        const addApartmentForm = document.getElementById('add-apartment-form');
-        const noApartmentsMessage = document.getElementById(
-          'no-apartments-message'
-        );
+      // APARTMENTS CRUD
+      document.addEventListener('DOMContentLoaded', async function() {
+        const apartmentForm = document.getElementById('add-apartment-form');
+        const apartmentTableBody = document.querySelector('#apartment-table tbody');
+        const noApartmentsMessage = document.getElementById('no-apartments-message');
 
-        // Load & display all apartments
         async function loadApartments() {
           try {
-            const response = await fetch(apartmentsUrl);
-            if (!response.ok) throw new Error('Error fetching apartments');
-
+            const response = await fetch('/api/apartments');
             const apartments = await response.json();
             apartmentTableBody.innerHTML = '';
-
-            if (!apartments || apartments.length === 0) {
-              noApartmentsMessage.textContent = 'No apartments found.';
+            
+            if (apartments.length === 0) {
               noApartmentsMessage.style.display = 'block';
             } else {
               noApartmentsMessage.style.display = 'none';
-              apartments.forEach((apt) => createApartmentRow(apt));
-            }
-          } catch (error) {
-            console.error('❌ Error loading apartments:', error);
-            noApartmentsMessage.textContent =
-              'Error loading apartments. Please try again later.';
-          }
-        }
-
-        // Create a row in the apartments table
-        function createApartmentRow(apt) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-      <td>${apt.apartment_id}</td>
-      <td contenteditable="true">${apt.property_id || ''}</td>
-      <td contenteditable="true">${apt.unit_number || ''}</td>
-      <td contenteditable="true">${apt.floor || 0}</td>
-      <td contenteditable="true">${parseFloat(apt.bedrooms) || 0}</td>
-      <td contenteditable="true">${parseFloat(apt.bathrooms) || 0}</td>
-      <td contenteditable="true">${parseFloat(apt.square_footage) || 0}</td>
-      <td contenteditable="true">${parseFloat(apt.rent_amount) || 0}</td>
-      <td>
-        <button class="edit-btn">Save</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    `;
-
-          // Attach event listeners for editing and deleting
-          row
-            .querySelector('.edit-btn')
-            .addEventListener('click', () =>
-              updateApartment(apt.apartment_id, row)
-            );
-          row
-            .querySelector('.delete-btn')
-            .addEventListener('click', () =>
-              deleteApartment(apt.apartment_id, row)
-            );
-
-          apartmentTableBody.appendChild(row);
-        }
-
-        // Send updated data to the server (PUT request)
-        async function updateApartment(id, row) {
-          const updatedData = {
-            property_id: parseInt(row.children[1].innerText.trim(), 10),
-            unit_number: row.children[2].innerText.trim(),
-            floor: parseInt(row.children[3].innerText.trim(), 10),
-            bedrooms: parseFloat(row.children[4].innerText.trim()),
-            bathrooms: parseFloat(row.children[5].innerText.trim()),
-            square_footage: parseFloat(row.children[6].innerText.trim()),
-            rent_amount: parseFloat(row.children[7].innerText.trim()),
-          };
-
-          try {
-            const response = await fetch(`${apartmentsUrl}/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(updatedData),
-            });
-
-            if (!response.ok) throw new Error('Failed to update apartment');
-
-            alert('Apartment updated successfully!');
-            loadApartments(); // Reload apartments after update
-          } catch (error) {
-            console.error('Error updating apartment:', error);
-            alert('Failed to update apartment.');
-          }
-        }
-
-        // Delete an apartment (DELETE request)
-        async function deleteApartment(id, row) {
-          if (confirm('Are you sure you want to delete this apartment?')) {
-            try {
-              const response = await fetch(`${apartmentsUrl}/${id}`, {
-                method: 'DELETE',
+              apartments.forEach(apartment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${apartment.apartment_id}</td>
+                  <td contenteditable="true">${apartment.property_id}</td>
+                  <td contenteditable="true">${apartment.unit_number}</td>
+                  <td contenteditable="true">${apartment.floor}</td>
+                  <td contenteditable="true">${apartment.bedrooms}</td>
+                  <td contenteditable="true">${apartment.bathrooms}</td>
+                  <td contenteditable="true">${apartment.square_footage}</td>
+                  <td contenteditable="true">${apartment.rent_amount}</td>
+                  <td>
+                    <button class="edit-btn" data-id="${apartment.apartment_id}">Save</button>
+                    <button class="delete-btn" data-id="${apartment.apartment_id}">Delete</button>
+                  </td>
+                `;
+                apartmentTableBody.appendChild(row);
               });
-              if (!response.ok) throw new Error('Failed to delete apartment');
-
-              row.remove();
-              alert('Apartment deleted successfully!');
-            } catch (error) {
-              console.error('Error deleting apartment:', error);
-              alert('Failed to delete apartment.');
             }
+          } catch (error) {
+            console.error('Error loading apartments:', error);
           }
         }
 
-        // Handle "Add Apartment" form submission (POST request)
-        addApartmentForm.addEventListener('submit', async function (event) {
-          event.preventDefault();
-
+        apartmentForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
           const formData = {
-            property_id: parseInt(
-              document.getElementById('apartment_property_id').value.trim(),
-              10
-            ),
-            unit_number: document
-              .getElementById('apartment_unit_number')
-              .value.trim(),
-            floor: parseInt(
-              document.getElementById('apartment_floor').value.trim(),
-              10
-            ),
-            bedrooms: parseFloat(
-              document.getElementById('apartment_bedrooms').value.trim()
-            ),
-            bathrooms: parseFloat(
-              document.getElementById('apartment_bathrooms').value.trim()
-            ),
-            square_footage: parseFloat(
-              document.getElementById('apartment_square_footage').value.trim()
-            ),
-            rent_amount: parseFloat(
-              document.getElementById('apartment_rent_amount').value.trim()
-            ),
+            property_id: document.getElementById('apartment_property_id').value,
+            unit_number: document.getElementById('apartment_unit_number').value,
+            floor: document.getElementById('apartment_floor').value,
+            bedrooms: document.getElementById('apartment_bedrooms').value,
+            bathrooms: document.getElementById('apartment_bathrooms').value,
+            square_footage: document.getElementById('apartment_square_footage').value,
+            rent_amount: document.getElementById('apartment_rent_amount').value
           };
 
           try {
-            const response = await fetch(apartmentsUrl, {
+            await fetch('/api/apartments', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formData),
+              body: JSON.stringify(formData)
             });
-
-            if (!response.ok) {
-              throw new Error('Error adding apartment');
-            }
-
-            alert('Apartment added successfully!');
-            addApartmentForm.reset();
-            loadApartments(); // Refresh table after adding
+            loadApartments();
           } catch (error) {
             console.error('Error adding apartment:', error);
-            alert('Failed to add apartment.');
           }
         });
 
-        // Load apartments on page load
         loadApartments();
       });
 
-      // -----------------------------------------------------
-      //                    USERS
-      // -----------------------------------------------------
-      document.addEventListener('DOMContentLoaded', async function () {
-        const usersUrl = '/api/users';
+      // USERS CRUD
+      document.addEventListener('DOMContentLoaded', async function() {
+        const userForm = document.getElementById('add-user-form');
         const userTableBody = document.querySelector('#user-table tbody');
-        const addUserForm = document.getElementById('add-user-form');
         const noUsersMessage = document.getElementById('no-users-message');
 
-        // Load & display all users
         async function loadUsers() {
           try {
-            const response = await fetch(usersUrl);
-            if (!response.ok) throw new Error('Error fetching users');
-
+            const response = await fetch('/api/users');
             const users = await response.json();
             userTableBody.innerHTML = '';
-
-            if (!users || users.length === 0) {
-              noUsersMessage.textContent = 'No users found.';
+            
+            if (users.length === 0) {
               noUsersMessage.style.display = 'block';
             } else {
               noUsersMessage.style.display = 'none';
-              users.forEach((user) => createUserRow(user));
+              users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${user.user_id}</td>
+                  <td contenteditable="true">${user.property_id}</td>
+                  <td contenteditable="true">${user.role}</td>
+                  <td contenteditable="true">${user.username}</td>
+                  <td contenteditable="true">${user.password}</td>
+                  <td contenteditable="true">${user.phone_number}</td>
+                  <td contenteditable="true">${user.mfa_secret || ''}</td>
+                  <td>
+                    <button class="edit-btn" data-id="${user.user_id}">Save</button>
+                    <button class="delete-btn" data-id="${user.user_id}">Delete</button>
+                  </td>
+                `;
+                userTableBody.appendChild(row);
+              });
             }
           } catch (error) {
-            console.error('❌ Error loading users:', error);
-            noUsersMessage.textContent =
-              'Error loading users. Please try again later.';
+            console.error('Error loading users:', error);
           }
         }
 
-        // Create a row in the users table
-        function createUserRow(user) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-      <td>${user.user_id}</td>
-      <td contenteditable="true">${user.property_id || ''}</td>
-      <td contenteditable="true">${user.role || ''}</td>
-      <td contenteditable="true">${user.username || ''}</td>
-      <td contenteditable="true">${user.password || ''}</td>
-      <td contenteditable="true">${user.phone_number || ''}</td>
-      <td contenteditable="true">${user.mfa_secret || ''}</td>
-      <td>
-        <button class="edit-btn">Save</button>
-        <button class="delete-btn">Delete</button>
-      </td>
-    `;
-
-          // Attach event listeners for editing and deleting
-          row
-            .querySelector('.edit-btn')
-            .addEventListener('click', () => updateUser(user.user_id, row));
-          row
-            .querySelector('.delete-btn')
-            .addEventListener('click', () => deleteUser(user.user_id, row));
-
-          userTableBody.appendChild(row);
-        }
-
-        // Handle "Add User" form submission (FIXED)
-        addUserForm.addEventListener('submit', async function (event) {
-          event.preventDefault();
-
-          const username = document
-            .getElementById('user_username')
-            .value.trim();
-          const propertyId = document
-            .getElementById('user_property_id')
-            .value.trim();
-          const role = document.getElementById('user_role').value.trim(); // ✅ Now accepts any string
-          const phoneNumber = document
-            .getElementById('user_phone_number')
-            .value.trim();
-          const password = document
-            .getElementById('user_password')
-            .value.trim();
-          const mfaSecret =
-            document.getElementById('user_mfa_secret').value.trim() || null;
-
-          // ✅ Check if all required fields are filled
-          if (!username || !propertyId || !role || !phoneNumber || !password) {
-            alert('⚠️ Please fill in all required fields.');
-            return;
-          }
-
+        userForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
           const formData = {
-            username: username,
-            property_id: parseInt(propertyId, 10),
-            role: role, // ✅ Fixed: Now sends role as plain text
-            phone_number: phoneNumber,
-            password: password,
-            mfa_secret: mfaSecret,
+            username: document.getElementById('user_username').value,
+            property_id: document.getElementById('user_property_id').value,
+            role: document.getElementById('user_role').value,
+            phone_number: document.getElementById('user_phone_number').value,
+            password: document.getElementById('user_password').value,
+            mfa_secret: document.getElementById('user_mfa_secret').value
           };
 
-          console.log('🟢 Sending User Data:', formData); // Debugging log
-
           try {
-            const response = await fetch(usersUrl, {
+            await fetch('/api/users', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(formData),
+              body: JSON.stringify(formData)
             });
-
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.message || 'Error adding user');
-            }
-
-            alert('✅ User added successfully!');
-            addUserForm.reset();
-            loadUsers(); // Refresh table
+            loadUsers();
           } catch (error) {
-            console.error('❌ Failed to add user:', error);
-            alert(`❌ Failed to add user: ${error.message}`);
+            console.error('Error adding user:', error);
           }
         });
 
-        // Send updated data to the server (PUT request)
-        async function updateUser(id, row) {
-          const updatedData = {
-            property_id: parseInt(row.children[1].innerText.trim(), 10),
-            role: row.children[2].innerText.trim(),
-            username: row.children[3].innerText.trim(),
-            password: row.children[4].innerText.trim(),
-            phone_number: row.children[5].innerText.trim(),
-            mfa_secret: row.children[6].innerText.trim(),
-          };
-
-          try {
-            const response = await fetch(`${usersUrl}/${id}`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(updatedData),
-            });
-
-            if (!response.ok) throw new Error('Failed to update user');
-
-            alert('✅ User updated successfully!');
-            loadUsers();
-          } catch (error) {
-            console.error('Error updating user:', error);
-            alert('❌ Failed to update user.');
-          }
-        }
-
-        // Delete a user (DELETE request)
-        async function deleteUser(id, row) {
-          if (confirm('Are you sure you want to delete this user?')) {
-            try {
-              const response = await fetch(`${usersUrl}/${id}`, {
-                method: 'DELETE',
-              });
-              if (!response.ok) throw new Error('Failed to delete user');
-
-              row.remove();
-              alert('✅ User deleted successfully!');
-            } catch (error) {
-              console.error('Error deleting user:', error);
-              alert('❌ Failed to delete user.');
-            }
-          }
-        }
-
-        // Load users on page load
-        loadUsers();
+        // Initialize search and data
+        document.addEventListener('DOMContentLoaded', function() {
+          setupSearch('search-property', 'property-table');
+          setupSearch('search-apartment', 'apartment-table');
+          setupSearch('search-user', 'user-table');
+          loadUsers();
+        });
       });
     </script>
   </body>
