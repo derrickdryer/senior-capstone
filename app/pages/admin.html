@@ -157,6 +157,7 @@
               <th>State</th>
               <th>Postal Code</th>
               <th>Number of Apartments</th>
+              <th>Available</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -194,9 +195,11 @@
               <th>Bathrooms</th>
               <th>Square Footage</th>
               <th>Rent Amount</th>
+              <th>Available</th>
               <th>Actions</th>
             </tr>
           </thead>
+          
           <tbody>
             <tr id="no-apartments-message">
               <td colspan="9">Loading apartments...</td>
@@ -289,17 +292,21 @@
               properties.forEach(property => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                  <td>${property.property_id}</td>
-                  <td contenteditable="true">${property.address}</td>
-                  <td contenteditable="true">${property.city}</td>
-                  <td contenteditable="true">${property.state}</td>
-                  <td contenteditable="true">${property.postal_code}</td>
-                  <td contenteditable="true">${property.num_apartments}</td>
-                  <td>
-                    <button class="edit-btn" data-id="${property.property_id}">Save</button>
-                    <button class="delete-btn" data-id="${property.property_id}">Delete</button>
-                  </td>
-                `;
+                <td>${property.property_id}</td>
+                <td contenteditable="true">${property.address}</td>
+                <td contenteditable="true">${property.city}</td>
+                <td contenteditable="true">${property.state}</td>
+                <td contenteditable="true">${property.postal_code}</td>
+                <td contenteditable="true">${property.num_apartments}</td>
+                <td>
+                  <input type="checkbox" class="toggle-availability" data-id="${property.property_id}" ${property.is_available ? 'checked' : ''}>
+                </td>
+                <td>
+                  <button class="edit-btn" data-id="${property.property_id}">Save</button>
+                  <button class="delete-btn" data-id="${property.property_id}">Delete</button>
+                </td>
+              `;
+
                 propertyTableBody.appendChild(row);
               });
             }
@@ -353,19 +360,23 @@
               apartments.forEach(apartment => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                  <td>${apartment.apartment_id}</td>
-                  <td contenteditable="true">${apartment.property_id}</td>
-                  <td contenteditable="true">${apartment.unit_number}</td>
-                  <td contenteditable="true">${apartment.floor}</td>
-                  <td contenteditable="true">${apartment.bedrooms}</td>
-                  <td contenteditable="true">${apartment.bathrooms}</td>
-                  <td contenteditable="true">${apartment.square_footage}</td>
-                  <td contenteditable="true">${apartment.rent_amount}</td>
-                  <td>
-                    <button class="edit-btn" data-id="${apartment.apartment_id}">Save</button>
-                    <button class="delete-btn" data-id="${apartment.apartment_id}">Delete</button>
-                  </td>
-                `;
+                <td>${apartment.apartment_id}</td>
+                <td contenteditable="true">${apartment.property_id}</td>
+                <td contenteditable="true">${apartment.unit_number}</td>
+                <td contenteditable="true">${apartment.floor}</td>
+                <td contenteditable="true">${apartment.bedrooms}</td>
+                <td contenteditable="true">${apartment.bathrooms}</td>
+                <td contenteditable="true">${apartment.square_footage}</td>
+                <td contenteditable="true">${apartment.rent_amount}</td>
+                <td>
+                  <input type="checkbox" class="toggle-availability" data-id="${apartment.apartment_id}" ${apartment.is_available ? 'checked' : ''}>
+                </td>
+                <td>
+                  <button class="edit-btn" data-id="${apartment.apartment_id}">Save</button>
+                  <button class="delete-btn" data-id="${apartment.apartment_id}">Delete</button>
+                </td>
+              `;
+
                 apartmentTableBody.appendChild(row);
               });
             }
@@ -471,6 +482,28 @@
           loadUsers();
         });
       });
+      document.addEventListener('change', async (event) => {
+    if (event.target.classList.contains('toggle-availability')) {
+        const id = event.target.getAttribute('data-id');
+        const isAvailable = event.target.checked;
+
+        const endpoint = event.target.closest('tr').querySelector('td:first-child').textContent.includes('P')
+            ? `/api/assets/${id}`
+            : `/api/apartments/${id}`;
+
+        try {
+            await fetch(endpoint, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_available: isAvailable })
+            });
+            console.log(`Availability updated for ID ${id}`);
+        } catch (error) {
+            console.error('Error updating availability:', error);
+        }
+    }
+});
+
     </script>
   </body>
 </html>

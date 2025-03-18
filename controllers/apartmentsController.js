@@ -1,14 +1,6 @@
 const pool = require('../database'); // Import MySQL connection
 
-/**
- * Retrieves and returns all apartment records from the database.
- *
- * @async
- * @function getAllApartments
- * @param {Object} ctx - Koa context object.
- * @returns {Promise<void>} Sets ctx.body to an array of apartment objects.
- * @throws {Error} If the database query fails.
- */
+// Get all apartments
 exports.getAllApartments = async (ctx) => {
   try {
     console.log('✅ Fetching all apartments...');
@@ -22,22 +14,10 @@ exports.getAllApartments = async (ctx) => {
   }
 };
 
-/**
- * Retrieves apartment records associated with a specific property.
- *
- * @async
- * @function getApartmentsByProperty
- * @param {Object} ctx - Koa context object containing query parameters.
- * @param {Object} ctx.params - Request parameters.
- * @param {string} ctx.params.propertyId - ID of the property.
- * @returns {Promise<void>} Sets ctx.body to an array of apartment objects.
- * @throws {Error} If the database query fails.
- */
+// Get apartments by property ID
 exports.getApartmentsByProperty = async (ctx) => {
   try {
-    console.log(
-      `✅ Fetching apartments for property_id: ${ctx.params.propertyId}`
-    );
+    console.log(`✅ Fetching apartments for property_id: ${ctx.params.propertyId}`);
     const [rows] = await pool.query(
       'SELECT * FROM apartments WHERE property_id = ?',
       [ctx.params.propertyId]
@@ -52,17 +32,7 @@ exports.getApartmentsByProperty = async (ctx) => {
   }
 };
 
-/**
- * Retrieves a specific apartment record by its ID.
- *
- * @async
- * @function getApartmentById
- * @param {Object} ctx - Koa context object containing parameters.
- * @param {Object} ctx.params - Request parameters.
- * @param {number} ctx.params.id - ID of the apartment.
- * @returns {Promise<void>} Sets ctx.body to the apartment object if found.
- * @throws {Error} If the database query fails.
- */
+// Get a single apartment by ID
 exports.getApartmentById = async (ctx) => {
   try {
     const [rows] = await pool.query(
@@ -83,22 +53,7 @@ exports.getApartmentById = async (ctx) => {
   }
 };
 
-/**
- * Inserts a new apartment record into the database.
- *
- * @async
- * @function createApartment
- * @param {Object} ctx - Koa context object containing the request body.
- * @param {number} ctx.request.body.property_id - ID of the property.
- * @param {string} ctx.request.body.unit_number - Unit number.
- * @param {number} ctx.request.body.floor - Floor number.
- * @param {number} ctx.request.body.bedrooms - Number of bedrooms.
- * @param {number} ctx.request.body.bathrooms - Number of bathrooms.
- * @param {number} ctx.request.body.square_footage - Apartment square footage.
- * @param {number} ctx.request.body.rent_amount - Rent amount.
- * @returns {Promise<void>} Sets ctx.body with a message and apartment_id.
- * @throws {Error} If the database query fails.
- */
+// Create a new apartment
 exports.createApartment = async (ctx) => {
   try {
     const {
@@ -109,9 +64,11 @@ exports.createApartment = async (ctx) => {
       bathrooms,
       square_footage,
       rent_amount,
+      is_available = true
     } = ctx.request.body;
+
     const [result] = await pool.query(
-      'INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount, is_available) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [
         property_id,
         unit_number,
@@ -120,8 +77,10 @@ exports.createApartment = async (ctx) => {
         bathrooms,
         square_footage,
         rent_amount,
+        is_available
       ]
     );
+
     ctx.status = 201;
     ctx.body = {
       message: 'Apartment created successfully',
@@ -134,24 +93,7 @@ exports.createApartment = async (ctx) => {
   }
 };
 
-/**
- * Updates an existing apartment record in the database.
- *
- * @async
- * @function updateApartment
- * @param {Object} ctx - Koa context object containing parameters and request body.
- * @param {Object} ctx.params - Request parameters.
- * @param {number} ctx.params.id - ID of the apartment to update.
- * @param {number} ctx.request.body.property_id - Updated property ID.
- * @param {string} ctx.request.body.unit_number - Updated unit number.
- * @param {number} ctx.request.body.floor - Updated floor number.
- * @param {number} ctx.request.body.bedrooms - Updated number of bedrooms.
- * @param {number} ctx.request.body.bathrooms - Updated number of bathrooms.
- * @param {number} ctx.request.body.square_footage - Updated square footage.
- * @param {number} ctx.request.body.rent_amount - Updated rent amount.
- * @returns {Promise<void>} Sets ctx.body with a success message.
- * @throws {Error} If the update query fails.
- */
+// Update an apartment by ID
 exports.updateApartment = async (ctx) => {
   try {
     const {
@@ -162,9 +104,11 @@ exports.updateApartment = async (ctx) => {
       bathrooms,
       square_footage,
       rent_amount,
+      is_available
     } = ctx.request.body;
+
     const [result] = await pool.query(
-      'UPDATE apartments SET property_id = ?, unit_number = ?, floor = ?, bedrooms = ?, bathrooms = ?, square_footage = ?, rent_amount = ? WHERE apartment_id = ?',
+      'UPDATE apartments SET property_id = ?, unit_number = ?, floor = ?, bedrooms = ?, bathrooms = ?, square_footage = ?, rent_amount = ?, is_available = ? WHERE apartment_id = ?',
       [
         property_id,
         unit_number,
@@ -173,7 +117,8 @@ exports.updateApartment = async (ctx) => {
         bathrooms,
         square_footage,
         rent_amount,
-        ctx.params.id,
+        is_available,
+        ctx.params.id
       ]
     );
 
@@ -192,17 +137,32 @@ exports.updateApartment = async (ctx) => {
   }
 };
 
-/**
- * Deletes an apartment record from the database.
- *
- * @async
- * @function deleteApartment
- * @param {Object} ctx - Koa context object containing parameters.
- * @param {Object} ctx.params - Request parameters.
- * @param {number} ctx.params.id - ID of the apartment to delete.
- * @returns {Promise<void>} Sets ctx.body with a success message upon deletion.
- * @throws {Error} If the delete query fails.
- */
+// Toggle apartment availability
+exports.toggleApartmentAvailability = async (ctx) => {
+  try {
+    const { is_available } = ctx.request.body;
+
+    const [result] = await pool.query(
+      'UPDATE apartments SET is_available = ? WHERE apartment_id = ?',
+      [is_available, ctx.params.id]
+    );
+
+    if (result.affectedRows === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'Apartment not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Apartment availability updated successfully' };
+  } catch (error) {
+    console.error('❌ Error updating apartment availability:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+// Delete an apartment by ID
 exports.deleteApartment = async (ctx) => {
   try {
     const [result] = await pool.query(
