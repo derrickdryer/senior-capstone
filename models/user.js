@@ -1,39 +1,44 @@
+/**
+ * User model representing users of the application.
+ *
+ * @module models/user
+ */
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
+      // Unique identifier for the user
       user_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      property_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
+      // Role of the user (manager, maintenance, tenant)
       role: {
         type: DataTypes.ENUM('manager', 'maintenance', 'tenant'),
         allowNull: false,
       },
+      // Unique username for logging in
       username: {
-        type: DataTypes.STRING(50),
-        allowNull: false,
+        type: DataTypes.STRING,
         unique: true,
-      },
-      password: {
-        type: DataTypes.STRING(255),
         allowNull: false,
       },
-      phone_number: {
-        type: DataTypes.STRING(15),
-        allowNull: true,
+      // User's password (should be stored hashed)
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
-      mfa_secret: {
-        type: DataTypes.STRING(255),
-        allowNull: true,
+      // User's email address
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
     },
-    { timestamps: true }
+    {
+      tableName: 'users',
+      timestamps: false, // Disables automatic timestamp fields
+    }
   );
 
   return User;

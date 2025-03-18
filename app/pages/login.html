@@ -7,6 +7,11 @@
       content="width=device-width, initial-scale=1.0"
     />
     <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
       rel="stylesheet"
       href="/public/styles/main.css"
     />
@@ -42,19 +47,32 @@
             />
 
             <button type="submit">Login</button>
-            <p
-              id="errorMessage"
-              style="color: red; display: none"
-            ></p>
-            <p
-              id="successMessage"
-              style="color: green; display: none"
-            ></p>
           </form>
+          <p
+            id="errorMessage"
+            style="color: red; display: none"
+          ></p>
+          <p
+            id="successMessage"
+            style="color: green; display: none"
+          ></p>
           <p>
             <a href="/register">Create an account</a> |
             <a href="/forgot_password">Forgot your password?</a>
           </p>
+        </div>
+      </section>
+      <section>
+        <div class="container">
+          <h2>Test Accounts</h2>
+          <p>
+            Use the following test accounts to log in and explore the website:
+          </p>
+          <ul>
+            <li>Manager: manager1 / password1</li>
+            <li>Agent: maintenance1 / password2</li>
+            <li>Client: tenant1 / password3</li>
+          </ul>
         </div>
       </section>
     </main>
@@ -70,56 +88,29 @@
           const errorMessage = document.getElementById('errorMessage');
           const successMessage = document.getElementById('successMessage');
 
-          // Clear previous messages
-          errorMessage.style.display = 'none';
-          errorMessage.textContent = '';
-          successMessage.style.display = 'none';
-          successMessage.textContent = '';
-
-          if (!username || !password) {
-            errorMessage.textContent = 'Username and password are required.';
-            errorMessage.style.display = 'block';
-            return;
-          }
-
           try {
-            console.log('Attempting to log in with:', { username, password });
-
-            // Fetch the user by username using the correct API endpoint
-            const response = await fetch(`/api/users/by-username/${username}`, {
-              method: 'GET',
+            const response = await fetch('/api/login', {
+              method: 'POST',
               headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ username, password }),
             });
 
             console.log('Response status:', response.status);
 
             if (!response.ok) {
               const errorText = await response.text();
-              throw new Error(errorText || 'Invalid username or password');
+              throw new Error(errorText || 'Login failed');
             }
 
-            const user = await response.json();
-            console.log('Response user:', user);
-
-            // Verify password (in production, this should be handled on the server)
-            if (user.password !== password) {
-              errorMessage.textContent = 'Invalid username or password.';
-              errorMessage.style.display = 'block';
-              return;
-            }
-
-            // Save login state with persistent storage
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('role', user.role);
-            localStorage.setItem('user_id', user.user_id);
-            //updateHeader();
+            const result = await response.json();
+            console.log('Login result:', result);
+            sessionStorage.setItem('token', result.token);
 
             // Display success message instead of redirecting
             successMessage.textContent = 'Login success!';
             successMessage.style.display = 'block';
 
-            // Commented out the redirect for now
-            // window.location.href = '/user';
+            // Redirect to the user dashboard
             window.location.href = '/index';
           } catch (error) {
             console.error('Login Error:', error);

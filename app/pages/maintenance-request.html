@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
     <title>Maintenance Requests</title>
     <link
       rel="stylesheet"
@@ -59,6 +64,7 @@ footer {
         <h1>Maintenance Requests</h1>
       </div>
     </header>
+    <!-- Documentation: This page allows tenants to enter a Tenant ID and view/submit maintenance requests -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -145,6 +151,7 @@ footer {
       </div>
     </footer>
 
+    <!-- Documentation: The inline script defines helper functions (e.g. formatDate) to format time and handles form submissions for loading and submitting requests -->
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         const tenantIdForm = document.getElementById('tenant-id-form');

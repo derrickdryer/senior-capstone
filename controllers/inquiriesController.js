@@ -1,6 +1,15 @@
 const pool = require('../database'); // Import MySQL connection
 
 // Get all inquiries
+/**
+ * Retrieves all inquiries from the database.
+ *
+ * @async
+ * @function getAllInquiries
+ * @param {Object} ctx - The Koa context object.
+ * @returns {Promise<void>} On success, ctx.body contains an array of inquiry records.
+ * @throws {Error} If the query fails.
+ */
 exports.getAllInquiries = async (ctx) => {
   try {
     const [rows] = await pool.query('SELECT * FROM inquiries');
@@ -14,6 +23,17 @@ exports.getAllInquiries = async (ctx) => {
 };
 
 // Get a single inquiry by ID
+/**
+ * Retrieves a specific inquiry by its ID.
+ *
+ * @async
+ * @function getInquiryById
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The request parameters.
+ * @param {number} ctx.params.id - The inquiry ID.
+ * @returns {Promise<void>} On success, ctx.body contains the inquiry record.
+ * @throws {Error} If the query fails.
+ */
 exports.getInquiryById = async (ctx) => {
   try {
     const [rows] = await pool.query(
@@ -35,6 +55,20 @@ exports.getInquiryById = async (ctx) => {
 };
 
 // Create a new inquiry
+/**
+ * Inserts a new inquiry record into the database.
+ *
+ * @async
+ * @function createInquiry
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.request.body - The inquiry details.
+ * @param {number} ctx.request.body.tenant_id - The ID of the tenant.
+ * @param {number} ctx.request.body.apartment_id - The ID of the apartment.
+ * @param {string} ctx.request.body.inquiry_date - The date of the inquiry.
+ * @param {string} ctx.request.body.message - The inquiry message.
+ * @returns {Promise<void>} On success, ctx.body includes a success message and new inquiry ID.
+ * @throws {Error} If the query fails.
+ */
 exports.createInquiry = async (ctx) => {
   try {
     const { tenant_id, apartment_id, inquiry_date, message } = ctx.request.body;
@@ -55,6 +89,22 @@ exports.createInquiry = async (ctx) => {
 };
 
 // Update an inquiry by ID
+/**
+ * Updates an existing inquiry record with new details.
+ *
+ * @async
+ * @function updateInquiry
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The request parameters.
+ * @param {number} ctx.params.id - The ID of the inquiry to update.
+ * @param {Object} ctx.request.body - The updated inquiry details.
+ * @param {number} ctx.request.body.tenant_id - The tenant ID.
+ * @param {number} ctx.request.body.apartment_id - The apartment ID.
+ * @param {string} ctx.request.body.inquiry_date - The updated inquiry date.
+ * @param {string} ctx.request.body.message - The updated inquiry message.
+ * @returns {Promise<void>} On success, ctx.body includes a confirmation message.
+ * @throws {Error} If the query fails.
+ */
 exports.updateInquiry = async (ctx) => {
   try {
     const { tenant_id, apartment_id, inquiry_date, message } = ctx.request.body;
@@ -79,6 +129,17 @@ exports.updateInquiry = async (ctx) => {
 };
 
 // Delete an inquiry by ID
+/**
+ * Deletes an inquiry record from the database.
+ *
+ * @async
+ * @function deleteInquiry
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The request parameters.
+ * @param {number} ctx.params.id - The ID of the inquiry to delete.
+ * @returns {Promise<void>} On success, ctx.body includes a confirmation message.
+ * @throws {Error} If the query fails.
+ */
 exports.deleteInquiry = async (ctx) => {
   try {
     const [result] = await pool.query(

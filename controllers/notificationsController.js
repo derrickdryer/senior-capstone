@@ -1,6 +1,15 @@
 const pool = require('../database'); // Import MySQL connection
 
 // Get all notifications
+/**
+ * Retrieves all notification records from the database.
+ *
+ * @async
+ * @function getAllNotifications
+ * @param {Object} ctx - The Koa context object.
+ * @returns {Promise<void>} On success, sets ctx.body to an array of notification objects.
+ * @throws {Error} If the database query fails.
+ */
 exports.getAllNotifications = async (ctx) => {
   try {
     console.log('✅ Fetching all notifications...');
@@ -15,6 +24,17 @@ exports.getAllNotifications = async (ctx) => {
 };
 
 // Get a single notification by ID
+/**
+ * Retrieves a single notification based on its ID.
+ *
+ * @async
+ * @function getNotificationById
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The route parameters.
+ * @param {number|string} ctx.params.id - The unique ID of the notification.
+ * @returns {Promise<void>} On success, sets ctx.body to the notification object.
+ * @throws {Error} If the database query fails.
+ */
 exports.getNotificationById = async (ctx) => {
   try {
     const [rows] = await pool.query(
@@ -36,6 +56,21 @@ exports.getNotificationById = async (ctx) => {
 };
 
 // Create a new notification
+/**
+ * Creates a new notification record in the database.
+ *
+ * @async
+ * @function createNotification
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.request.body - The notification details.
+ * @param {number} ctx.request.body.user_id - The ID of the user who will receive the notification.
+ * @param {string} ctx.request.body.notification_type - The type/category of the notification.
+ * @param {string} ctx.request.body.content - The notification content.
+ * @param {Date|string} ctx.request.body.sent_date - The date the notification was sent.
+ * @param {boolean} ctx.request.body.read_status - The read status of the notification.
+ * @returns {Promise<void>} On success, sets ctx.body with a success message and the new notification ID.
+ * @throws {Error} If the insertion fails.
+ */
 exports.createNotification = async (ctx) => {
   try {
     const { user_id, notification_type, content, sent_date, read_status } =
@@ -57,6 +92,23 @@ exports.createNotification = async (ctx) => {
 };
 
 // Update a notification by ID
+/**
+ * Updates an existing notification record with new details.
+ *
+ * @async
+ * @function updateNotification
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The route parameters.
+ * @param {number|string} ctx.params.id - The unique ID of the notification to update.
+ * @param {Object} ctx.request.body - The updated notification details.
+ * @param {number} ctx.request.body.user_id - The ID of the associated user.
+ * @param {string} ctx.request.body.notification_type - The updated notification type.
+ * @param {string} ctx.request.body.content - The updated notification content.
+ * @param {Date|string} ctx.request.body.sent_date - The updated sent date.
+ * @param {boolean} ctx.request.body.read_status - The updated read status.
+ * @returns {Promise<void>} On success, sets ctx.body with a confirmation message.
+ * @throws {Error} If the update query fails.
+ */
 exports.updateNotification = async (ctx) => {
   try {
     const { user_id, notification_type, content, sent_date, read_status } =
@@ -89,6 +141,17 @@ exports.updateNotification = async (ctx) => {
 };
 
 // Delete a notification by ID
+/**
+ * Deletes a notification record from the database.
+ *
+ * @async
+ * @function deleteNotification
+ * @param {Object} ctx - The Koa context object.
+ * @param {Object} ctx.params - The route parameters.
+ * @param {number|string} ctx.params.id - The unique ID of the notification to delete.
+ * @returns {Promise<void>} On success, sets ctx.body with a deletion confirmation.
+ * @throws {Error} If the deletion operation fails.
+ */
 exports.deleteNotification = async (ctx) => {
   try {
     const [result] = await pool.query(

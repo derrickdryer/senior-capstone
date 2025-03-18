@@ -1,75 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Russell Properties LLC</title>
-  <link rel="stylesheet" href="/public/styles/main.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Discover premium properties with Russell Properties LLC - luxury living redefined."
+    />
+    <title>Russell Properties LLC</title>
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+  </head>
+  <body>
     <script type="module">
-        import { createHeader } from '/components/header.js';
-        import { createFooter } from '/components/footer.js';
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
 
-        document.body.prepend(createHeader());
-        document.body.appendChild(createFooter());
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
     </script>
 
-    <!-- Hero Section with Background Image -->
-    <div class="hero" style="background: url('public/images/modern-apartment.jpg') center/cover no-repeat; height: 80vh; display: flex; align-items: center; justify-content: center; text-align: center; color: white;">
-        <div class="hero-content" style="background: rgba(0, 0, 0, 0.5); padding: 2rem; border-radius: 10px;">
-            <h1 style="font-size: 3rem; margin-bottom: 10px;">Discover Luxury Living</h1>
-            <p style="font-size: 1.5rem; max-width: 600px; margin: 0 auto;">Find your dream home with Russell Properties LLC</p>
-            <a href="/register" class="btn primary" style="margin-top: 15px; padding: 12px 24px; font-size: 1.2rem;">Get Started</a>
-        </div>
+    <!-- Documentation: This is the landing page for Russell Properties. It features a hero section with a call-to-action, an about section, and a virtual tour link. -->
+
+    <!-- Hero Section: Showcases a featured property with a call-to-action -->
+    <div
+      class="hero"
+      style="
+        background: url('public/images/modern-apartment.jpg') center/cover
+          no-repeat;
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: white;
+      "
+    >
+      <div
+        class="hero-content"
+        style="
+          background: rgba(0, 0, 0, 0.5);
+          padding: 2rem;
+          border-radius: 10px;
+        "
+      >
+        <h1 style="font-size: 3rem; margin-bottom: 10px">
+          Discover Luxury Living
+        </h1>
+        <p style="font-size: 1.5rem; max-width: 600px; margin: 0 auto">
+          Find your dream home with Russell Properties LLC
+        </p>
+        <a
+          href="/register"
+          class="btn primary"
+          style="margin-top: 15px; padding: 12px 24px; font-size: 1.2rem"
+          >Get Started</a
+        >
+      </div>
     </div>
 
-    <!-- About Section -->
-    <section class="about" style="background: #f9f9f9; padding: 4rem 2rem; text-align: center;">
-        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Why Choose Russell Properties?</h2>
-        <p style="max-width: 800px; margin: 0 auto; font-size: 1.2rem;">With immense experience in real estate, we connect buyers and sellers with premium properties tailored to their needs.</p>
+    <!-- About Section: Highlights why to choose Russell Properties -->
+    <section
+      class="about"
+      style="background: #f9f9f9; padding: 4rem 2rem; text-align: center"
+    >
+      <h2 style="font-size: 2.5rem; margin-bottom: 20px">
+        Why Choose Russell Properties?
+      </h2>
+      <p style="max-width: 800px; margin: 0 auto; font-size: 1.2rem">
+        With immense experience in real estate, we connect buyers and sellers
+        with premium properties tailored to their needs.
+      </p>
     </section>
 
-    <!-- Virtual Tour & AI Assistance -->
-    <section class="virtual-tour" style="padding: 4rem 2rem; text-align: center;">
-        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Experience Homes Virtually</h2>
-        <p style="max-width: 800px; margin: 0 auto; font-size: 1.2rem;">Take a virtual tour of our top properties from the comfort of your home.</p>
-        <a href="/properties" class="btn secondary">Explore Tours</a>
+    <!-- Virtual Tour Section: Lets users experience properties virtually -->
+    <section
+      class="virtual-tour"
+      style="padding: 4rem 2rem; text-align: center"
+    >
+      <h2 style="font-size: 2.5rem; margin-bottom: 20px">
+        Experience Homes Virtually
+      </h2>
+      <p style="max-width: 800px; margin: 0 auto; font-size: 1.2rem">
+        Take a virtual tour of our top properties from the comfort of your home.
+      </p>
+      <a
+        href="/properties"
+        class="btn secondary"
+        >Explore Tours</a
+      >
     </section>
 
+    <!-- Documentation: The script section at the bottom dynamically loads featured properties from localStorage and renders property cards -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const propertyList = document.getElementById('property-list');
-            const noPropertiesMessage = document.getElementById('no-properties-message');
+      document.addEventListener('DOMContentLoaded', function () {
+        const propertyList = document.getElementById('property-list');
+        const noPropertiesMessage = document.getElementById(
+          'no-properties-message'
+        );
 
-            function loadProperties() {
-                const properties = JSON.parse(localStorage.getItem('featuredProperties')) || [];
-                propertyList.innerHTML = '';
+        function loadProperties() {
+          const properties =
+            JSON.parse(localStorage.getItem('featuredProperties')) || [];
+          propertyList.innerHTML = '';
 
-                if (properties.length === 0) {
-                    noPropertiesMessage.style.display = 'block';
-                } else {
-                    noPropertiesMessage.style.display = 'none';
-                    properties.forEach(property => {
-                        const item = document.createElement('div');
-                        item.classList.add('property-card');
-                        item.innerHTML = `
+          if (properties.length === 0) {
+            noPropertiesMessage.style.display = 'block';
+          } else {
+            noPropertiesMessage.style.display = 'none';
+            properties.forEach((property) => {
+              const item = document.createElement('div');
+              item.classList.add('property-card');
+              item.innerHTML = `
                             <div style="border: 1px solid #ddd; border-radius: 10px; overflow: hidden; box-shadow: 0px 4px 10px rgba(0,0,0,0.1); width: 300px;">
-                                <img src="${property.image}" alt="${property.title}" style="width: 100%; height: 200px; object-fit: cover;">
+                                <img src="${property.image}" alt="${
+                property.title
+              }" style="width: 100%; height: 200px; object-fit: cover;">
                                 <div style="padding: 15px;">
-                                    <h3 style="margin-bottom: 10px;">${property.title}</h3>
-                                    <p style="color: #555;">${property.description}</p>
+                                    <h3 style="margin-bottom: 10px;">${
+                                      property.title
+                                    }</h3>
+                                    <p style="color: #555;">${
+                                      property.description
+                                    }</p>
                                     <p style="font-weight: bold; font-size: 1.2rem;">$${property.price.toLocaleString()}</p>
                                 </div>
                             </div>
                         `;
-                        propertyList.appendChild(item);
-                    });
-                }
-            }
+              propertyList.appendChild(item);
+            });
+          }
+        }
 
-            loadProperties();
-        });
+        loadProperties();
+      });
     </script>
-</body>
+  </body>
 </html>

@@ -6,6 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
     <title>Maintenance Requests</title>
     <link
       rel="stylesheet"
@@ -66,6 +71,7 @@
     </style>
   </head>
   <body>
+    <!-- Documentation: This page provides an admin/manager view for all maintenance requests, including functions to add, update, and delete requests -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -168,6 +174,7 @@
       </div>
     </footer>
 
+    <!-- Documentation: The inline script loads maintenance requests from /api/maintenance-requests and builds a responsive table with edit and delete actions -->
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         const baseUrl = '/api/maintenance-requests';

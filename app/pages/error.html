@@ -7,12 +7,23 @@
       content="width=device-width, initial-scale=1.0"
     />
     <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <!-- Added meta description for SEO and documentation -->
+    <meta
+      name="description"
+      content="Error page for Russell Properties. Inform users when something goes wrong."
+    />
+    <link
       rel="stylesheet"
       href="/public/styles/main.css"
     />
     <title>Error - Russell Properties</title>
   </head>
   <body>
+    <!-- Load header and footer components for consistent site navigation -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -21,6 +32,7 @@
       document.body.appendChild(createFooter());
     </script>
     <main>
+      <!-- Error Section: Displays error message when a request fails -->
       <section id="error-page">
         <div class="container">
           <h2>Oops! Something Went Wrong</h2>

@@ -7,12 +7,18 @@
       content="width=device-width, initial-scale=1.0"
     />
     <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
       rel="stylesheet"
       href="/public/styles/main.css"
     />
     <title>User Account - Russell Properties</title>
   </head>
   <body>
+    <!-- Documentation: The first inline script below handles header & footer injection -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -22,6 +28,7 @@
 
     <!-- Main Content -->
     <main>
+      <!-- Documentation: The 'user-account' section displays account details and lists tenant leases -->
       <section id="user-account">
         <div class="container">
           <h2 id="welcomeMessage">Welcome, User</h2>
@@ -31,31 +38,57 @@
             <p>
               <strong>Email:</strong> <span id="userEmail">Loading...</span>
             </p>
-            <p>
-              <strong>Phone:</strong> <span id="userPhone">Loading...</span>
-            </p>
-            <p>
-              <strong>Address:</strong> <span id="userAddress">Loading...</span>
-            </p>
+            <form id="updateEmailForm">
+              <label for="newEmail">New Email:</label>
+              <input
+                type="email"
+                id="newEmail"
+                name="newEmail"
+                required
+              />
+              <button type="submit">Update Email</button>
+            </form>
+            <form id="updatePasswordForm">
+              <label for="newPassword">New Password:</label>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                required
+              />
+              <button type="submit">Update Password</button>
+            </form>
           </section>
 
-          <!-- Rent Payment -->
-          <section id="rent-payment">
-            <h3>Pay Rent</h3>
-            <a href="/invoice">View Invoice & Pay</a>
-          </section>
-
-          <!-- Submit Requests -->
-          <section id="requests">
-            <h3>Submit Request</h3>
-            <a href="/invoice">Create Maintenance Request</a>
+          <!-- Tenants -->
+          <section id="tenants">
+            <h3>Tenants</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Lease ID</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Tenants</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tenant-list">
+                <tr>
+                  <td colspan="5">Loading tenants...</td>
+                </tr>
+              </tbody>
+            </table>
           </section>
         </div>
       </section>
     </main>
 
+    <!-- Documentation: The second inline script contains authentication checks,
+     fetchUserData(), updateEmail(), updatePassword(), fetchLeases(), and fetchTenants() functions -->
     <script type="module">
       import { requireAuth, getUserId } from '/scripts/auth.js';
+      const token = sessionStorage.getItem('token');
 
       // Ensure only a tenant can access this page.
       if (requireAuth('tenant')) {
@@ -65,7 +98,10 @@
           try {
             const response = await fetch(`/api/users/${userId}`, {
               method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
             });
 
             if (!response.ok) {
@@ -78,17 +114,187 @@
             ).textContent = `Welcome, ${user.username}`;
             document.getElementById('userEmail').textContent =
               user.email || 'Not provided';
-            document.getElementById('userPhone').textContent =
-              user.phone_number || 'Not provided';
-            document.getElementById('userAddress').textContent =
-              user.property_id || 'Not provided';
           } catch (error) {
             console.error('Error fetching user data:', error);
             alert('Failed to load user data.');
           }
         }
 
+        async function updateEmail(event) {
+          event.preventDefault();
+          const newEmail = document.getElementById('newEmail').value.trim();
+
+          try {
+            const response = await fetch(`/api/users/${userId}/email`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ email: newEmail }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to update email');
+            }
+
+            alert('Email updated successfully!');
+            fetchUserData();
+          } catch (error) {
+            console.error('Error updating email:', error);
+            alert('Failed to update email.');
+          }
+        }
+
+        async function updatePassword(event) {
+          event.preventDefault();
+          const newPassword = document
+            .getElementById('newPassword')
+            .value.trim();
+
+          try {
+            const response = await fetch(`/api/users/${userId}/password`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ password: newPassword }),
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to update password');
+            }
+
+            alert('Password updated successfully!');
+          } catch (error) {
+            console.error('Error updating password:', error);
+            alert('Failed to update password.');
+          }
+        }
+
+        async function fetchLeases(tenantId) {
+          try {
+            const response = await fetch(`/api/leases?tenant_id=${tenantId}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to fetch leases');
+            }
+
+            return await response.json();
+          } catch (error) {
+            console.error('Error fetching leases:', error);
+            alert('Failed to load leases.');
+            return [];
+          }
+        }
+
+        async function fetchTenants() {
+          try {
+            const response = await fetch(`/api/tenants?user_id=${userId}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (!response.ok) {
+              throw new Error('Failed to fetch tenants');
+            }
+
+            const tenants = await response.json();
+            const tenantList = document.getElementById('tenant-list');
+            tenantList.innerHTML = '';
+
+            if (tenants.length === 0) {
+              tenantList.innerHTML =
+                '<tr><td colspan="5">No tenants found.</td></tr>';
+            } else {
+              const leaseMap = new Map();
+
+              for (const tenant of tenants) {
+                const leases = await fetchLeases(tenant.tenant_id);
+
+                leases.forEach((lease) => {
+                  if (!leaseMap.has(lease.lease_id)) {
+                    leaseMap.set(lease.lease_id, {
+                      lease,
+                      tenants: [],
+                    });
+                  }
+                  leaseMap.get(lease.lease_id).tenants.push(tenant);
+                });
+              }
+
+              const dateFormatter = new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              });
+
+              leaseMap.forEach(({ lease, tenants }) => {
+                const leaseRow = document.createElement('tr');
+                leaseRow.innerHTML = `
+            <td>${lease.lease_id}</td>
+            <td>${dateFormatter.format(new Date(lease.lease_start_date))}</td>
+            <td>${dateFormatter.format(new Date(lease.lease_end_date))}</td>
+            <td>
+              <ul>
+                ${tenants
+                  .map(
+                    (tenant) =>
+                      `<li>${tenant.first_name} ${tenant.last_name}</li>`
+                  )
+                  .join('')}
+              </ul>
+            </td>
+            <td>
+              <button onclick="viewLease(${lease.lease_id})">View Lease</button>
+              <button onclick="viewInvoice(${
+                lease.lease_id
+              })">View Invoice & Pay</button>
+              <button onclick="createRequest(${
+                lease.lease_id
+              })">Create Maintenance Request</button>
+            </td>
+          `;
+                tenantList.appendChild(leaseRow);
+              });
+            }
+          } catch (error) {
+            console.error('Error fetching tenants:', error);
+            alert('Failed to load tenants.');
+          }
+        }
+
+        window.viewLease = function (leaseId) {
+          window.location.href = `/lease?id=${leaseId}`;
+        };
+
+        window.viewInvoice = function (leaseId) {
+          window.location.href = `/invoice?lease_id=${leaseId}`;
+        };
+
+        window.createRequest = function (leaseId) {
+          window.location.href = `/request?lease_id=${leaseId}`;
+        };
+
+        document
+          .getElementById('updateEmailForm')
+          .addEventListener('submit', updateEmail);
+        document
+          .getElementById('updatePasswordForm')
+          .addEventListener('submit', updatePassword);
+
         fetchUserData();
+        fetchTenants();
       }
     </script>
   </body>

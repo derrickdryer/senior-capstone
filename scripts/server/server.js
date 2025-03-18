@@ -1,3 +1,14 @@
+// ======================================================================
+// File: server.js
+// Description: Sets up a Koa server for serving static files and handling API routes.
+//              This server applies middleware for parsing request bodies, serves static
+//              assets with caching settings, handles dynamic routing for HTML pages,
+//              and registers API endpoints for various application domains. It also
+//              supports global error handling and optional SSL configuration.
+// Dependencies: Koa, koa-router, koa-static, koa-mount, koa-bodyparser, dotenv, fs, path.
+// Usage: Define environment variables in a .env file and run this script to start the server.
+// ======================================================================
+
 const Koa = require('koa');
 const Router = require('koa-router');
 const serve = require('koa-static');
@@ -6,15 +17,16 @@ const bodyParser = require('koa-bodyparser');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
-// const http2 = require('http2'); // Commented out as it's not needed for HTTP
 
 dotenv.config();
 const app = new Koa();
 const router = new Router();
 
+// Parse incoming request bodies (e.g., JSON payloads)
 app.use(bodyParser());
 
-// Serve static files from the "public" directory with caching headers
+// Serve static files from the "public" directory with caching headers.
+// Ensures JavaScript files are served with the proper MIME type.
 app.use(
   mount(
     '/public',
@@ -29,12 +41,12 @@ app.use(
   )
 );
 
-// Serve JavaScript files with the correct MIME type and caching headers
+// Serve JavaScript components with caching and correct MIME type.
 app.use(
   mount(
     '/components',
     serve(path.join(__dirname, '../../app/components'), {
-      maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+      maxage: 24 * 60 * 60 * 1000, // Cache for 1 day
       setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript');
@@ -44,12 +56,12 @@ app.use(
   )
 );
 
-// Serve JavaScript files with the correct MIME type and caching headers
+// Serve JavaScript scripts similarly with caching and proper headers.
 app.use(
   mount(
     '/scripts',
     serve(path.join(__dirname, '../../app/scripts'), {
-      maxage: 24 * 60 * 60 * 1000, // Cache static assets for 1 day
+      maxage: 24 * 60 * 60 * 1000, // Cache for 1 day
       setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
           res.setHeader('Content-Type', 'application/javascript');
@@ -59,7 +71,7 @@ app.use(
   )
 );
 
-// Import Routes
+// Import API route modules for various entities.
 const assetsRoutes = require('../../routes/assets');
 const apartmentsRoutes = require('../../routes/apartments');
 const tenantsRoutes = require('../../routes/tenants');
@@ -69,8 +81,9 @@ const maintenanceRequestsRoutes = require('../../routes/maintenance_requests');
 const usersRoutes = require('../../routes/users');
 const notificationsRoutes = require('../../routes/notifications');
 const inquiriesRoutes = require('../../routes/inquiries');
+const loginRoutes = require('../../routes/login'); // Handles authentication
 
-// Register Routes
+// Register API routes with designated base paths.
 router.use('/api/assets', assetsRoutes.routes());
 router.use('/api/apartments', apartmentsRoutes.routes());
 router.use('/api/tenants', tenantsRoutes.routes());
@@ -80,17 +93,19 @@ router.use('/api/maintenance-requests', maintenanceRequestsRoutes.routes());
 router.use('/api/users', usersRoutes.routes());
 router.use('/api/notifications', notificationsRoutes.routes());
 router.use('/api/inquiries', inquiriesRoutes.routes());
+router.use('/api/login', loginRoutes.routes());
 
+// Add the router middleware to handle routes and allowed methods.
 app.use(router.routes()).use(router.allowedMethods());
 
-// Serve the index.html file at "/"
+// Serve the homepage (index.html) at the root URL.
 router.get('/', async (ctx) => {
   const filePath = path.join(__dirname, '../../app/pages/index.html');
   ctx.type = 'html';
   ctx.body = fs.createReadStream(filePath);
 });
 
-// Dynamic Route to Serve All Pages in `app/pages/`
+// Dynamic route: Serves any HTML page located in app/pages based on the URL parameter.
 router.get('/:page', async (ctx) => {
   const requestedPage = ctx.params.page;
   const filePath = path.join(
@@ -112,25 +127,26 @@ router.get('/:page', async (ctx) => {
   }
 });
 
-// Place this new route before the catch-all dynamic page route.
+// Specific route: Serves the property page based on property ID.
+// Placed before the dynamic page route to ensure correct matching.
 router.get('/property/:id', async (ctx) => {
   const filePath = path.join(__dirname, '../../app/pages/property.html');
   ctx.type = 'html';
   ctx.body = fs.createReadStream(filePath);
 });
 
-// Global Error Handler
+// Global error handler to catch and log unexpected server errors.
 app.on('error', (err, ctx) => {
   console.error('Global Error Handler:', err);
   ctx.status = 500;
   ctx.body = 'Internal Server Error';
 });
 
-// Load SSL certificate and key if USE_LOCAL_SSL is true
+// Determine the port from environment variables (default to 3000).
 let server;
 const PORT = process.env.PORT || 3000;
 
-// Commented out SSL/HTTPS related code
+// Uncomment and configure the following block to enable SSL/HTTPS for local development.
 // if (process.env.USE_LOCAL_SSL === 'true') {
 //   const options = {
 //     key: fs.readFileSync(path.join(__dirname, '../../certs/cloudflare.key')),
@@ -147,7 +163,7 @@ server = app.listen(PORT, (err) => {
 });
 // }
 
-// Start the server if it's not already listening
+// Fallback: Ensure the server is listening.
 if (!server.listening) {
   server.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
