@@ -17,6 +17,40 @@
       href="/public/styles/main.css"
     />
     <style>
+      /* Updated table responsiveness and sticky header styles */
+      .table-responsive {
+  max-height: 400px; /* Adjust as needed */
+  overflow-y: auto;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border: 1px solid var(--primary-color);
+  padding-bottom: 20px; /* Extra space at the bottom */
+}
+
+/* Ensure table headers stick when scrolling */
+.table-responsive thead {
+  position: sticky;
+  top: 0;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  z-index: 2;
+}
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+main.container {
+  padding-bottom: 100px; 
+}
+
+
+footer {
+  position: relative; 
+  z-index: 10;
+}
+
       #maintenance-table {
         width: 100%;
         border-collapse: collapse;
@@ -38,9 +72,6 @@
       #maintenance-table tbody tr:hover {
         background-color: rgba(231, 76, 60, 0.2);
       }
-      .table-responsive {
-        overflow-x: auto;
-      }
       .edit-btn,
       .delete-btn {
         cursor: pointer;
@@ -57,16 +88,15 @@
       .info-button {
         display: inline-block;
         padding: 10px 15px;
-        border: 2px solid #333; /* Border for the box */
-        border-radius: 5px; /* Rounded corners */
-        background-color: #f8f9fa; /* Light background */
-        color: #333; /* Dark text */
-        text-decoration: none; /* Remove underline */
+        border: 2px solid #333;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        color: #333;
+        text-decoration: none;
         font-weight: bold;
       }
-
       .info-button:hover {
-        background-color: #ddd; /* Slightly darker on hover */
+        background-color: #ddd;
       }
     </style>
   </head>
@@ -88,11 +118,7 @@
         <nav>
           <ul>
             <li>
-              <a
-                href="/admin"
-                class="info-button"
-                >Back to Admin Dashboard</a
-              >
+              <a href="/admin" class="info-button">Back to Admin Dashboard</a>
             </li>
           </ul>
         </nav>
@@ -101,46 +127,25 @@
 
     <main class="container">
       <h2>All Maintenance Request Information</h2>
-
+      <input
+      type="text"
+      id="search-bar-maintenance"
+      placeholder="Search maintenance requests..."
+      style="margin-bottom:10px; padding:5px; width: 100%;"
+    />
       <!-- Add New Request Form -->
       <form id="add-request-form">
-        <input
-          type="number"
-          id="tenant_id"
-          placeholder="Tenant ID"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_id"
-          placeholder="Apartment ID"
-          required
-        />
-        <input
-          type="date"
-          id="request_date"
-          required
-        />
-        <input
-          type="text"
-          id="issue_description"
-          placeholder="Issue Description"
-          required
-        />
+        <input type="number" id="tenant_id" placeholder="Tenant ID" required />
+        <input type="number" id="apartment_id" placeholder="Apartment ID" required />
+        <input type="date" id="request_date" required />
+        <input type="text" id="issue_description" placeholder="Issue Description" required />
         <select id="status">
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
-        <input
-          type="date"
-          id="completion_date"
-        />
-        <input
-          type="text"
-          id="assigned_to"
-          placeholder="Assigned To"
-        />
+        <input type="date" id="completion_date" />
+        <input type="text" id="assigned_to" placeholder="Assigned To" />
         <button type="submit">Add Request</button>
       </form>
 
@@ -176,6 +181,32 @@
 
     <!-- Documentation: The inline script loads maintenance requests from /api/maintenance-requests and builds a responsive table with edit and delete actions -->
     <script>
+    // Shared search function for any table
+    function setupSearch(inputId, tableId) {
+        const input = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+
+        input.addEventListener('input', function () {
+          const filter = this.value.toLowerCase();
+          const rows = table.getElementsByTagName('tr');
+
+          // Loop starts at 1 to skip header row
+          for (let i = 1; i < rows.length; i++) {
+            // Skip fallback row if its ID includes 'no-'
+            if (rows[i].id && rows[i].id.includes('no-')) continue;
+
+            const cells = rows[i].getElementsByTagName('td');
+            const rowText = Array.from(cells)
+              .map(cell => cell.textContent.toLowerCase())
+              .join(' ');
+            rows[i].style.display = rowText.includes(filter) ? '' : 'none';
+          }
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        setupSearch('search-bar-maintenance', 'maintenance-table');
+      });
       document.addEventListener('DOMContentLoaded', async function () {
         const baseUrl = '/api/maintenance-requests';
         const tableBody = document.querySelector('#maintenance-table tbody');
@@ -183,7 +214,7 @@
 
         function formatDate(dateStr) {
           if (!dateStr) return null;
-          return dateStr.split('T')[0]; // Convert "2025-02-10T05:00:00.000Z" to "2025-02-10"
+          return dateStr.split('T')[0];
         }
 
         async function loadRequests() {
@@ -195,8 +226,7 @@
             tableBody.innerHTML = '';
 
             if (!requests || requests.length === 0) {
-              tableBody.innerHTML =
-                "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
+              tableBody.innerHTML = "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
             } else {
               requests.forEach((request) => createTableRow(request));
             }
@@ -208,44 +238,32 @@
         function createTableRow(request) {
           const row = document.createElement('tr');
           row.innerHTML = `
-          <td>${request.request_id}</td>
-          <td contenteditable="true">${request.tenant_id}</td>
-          <td contenteditable="true">${request.apartment_id}</td>
-          <td contenteditable="true">${formatDate(request.request_date)}</td>
-          <td contenteditable="true">${request.issue_description}</td>
-          <td>
-            <select class="status-dropdown">
-              <option value="pending" ${
-                request.status === 'pending' ? 'selected' : ''
-              }>Pending</option>
-              <option value="in_progress" ${
-                request.status === 'in_progress' ? 'selected' : ''
-              }>In Progress</option>
-              <option value="completed" ${
-                request.status === 'completed' ? 'selected' : ''
-              }>Completed</option>
-            </select>
-          </td>
-          <td contenteditable="true">${
-            formatDate(request.completion_date) || ''
-          }</td>
-          <td contenteditable="true">${request.assigned_to || 'Unassigned'}</td>
-          <td>
-            <button class="edit-btn">Save</button>
-            <button class="delete-btn">Delete</button>
-          </td>
-        `;
+            <td>${request.request_id}</td>
+            <td contenteditable="true">${request.tenant_id}</td>
+            <td contenteditable="true">${request.apartment_id}</td>
+            <td contenteditable="true">${formatDate(request.request_date)}</td>
+            <td contenteditable="true">${request.issue_description}</td>
+            <td>
+              <select class="status-dropdown">
+                <option value="pending" ${request.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="in_progress" ${request.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                <option value="completed" ${request.status === 'completed' ? 'selected' : ''}>Completed</option>
+              </select>
+            </td>
+            <td contenteditable="true">${formatDate(request.completion_date) || ''}</td>
+            <td contenteditable="true">${request.assigned_to || 'Unassigned'}</td>
+            <td>
+              <button class="edit-btn">Save</button>
+              <button class="delete-btn">Delete</button>
+            </td>
+          `;
 
-          row
-            .querySelector('.edit-btn')
-            .addEventListener('click', () =>
-              updateRequest(request.request_id, row)
-            );
-          row
-            .querySelector('.delete-btn')
-            .addEventListener('click', () =>
-              deleteRequest(request.request_id, row)
-            );
+          row.querySelector('.edit-btn').addEventListener('click', () =>
+            updateRequest(request.request_id, row)
+          );
+          row.querySelector('.delete-btn').addEventListener('click', () =>
+            deleteRequest(request.request_id, row)
+          );
 
           tableBody.appendChild(row);
         }
@@ -292,19 +310,11 @@
 
           const formData = {
             tenant_id: parseInt(document.getElementById('tenant_id').value, 10),
-            apartment_id: parseInt(
-              document.getElementById('apartment_id').value,
-              10
-            ),
-            request_date: formatDate(
-              document.getElementById('request_date').value
-            ),
-            issue_description:
-              document.getElementById('issue_description').value,
+            apartment_id: parseInt(document.getElementById('apartment_id').value, 10),
+            request_date: formatDate(document.getElementById('request_date').value),
+            issue_description: document.getElementById('issue_description').value,
             status: document.getElementById('status').value,
-            completion_date:
-              formatDate(document.getElementById('completion_date').value) ||
-              null,
+            completion_date: formatDate(document.getElementById('completion_date').value) || null,
             assigned_to: document.getElementById('assigned_to').value || null,
           };
 
