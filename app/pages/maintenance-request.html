@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,27 +35,16 @@
         color: var(--primary-color);
       }
       html, body {
-  height: 100%;
+  /* Remove fixed height so content can expand */
+  min-height: 100%;
+  height: auto;
   margin: 0;
   padding: 0;
-  overflow-y: auto; /* Enable vertical scrolling */
 }
 
-.container {
-  min-height: 100vh; /* Ensures the main container stretches to full height */
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex-grow: 1; /* Allows the main content to push down the footer */
-  padding-bottom: 20px; /* Ensures space at the bottom */
-}
-
-footer {
-  margin-top: auto;
-  padding: 10px 0;
-  text-align: center;
+main.container {
+  /* Add extra padding at the bottom so you can scroll past your content */
+  padding-bottom: 120px; /* Adjust this value as needed */
 }
     </style>
   </head>
