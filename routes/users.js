@@ -1,21 +1,14 @@
-// File purpose: Defines routes for user management, including CRUD operations and authentication.
-// Endpoints:
-//   GET /by-username/:username      - Returns user details by username
-//   GET /                           - Returns all users
-//   GET /:id                        - Returns a specific user by id
-//   POST /                          - Creates a new user
-//   PUT /:id                        - Updates an existing user by id
-//   DELETE /:id                     - Deletes a user
-//   PUT /users/:id/password         - Updates a user's password
-//   POST /login                     - Authenticates a user and returns a JWT
-//   POST /register                  - Registers a new user
-
 const Router = require('koa-router');
 const usersController = require('../controllers/usersController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateUser,
+  validateUpdateUser,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/users' });
 
+// Protect all routes except login and register (if desired, adjust as needed)
 router.use(authenticateToken);
 
 // GET user by username
@@ -27,22 +20,22 @@ router.get('/', usersController.getAllUsers);
 // GET user by id
 router.get('/:id', usersController.getUserById);
 
-// Create a new user
-router.post('/', usersController.createUser);
+// Create a new user with validation
+router.post('/', validateCreateUser, usersController.createUser);
 
-// Update an existing user
-router.put('/:id', usersController.updateUser);
+// Update an existing user with validation
+router.put('/:id', validateUpdateUser, usersController.updateUser);
 
 // Delete a user
 router.delete('/:id', usersController.deleteUser);
 
-// Update user's password
+// Update user's password (consider applying custom validation for password)
 router.put('/:id/password', usersController.updatePassword);
 
-// Login route for authentication
+// Login route for authentication (typically unprotected)
 router.post('/login', usersController.login);
 
-// Register route for new users
-router.post('/register', usersController.register);
+// Register route for new users (consider adding validation similar to createUser)
+router.post('/register', validateCreateUser, usersController.register);
 
 module.exports = router;
