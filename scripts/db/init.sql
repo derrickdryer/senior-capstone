@@ -145,18 +145,6 @@ INSERT INTO maintenance_requests (tenant_id, apartment_id, request_date, issue_d
 (2, 2, '2025-02-03', 'Broken window', 'in_progress', NULL, 'Alice'),
 (3, 3, '2025-02-05', 'No hot water', 'pending', NULL, NULL);
 
--- Insert dummy data into notifications
-INSERT INTO notifications (user_id, notification_type, content, sent_date, read_status) VALUES
-(1, 'info', 'Your rent is due', '2025-02-01', 'unread'),
-(2, 'warning', 'Maintenance required', '2025-02-02', 'read'),
-(3, 'alert', 'Lease expiring soon', '2025-02-03', 'unread');
-
--- Insert dummy data into inquiries
-INSERT INTO inquiries (tenant_id, property_id, apartment_id, inquiry_content, response_date, first_name, last_name, phone_number) VALUES
-(1, 1, 1, 'Is the apartment still available?', '2025-02-01', 'John', 'Doe', '555-1234'),
-(2, 2, 2, 'Can I schedule a viewing?', '2025-02-02', 'Jane', 'Smith', '555-5678'),
-(3, 3, 3, 'What is the pet policy?', '2025-02-03', 'Alice', 'Johnson', '555-8765');
-
 -- Insert dummy data into invoices
 INSERT INTO invoices (lease_id, invoice_date, total_amount, charges, status) VALUES
 (1, '2025-02-01', 1200.00, '[{"description": "Rent", "amount": 1200.00}]', 'paid'),
