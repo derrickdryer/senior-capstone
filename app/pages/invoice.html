@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Documentation:
-         Invoice Page for Rent Payment.
-         This page displays a summary of rent payment, charge breakdown, and a payment form with dynamic fields.
-         This page contains:
-           - Header and Footer injection via imported components.
-           - Invoice Summary: Displays invoice date and monthly rent.
-           - Charge Breakdown: Lists individual charges and total amount due.
-           - Payment Section: A form that dynamically displays fields for credit/debit card or bank transfer.
-           - Payment Confirmation: A note on payment processing.
-         JavaScript fetches data from '/api/leases-payments' and updates various DOM elements accordingly.
-    -->
     <meta charset="UTF-8" />
     <meta
       name="viewport"
@@ -39,7 +28,6 @@
 
     <!-- Main Content -->
     <main role="main">
-      <!-- Documentation: Invoice section with summary, breakdown, payment form, and confirmation -->
       <section id="invoice">
         <div class="container">
           <h2>Invoice for Rent Payment</h2>
@@ -71,7 +59,6 @@
               action="/process_payment"
               method="POST"
             >
-              <!-- Documentation: Select payment method and provide relevant payment details -->
               <label for="payment-method">Payment Method:</label>
               <select
                 id="payment-method"
@@ -172,54 +159,48 @@
     </main>
 
     <script>
-      // Documentation: Fetch invoice and lease/payment data, then update DOM elements accordingly.
       document.addEventListener('DOMContentLoaded', function () {
-        // Fetch user invoice data from the server
-        fetch('/api/leases-payments')
-          .then((response) => response.json())
-          .then((data) => {
-            // Update Lease Information
-            document.getElementById(
-              'lease-id'
-            ).textContent = `Lease ID: ${data.lease.lease_id}`;
-            document.getElementById(
-              'apartment-id'
-            ).textContent = `Apartment ID: ${data.lease.apartment_id}`;
-            document.getElementById(
-              'tenant-id'
-            ).textContent = `Tenant ID: ${data.lease.tenant_id}`;
-            document.getElementById(
-              'lease_start-date'
-            ).textContent = `Start Date: ${data.lease.start_date}`;
-            document.getElementById(
-              'lease_end-date'
-            ).textContent = `End Date: ${data.lease.end_date}`;
+        // Extract lease_id from the query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const leaseId = urlParams.get('lease_id');
 
-            // Map rent_amount from the apartments table to display rent
-            document.getElementById(
-              'monthly-rent'
-            ).textContent = `Monthly Rent: $${data.lease.rent_amount}`;
+        if (!leaseId) {
+          alert('Lease ID is missing. Unable to load invoice.');
+          return;
+        }
 
-            // Update Payment Information
-            document.getElementById(
-              'payment-id'
-            ).textContent = `Payment ID: ${data.payment.payment_id}`;
-            document.getElementById(
-              'payment-date'
-            ).textContent = `Payment Date: ${data.payment.payment_date}`;
-            document.getElementById(
-              'payment-amount'
-            ).textContent = `Amount: $${data.payment.amount}`;
-            document.getElementById(
-              'payment-method'
-            ).textContent = `Payment Method: ${data.payment.payment_method}`;
-            document.getElementById(
-              'payment-status'
-            ).textContent = `Payment Status: ${data.payment.status}`;
+        // Fetch invoice data for the given lease_id
+        fetch(`/api/invoices?lease_id=${leaseId}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch invoice data');
+            }
+            return response.json();
           })
-          .catch((error) =>
-            console.error('Error fetching lease and payment data:', error)
-          );
+          .then((data) => {
+            // Populate the invoice page with the fetched data
+            document.getElementById('payment_date').textContent =
+              data.payment_date;
+            document.getElementById(
+              'monthly_rent'
+            ).textContent = `$${data.monthly_rent}`;
+            document.getElementById(
+              'amount'
+            ).textContent = `$${data.total_amount}`;
+
+            const chargeBreakdownList = document.getElementById(
+              'charge-breakdown-list'
+            );
+            chargeBreakdownList.innerHTML = data.charges
+              .map(
+                (charge) => `<li>${charge.description}: $${charge.amount}</li>`
+              )
+              .join('');
+          })
+          .catch((error) => {
+            console.error('Error fetching invoice data:', error);
+            alert('Failed to load invoice data.');
+          });
 
         // Show relevant payment details based on selected payment method
         const paymentMethodSelect = document.getElementById('payment-method');
@@ -229,13 +210,13 @@
         paymentMethodSelect.addEventListener('change', function () {
           if (this.value === 'credit-card' || this.value === 'debit-card') {
             cardDetails.style.display = 'block';
-            bankDetails.style.display = 'none'; // Hide bank details when card is selected
+            bankDetails.style.display = 'none';
           } else if (this.value === 'bank-transfer') {
             bankDetails.style.display = 'block';
-            cardDetails.style.display = 'none'; // Hide card details when bank transfer is selected
+            cardDetails.style.display = 'none';
           } else {
             cardDetails.style.display = 'none';
-            bankDetails.style.display = 'none'; // Hide both if no valid option is selected
+            bankDetails.style.display = 'none';
           }
         });
 

@@ -89,31 +89,15 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
 
--- Table: notifications
-CREATE TABLE IF NOT EXISTS notifications (
-    notification_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    notification_type VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    sent_date DATE NOT NULL,
-    read_status VARCHAR(255) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
--- Table: inquiries
-CREATE TABLE IF NOT EXISTS inquiries (
-    inquiry_id INT AUTO_INCREMENT PRIMARY KEY,
-    tenant_id INT,
-    property_id INT,
-    apartment_id INT,
-    inquiry_content TEXT NOT NULL,
-    response_date DATE,
-    first_name VARCHAR(100) NOT NULL,
-    last_name VARCHAR(100) NOT NULL,
-    phone_number VARCHAR(15) NOT NULL,
-    FOREIGN KEY (tenant_id) REFERENCES tenants(tenant_id) ON DELETE SET NULL,
-    FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE,
-    FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
+-- Table: invoices
+CREATE TABLE IF NOT EXISTS invoices (
+    invoice_id INT AUTO_INCREMENT PRIMARY KEY,
+    lease_id INT NOT NULL,
+    invoice_date DATE NOT NULL,
+    total_amount DECIMAL(10, 2) NOT NULL,
+    charges JSON NOT NULL, -- Stores charge breakdown as JSON
+    status ENUM('unpaid', 'paid', 'overdue') NOT NULL,
+    FOREIGN KEY (lease_id) REFERENCES leases(lease_id) ON DELETE CASCADE
 );
 
 -- Insert dummy data into users
@@ -172,3 +156,9 @@ INSERT INTO inquiries (tenant_id, property_id, apartment_id, inquiry_content, re
 (1, 1, 1, 'Is the apartment still available?', '2025-02-01', 'John', 'Doe', '555-1234'),
 (2, 2, 2, 'Can I schedule a viewing?', '2025-02-02', 'Jane', 'Smith', '555-5678'),
 (3, 3, 3, 'What is the pet policy?', '2025-02-03', 'Alice', 'Johnson', '555-8765');
+
+-- Insert dummy data into invoices
+INSERT INTO invoices (lease_id, invoice_date, total_amount, charges, status) VALUES
+(1, '2025-02-01', 1200.00, '[{"description": "Rent", "amount": 1200.00}]', 'paid'),
+(2, '2025-02-01', 1500.00, '[{"description": "Rent", "amount": 1500.00}]', 'paid'),
+(3, '2025-03-01', 900.00, '[{"description": "Rent", "amount": 900.00}]', 'unpaid');
