@@ -63,54 +63,40 @@ exports.getInvoiceById = async (ctx) => {
  * @returns {Promise<void>} Sets ctx.body with an array of invoices for the lease.
  * @throws {Error} If retrieval fails.
  */
-exports.getInvoiceByLeaseAndInvoiceId = async (ctx) => {
+exports.getInvoicesByLeaseId = async (ctx) => {
   try {
-    const { lease_id, invoice_id } = ctx.query;
-
-    // Validate the required parameters.
-    if (!lease_id || !invoice_id) {
+    const { lease_id } = ctx.query;
+    if (!lease_id) {
       ctx.status = 400;
-      ctx.body = {
-        error: 'Both lease_id and invoice_id query parameters are required',
-      };
+      ctx.body = { error: 'lease_id query parameter is required' };
       return;
     }
 
-    // Query to fetch the specific invoice along with its lease details.
     const [rows] = await pool.query(
       `
       SELECT 
-        invoices.invoice_id,
-        invoices.lease_id,
-        invoices.invoice_date,
-        invoices.total_amount,
-        invoices.charges,
-        invoices.status AS invoice_status,
-        leases.lease_start_date,
-        leases.lease_end_date,
-        leases.monthly_rent,
-        leases.security_deposit,
-        leases.status AS lease_status
+        invoice_id,
+        lease_id,
+        invoice_date,
+        total_amount,
+        charges,
+        status AS invoice_status
       FROM invoices
-      JOIN leases ON invoices.lease_id = leases.lease_id
-      WHERE invoices.invoice_id = ? AND invoices.lease_id = ?
+      WHERE lease_id = ?
       `,
-      [invoice_id, lease_id]
+      [lease_id]
     );
 
-    // Check if any data was returned
     if (rows.length === 0) {
       ctx.status = 404;
-      ctx.body = {
-        error: 'Invoice not found for the given lease ID and invoice ID',
-      };
+      ctx.body = { error: `No invoices found for lease_id ${lease_id}` };
       return;
     }
 
     ctx.status = 200;
-    ctx.body = rows[0];
+    ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching invoice by lease and invoice ID:', error);
+    console.error('Error fetching invoices by lease ID:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

@@ -8,12 +8,6 @@ router.get('/', invoicesController.getAllInvoices);
 router.get('/:id', invoicesController.getInvoiceById);
 router.get('/by-lease', invoicesController.getInvoicesByLeaseId);
 
-// New route for fetching an invoice by both invoice_id and lease_id
-router.get(
-  '/by-lease-and-invoice',
-  invoicesController.getInvoiceByLeaseAndInvoiceId
-);
-
 router.get(
   '/current-unpaid',
   invoicesController.getCurrentUnpaidInvoiceByLeaseId
