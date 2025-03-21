@@ -21,7 +21,6 @@ exports.getAllUsers = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching users:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -59,7 +58,6 @@ exports.updatePassword = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Password updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating password:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -108,7 +106,6 @@ exports.login = async (ctx) => {
       role: user.role,
     };
   } catch (error) {
-    console.error('❌ Error during login:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -163,7 +160,6 @@ exports.register = async (ctx) => {
       user_id: result[0].insertId,
     };
   } catch (error) {
-    console.error('❌ Error during registration:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -193,7 +189,6 @@ exports.getUserById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching user:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -225,7 +220,6 @@ exports.getUserByName = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching user by username:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -258,7 +252,6 @@ exports.createUser = async (ctx) => {
       user_id: result[0].insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating user:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -295,7 +288,6 @@ exports.updateUser = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'User updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating user:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -325,7 +317,6 @@ exports.deleteUser = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'User deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting user:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

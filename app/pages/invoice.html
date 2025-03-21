@@ -285,7 +285,6 @@
             }
           })
           .catch((error) => {
-            console.error('Error fetching invoice data:', error);
             alert('Failed to load invoice data.');
           });
 
@@ -309,6 +308,14 @@
         // Initialize payment details display.
         cardDetails.style.display = 'none';
         bankDetails.style.display = 'none';
+
+        const paymentForm = document.querySelector(
+          'form[action="/process_payment"]'
+        );
+        paymentForm.addEventListener('submit', function (event) {
+          event.preventDefault();
+          window.location.href = '/stripe-placeholder';
+        });
       });
     </script>
   </body>

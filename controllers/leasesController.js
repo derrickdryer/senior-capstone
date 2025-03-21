@@ -12,7 +12,6 @@ const pool = require('../database'); // Import MySQL connection
  */
 exports.getAllLeases = async (ctx) => {
   try {
-    console.log('✅ Fetching all leases...');
     /**
      * Retrieves all rows from the leases table.
      *
@@ -23,7 +22,6 @@ exports.getAllLeases = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching leases:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -63,7 +61,65 @@ exports.getLeaseById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching lease:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+// Get an expanded lease with details from related tables: tenants, apartments, and properties.
+exports.getLeaseByIdDetailed = async (ctx) => {
+  try {
+    const sql = `
+      SELECT 
+        l.*,
+        t.first_name, t.last_name, t.email,
+        a.unit_number, a.floor, a.bedrooms, a.bathrooms,
+        p.address, p.city, p.state, p.postal_code
+      FROM leases l
+      JOIN tenants t ON l.tenant_id = t.tenant_id
+      JOIN apartments a ON l.apartment_id = a.apartment_id
+      JOIN assets p ON a.property_id = p.property_id
+      WHERE l.lease_id = ?
+    `;
+    const [rows] = await pool.query(sql, [ctx.params.id]);
+    if (rows.length === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'Lease not found' };
+      return;
+    }
+    const row = rows[0];
+    // Restructure the row into nested details.
+    const expandedLease = {
+      lease_id: row.lease_id,
+      tenant_id: row.tenant_id,
+      apartment_id: row.apartment_id,
+      lease_start_date: row.lease_start_date,
+      lease_end_date: row.lease_end_date,
+      monthly_rent: row.monthly_rent,
+      security_deposit: row.security_deposit,
+      status: row.status,
+      tenant: {
+        first_name: row.first_name,
+        last_name: row.last_name,
+        email: row.email,
+      },
+      apartment: {
+        apartment_id: row.apartment_id,
+        unit_number: row.unit_number,
+        floor: row.floor,
+        bedrooms: row.bedrooms,
+        bathrooms: row.bathrooms,
+      },
+      property: {
+        address: row.address,
+        city: row.city,
+        state: row.state,
+        postal_code: row.postal_code,
+      },
+    };
+    ctx.status = 200;
+    ctx.body = expandedLease;
+  } catch (error) {
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -129,7 +185,6 @@ exports.createLease = async (ctx) => {
       lease_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating lease:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -205,7 +260,6 @@ exports.updateLease = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Lease updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating lease:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -246,7 +300,6 @@ exports.deleteLease = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Lease deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting lease:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

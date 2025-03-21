@@ -11,12 +11,10 @@ const pool = require('../database'); // Import MySQL connection
  */
 exports.getAllTenants = async (ctx) => {
   try {
-    console.log('✅ Fetching all tenants...');
     const [rows] = await pool.query('SELECT * FROM tenants');
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching tenants:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -47,7 +45,6 @@ exports.getTenantById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching tenant:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -81,7 +78,6 @@ exports.createTenant = async (ctx) => {
       tenant_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating tenant:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -121,7 +117,6 @@ exports.updateTenant = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Tenant updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating tenant:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -153,7 +148,6 @@ exports.deleteTenant = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Tenant deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting tenant:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

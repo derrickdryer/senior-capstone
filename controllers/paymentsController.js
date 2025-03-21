@@ -12,12 +12,10 @@ const pool = require('../database'); // Import MySQL connection
  */
 exports.getAllPayments = async (ctx) => {
   try {
-    console.log('✅ Fetching all payments...');
     const [rows] = await pool.query('SELECT * FROM payments');
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching payments:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -49,7 +47,6 @@ exports.getPaymentById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching payment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -85,7 +82,6 @@ exports.createPayment = async (ctx) => {
       payment_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating payment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -127,7 +123,6 @@ exports.updatePayment = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Payment updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating payment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -160,7 +155,6 @@ exports.deletePayment = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Payment deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting payment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

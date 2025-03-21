@@ -1,7 +1,10 @@
 const Router = require('koa-router');
 const invoicesController = require('../controllers/invoicesController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = new Router({ prefix: '/api/invoices' });
+
+router.use(authenticateToken);
 
 // Specific routes first:
 router.get('/', invoicesController.getAllInvoices);

@@ -19,37 +19,37 @@
     <style>
       /* Updated table responsiveness and sticky header styles */
       .table-responsive {
-  max-height: 400px; /* Adjust as needed */
-  overflow-y: auto;
-  overflow-x: auto;
-  margin-bottom: 2rem;
-  border: 1px solid var(--primary-color);
-  padding-bottom: 20px; /* Extra space at the bottom */
-}
+        max-height: 400px; /* Adjust as needed */
+        overflow-y: auto;
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        border: 1px solid var(--primary-color);
+        padding-bottom: 20px; /* Extra space at the bottom */
+      }
 
-/* Ensure table headers stick when scrolling */
-.table-responsive thead {
-  position: sticky;
-  top: 0;
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  z-index: 2;
-}
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
+      /* Ensure table headers stick when scrolling */
+      .table-responsive thead {
+        position: sticky;
+        top: 0;
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+        z-index: 2;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
 
-main.container {
-  padding-bottom: 100px; 
-}
+      main.container {
+        padding-bottom: 100px;
+      }
 
-
-footer {
-  position: relative; 
-  z-index: 10;
-}
+      footer {
+        position: relative;
+        z-index: 10;
+      }
 
       #maintenance-table {
         width: 100%;
@@ -118,7 +118,11 @@ footer {
         <nav>
           <ul>
             <li>
-              <a href="/admin" class="info-button">Back to Admin Dashboard</a>
+              <a
+                href="/admin"
+                class="info-button"
+                >Back to Admin Dashboard</a
+              >
             </li>
           </ul>
         </nav>
@@ -128,24 +132,50 @@ footer {
     <main class="container">
       <h2>All Maintenance Request Information</h2>
       <input
-      type="text"
-      id="search-bar-maintenance"
-      placeholder="Search maintenance requests..."
-      style="margin-bottom:10px; padding:5px; width: 100%;"
-    />
+        type="text"
+        id="search-bar-maintenance"
+        placeholder="Search maintenance requests..."
+        style="margin-bottom: 10px; padding: 5px; width: 100%"
+      />
       <!-- Add New Request Form -->
       <form id="add-request-form">
-        <input type="number" id="tenant_id" placeholder="Tenant ID" required />
-        <input type="number" id="apartment_id" placeholder="Apartment ID" required />
-        <input type="date" id="request_date" required />
-        <input type="text" id="issue_description" placeholder="Issue Description" required />
+        <input
+          type="number"
+          id="tenant_id"
+          placeholder="Tenant ID"
+          required
+        />
+        <input
+          type="number"
+          id="apartment_id"
+          placeholder="Apartment ID"
+          required
+        />
+        <input
+          type="date"
+          id="request_date"
+          required
+        />
+        <input
+          type="text"
+          id="issue_description"
+          placeholder="Issue Description"
+          required
+        />
         <select id="status">
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
-        <input type="date" id="completion_date" />
-        <input type="text" id="assigned_to" placeholder="Assigned To" />
+        <input
+          type="date"
+          id="completion_date"
+        />
+        <input
+          type="text"
+          id="assigned_to"
+          placeholder="Assigned To"
+        />
         <button type="submit">Add Request</button>
       </form>
 
@@ -181,8 +211,8 @@ footer {
 
     <!-- Documentation: The inline script loads maintenance requests from /api/maintenance-requests and builds a responsive table with edit and delete actions -->
     <script>
-    // Shared search function for any table
-    function setupSearch(inputId, tableId) {
+      // Shared search function for any table
+      function setupSearch(inputId, tableId) {
         const input = document.getElementById(inputId);
         const table = document.getElementById(tableId);
 
@@ -197,7 +227,7 @@ footer {
 
             const cells = rows[i].getElementsByTagName('td');
             const rowText = Array.from(cells)
-              .map(cell => cell.textContent.toLowerCase())
+              .map((cell) => cell.textContent.toLowerCase())
               .join(' ');
             rows[i].style.display = rowText.includes(filter) ? '' : 'none';
           }
@@ -208,6 +238,7 @@ footer {
         setupSearch('search-bar-maintenance', 'maintenance-table');
       });
       document.addEventListener('DOMContentLoaded', async function () {
+        const token = sessionStorage.getItem('token');
         const baseUrl = '/api/maintenance-requests';
         const tableBody = document.querySelector('#maintenance-table tbody');
         const addRequestForm = document.getElementById('add-request-form');
@@ -226,12 +257,12 @@ footer {
             tableBody.innerHTML = '';
 
             if (!requests || requests.length === 0) {
-              tableBody.innerHTML = "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
+              tableBody.innerHTML =
+                "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
             } else {
               requests.forEach((request) => createTableRow(request));
             }
           } catch (error) {
-            console.error('❌ Error fetching maintenance requests:', error);
           }
         }
 
@@ -245,25 +276,39 @@ footer {
             <td contenteditable="true">${request.issue_description}</td>
             <td>
               <select class="status-dropdown">
-                <option value="pending" ${request.status === 'pending' ? 'selected' : ''}>Pending</option>
-                <option value="in_progress" ${request.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                <option value="completed" ${request.status === 'completed' ? 'selected' : ''}>Completed</option>
+                <option value="pending" ${
+                  request.status === 'pending' ? 'selected' : ''
+                }>Pending</option>
+                <option value="in_progress" ${
+                  request.status === 'in_progress' ? 'selected' : ''
+                }>In Progress</option>
+                <option value="completed" ${
+                  request.status === 'completed' ? 'selected' : ''
+                }>Completed</option>
               </select>
             </td>
-            <td contenteditable="true">${formatDate(request.completion_date) || ''}</td>
-            <td contenteditable="true">${request.assigned_to || 'Unassigned'}</td>
+            <td contenteditable="true">${
+              formatDate(request.completion_date) || ''
+            }</td>
+            <td contenteditable="true">${
+              request.assigned_to || 'Unassigned'
+            }</td>
             <td>
               <button class="edit-btn">Save</button>
               <button class="delete-btn">Delete</button>
             </td>
           `;
 
-          row.querySelector('.edit-btn').addEventListener('click', () =>
-            updateRequest(request.request_id, row)
-          );
-          row.querySelector('.delete-btn').addEventListener('click', () =>
-            deleteRequest(request.request_id, row)
-          );
+          row
+            .querySelector('.edit-btn')
+            .addEventListener('click', () =>
+              updateRequest(request.request_id, row)
+            );
+          row
+            .querySelector('.delete-btn')
+            .addEventListener('click', () =>
+              deleteRequest(request.request_id, row)
+            );
 
           tableBody.appendChild(row);
         }
@@ -283,14 +328,16 @@ footer {
           try {
             const response = await fetch(`${baseUrl}/${id}`, {
               method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify(updatedRequest),
             });
 
             if (!response.ok) throw new Error('Failed to update request');
             alert('Request updated successfully!');
           } catch (error) {
-            console.error('Error updating request:', error);
           }
         }
 
@@ -300,7 +347,6 @@ footer {
               await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
               row.remove();
             } catch (error) {
-              console.error('Error deleting request:', error);
             }
           }
         }
@@ -310,11 +356,19 @@ footer {
 
           const formData = {
             tenant_id: parseInt(document.getElementById('tenant_id').value, 10),
-            apartment_id: parseInt(document.getElementById('apartment_id').value, 10),
-            request_date: formatDate(document.getElementById('request_date').value),
-            issue_description: document.getElementById('issue_description').value,
+            apartment_id: parseInt(
+              document.getElementById('apartment_id').value,
+              10
+            ),
+            request_date: formatDate(
+              document.getElementById('request_date').value
+            ),
+            issue_description:
+              document.getElementById('issue_description').value,
             status: document.getElementById('status').value,
-            completion_date: formatDate(document.getElementById('completion_date').value) || null,
+            completion_date:
+              formatDate(document.getElementById('completion_date').value) ||
+              null,
             assigned_to: document.getElementById('assigned_to').value || null,
           };
 

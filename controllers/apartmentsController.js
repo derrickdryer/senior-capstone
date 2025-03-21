@@ -3,12 +3,10 @@ const pool = require('../database'); // Import MySQL connection
 // Get all apartments
 exports.getAllApartments = async (ctx) => {
   try {
-    console.log('✅ Fetching all apartments...');
     const [rows] = await pool.query('SELECT * FROM apartments');
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching apartments:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -17,7 +15,6 @@ exports.getAllApartments = async (ctx) => {
 // Get apartments by property ID
 exports.getApartmentsByProperty = async (ctx) => {
   try {
-    console.log(`✅ Fetching apartments for property_id: ${ctx.params.propertyId}`);
     const [rows] = await pool.query(
       'SELECT * FROM apartments WHERE property_id = ?',
       [ctx.params.propertyId]
@@ -26,7 +23,6 @@ exports.getApartmentsByProperty = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching apartments by property:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -47,7 +43,6 @@ exports.getApartmentById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching apartment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -87,7 +82,6 @@ exports.createApartment = async (ctx) => {
       apartment_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating apartment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -131,7 +125,6 @@ exports.updateApartment = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Apartment updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating apartment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -156,7 +149,6 @@ exports.toggleApartmentAvailability = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Apartment availability updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating apartment availability:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -178,7 +170,6 @@ exports.deleteApartment = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Apartment deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting apartment:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

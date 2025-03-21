@@ -21,6 +21,8 @@ router.get('/', leasesController.getAllLeases);
 // GET lease by id
 router.get('/:id', leasesController.getLeaseById);
 
+router.get('/detailed/:id', leasesController.getLeaseByIdDetailed);
+
 // Create a new lease
 router.post('/', leasesController.createLease);
 

@@ -8,8 +8,11 @@
 
 const Router = require('koa-router');
 const tenantsController = require('../controllers/tenantsController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = new Router({ prefix: '/api/tenants' });
+
+router.use(authenticateToken);
 
 // GET all tenants
 router.get('/', tenantsController.getAllTenants);

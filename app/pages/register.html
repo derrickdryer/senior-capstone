@@ -125,12 +125,6 @@
           }
 
           try {
-            console.log('Attempting to register with:', {
-              email,
-              username,
-              password,
-            });
-
             // Send registration request to the server
             const response = await fetch('/api/users/register', {
               method: 'POST',
@@ -138,15 +132,12 @@
               body: JSON.stringify({ email, username, password }),
             });
 
-            console.log('Response status:', response.status);
-
             if (!response.ok) {
               const errorText = await response.text();
               throw new Error(errorText || 'Registration failed');
             }
 
             const result = await response.json();
-            console.log('Registration result:', result);
 
             // Display success message
             successMessage.textContent =
@@ -156,7 +147,6 @@
             // Optionally, redirect to the login page
             // window.location.href = '/login';
           } catch (error) {
-            console.error('Registration Error:', error);
             errorMessage.textContent =
               'An error occurred. Please try again later.';
             errorMessage.style.display = 'block';

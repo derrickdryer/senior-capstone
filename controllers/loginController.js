@@ -70,7 +70,6 @@ exports.login = async (ctx) => {
       token,
     };
   } catch (error) {
-    console.error('❌ Error during login', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

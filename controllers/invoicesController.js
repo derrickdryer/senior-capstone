@@ -15,7 +15,6 @@ exports.getAllInvoices = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching invoices:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -46,7 +45,6 @@ exports.getInvoiceById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -96,7 +94,6 @@ exports.getInvoicesByLeaseId = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('Error fetching invoices by lease ID:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -156,7 +153,6 @@ exports.getCurrentUnpaidInvoiceByLeaseId = async (ctx) => {
     ctx.status = 200;
     ctx.body = invoice;
   } catch (error) {
-    console.error('❌ Error fetching current unpaid invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -199,7 +195,6 @@ exports.createInvoice = async (ctx) => {
       invoice_id: result[0].insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -243,7 +238,6 @@ exports.updateInvoice = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Invoice updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -276,7 +270,6 @@ exports.deleteInvoice = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Invoice deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

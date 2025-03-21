@@ -94,16 +94,12 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ username, password }),
             });
-
-            console.log('Response status:', response.status);
-
             if (!response.ok) {
               const errorText = await response.text();
               throw new Error(errorText || 'Login failed');
             }
 
             const result = await response.json();
-            console.log('Login result:', result);
             sessionStorage.setItem('token', result.token);
 
             // Display success message instead of redirecting
@@ -113,7 +109,6 @@
             // Redirect to the user dashboard
             window.location.href = '/index';
           } catch (error) {
-            console.error('Login Error:', error);
             errorMessage.textContent =
               'An error occurred. Please try again later.';
             errorMessage.style.display = 'block';

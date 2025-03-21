@@ -151,6 +151,9 @@
       const imagesInput = document.getElementById('images');
       const fileList = document.getElementById('file-list');
 
+      // Added token from sessionStorage for API authorization
+      const token = sessionStorage.getItem('token');
+
       // Handle form submission: prevent default, append files, and call API
       form.addEventListener('submit', async function (event) {
         event.preventDefault();
@@ -164,15 +167,17 @@
         });
 
         try {
-          // Send property data to the backend API
+          // Send property data to the backend API including Authorization header
           const response = await fetch('http://localhost:3000/api/properties', {
             method: 'POST',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
             body: formData,
           });
 
           if (response.ok) {
             const result = await response.json();
-            console.log('Property added:', result);
 
             // Alert for user feedback
             alert(
@@ -185,7 +190,6 @@
             alert(`Failed to add property: ${errorData.error}`);
           }
         } catch (error) {
-          console.error('Error adding property:', error);
           alert('An error occurred while adding the property.');
         }
       });

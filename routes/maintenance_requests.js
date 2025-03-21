@@ -8,8 +8,11 @@
 
 const Router = require('koa-router');
 const maintenanceRequestsController = require('../controllers/maintenanceRequestsController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = new Router({ prefix: '/api/maintenance-requests' });
+
+router.use(authenticateToken);
 
 // GET all maintenance requests
 router.get('/', maintenanceRequestsController.getAllMaintenanceRequests);

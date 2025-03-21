@@ -12,8 +12,11 @@
 
 const Router = require('koa-router');
 const usersController = require('../controllers/usersController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = new Router({ prefix: '/api/users' });
+
+router.use(authenticateToken);
 
 // GET user by username
 router.get('/by-username/:username', usersController.getUserByName);
@@ -34,7 +37,7 @@ router.put('/:id', usersController.updateUser);
 router.delete('/:id', usersController.deleteUser);
 
 // Update user's password
-router.put('/users/:id/password', usersController.updatePassword);
+router.put('/:id/password', usersController.updatePassword);
 
 // Login route for authentication
 router.post('/login', usersController.login);

@@ -140,6 +140,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
+        const token = sessionStorage.getItem('token');
         const tenantIdForm = document.getElementById('tenant-id-form');
         const tenantIdInput = document.getElementById('tenant_id_input');
         const requestSection = document.getElementById('request-section');
@@ -214,7 +215,6 @@
               });
             }
           } catch (error) {
-            console.error('❌ Error fetching maintenance requests:', error);
             noRequestsMessage.textContent =
               'Error loading maintenance requests. Please try again later.';
           }
@@ -261,7 +261,10 @@
           try {
             const response = await fetch('/api/maintenance-requests', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
               body: JSON.stringify(formData),
             });
 
@@ -271,7 +274,6 @@
             maintenanceForm.reset();
             loadRequests();
           } catch (error) {
-            console.error('❌ Error submitting request:', error);
             alert('Error submitting request. Please try again.');
           }
         });

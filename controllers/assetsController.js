@@ -3,12 +3,10 @@ const pool = require('../database'); // Import MySQL connection
 // Get all assets
 exports.getAllAssets = async (ctx) => {
   try {
-    console.log('✅ Fetching all assets...');
     const [rows] = await pool.query('SELECT * FROM assets');
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching assets:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -29,7 +27,6 @@ exports.getAssetById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching asset:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -51,7 +48,6 @@ exports.createAsset = async (ctx) => {
       property_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating asset:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -76,7 +72,6 @@ exports.updateAsset = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Asset updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating asset:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -101,7 +96,6 @@ exports.toggleAvailability = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Asset availability updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating asset availability:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -123,7 +117,6 @@ exports.deleteAsset = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Asset deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting asset:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }

@@ -8,8 +8,11 @@
 
 const Router = require('koa-router');
 const paymentsController = require('../controllers/paymentsController');
+const { authenticateToken } = require('../middleware/auth');
 
 const router = new Router({ prefix: '/api/payments' });
+
+router.use(authenticateToken);
 
 // GET all payments
 router.get('/', paymentsController.getAllPayments);

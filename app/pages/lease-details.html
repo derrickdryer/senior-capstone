@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <title>Lease Details - Russell Properties</title>
+  </head>
+  <body>
+    <script type="module">
+      import { createHeader } from '/components/header.js';
+      import { createFooter } from '/components/footer.js';
+      document.body.prepend(createHeader());
+      document.body.appendChild(createFooter());
+    </script>
+
+    <main class="container">
+      <section id="lease-details">
+        <h2>Lease Details</h2>
+        <div id="details">
+          <!-- Lease details will be inserted here -->
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Helper to get query parameters.
+      function getQueryParam(param) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(param);
+      }
+
+      const leaseId = getQueryParam('id');
+
+      if (!leaseId) {
+        document.getElementById('details').innerHTML =
+          '<p>Error: No lease id provided.</p>';
+      } else {
+        fetchLeaseDetails(leaseId);
+      }
+
+      async function fetchLeaseDetails(id) {
+        try {
+          const token = sessionStorage.getItem('token');
+          // Use the detailed endpoint to retrieve tenant, apartment, and property joins.
+          const response = await fetch(`/api/leases/detailed/${id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch lease details.');
+          }
+
+          const lease = await response.json();
+          displayLeaseDetails(lease);
+        } catch (error) {
+          document.getElementById(
+            'details'
+          ).innerHTML = `<p>${error.message}</p>`;
+        }
+      }
+
+      function displayLeaseDetails(lease) {
+        // Format dates nicely.
+        const dateFormatter = new Intl.DateTimeFormat('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+
+        // Build the HTML layout for detailed lease information.
+        // Assumes the API now returns nested objects:
+        //   lease.tenant with first_name, last_name, email, etc.
+        //   lease.apartment with apartment details (unit_number, floor, etc.)
+        //   lease.property with property details (address, city, state, postal_code)
+        const htmlContent = `
+          <h3>Lease Information</h3>
+          <p><strong>Lease ID:</strong> ${lease.lease_id}</p>
+          <p><strong>Status:</strong> ${lease.status}</p>
+          
+          <h3>Tenant Details</h3>
+          <p><strong>Name:</strong> ${lease.tenant.first_name} ${
+          lease.tenant.last_name
+        }</p>
+          <p><strong>Email:</strong> ${lease.tenant.email}</p>
+
+          <h3>Apartment Details</h3>
+          <p><strong>Apartment ID:</strong> ${lease.apartment.apartment_id}</p>
+          <p><strong>Unit:</strong> ${lease.apartment.unit_number}</p>
+          <p><strong>Floor:</strong> ${lease.apartment.floor}</p>
+          <p><strong>Bedrooms:</strong> ${lease.apartment.bedrooms}</p>
+          <p><strong>Bathrooms:</strong> ${lease.apartment.bathrooms}</p>
+          
+          <h3>Property Details</h3>
+          <p><strong>Address:</strong> ${lease.property.address}</p>
+          <p><strong>City:</strong> ${lease.property.city}</p>
+          <p><strong>State:</strong> ${lease.property.state}</p>
+          <p><strong>Postal Code:</strong> ${lease.property.postal_code}</p>
+          
+          <h3>Lease Terms</h3>
+          <p><strong>Lease Start Date:</strong> ${dateFormatter.format(
+            new Date(lease.lease_start_date)
+          )}</p>
+          <p><strong>Lease End Date:</strong> ${dateFormatter.format(
+            new Date(lease.lease_end_date)
+          )}</p>
+          <p><strong>Monthly Rent:</strong> $${lease.monthly_rent}</p>
+          <p><strong>Security Deposit:</strong> $${lease.security_deposit}</p>
+        `;
+        document.getElementById('details').innerHTML = htmlContent;
+      }
+    </script>
+  </body>
+</html>

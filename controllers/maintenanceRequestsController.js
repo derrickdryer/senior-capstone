@@ -12,7 +12,6 @@ const pool = require('../database'); // Import MySQL connection
  */
 exports.getAllMaintenanceRequests = async (ctx) => {
   try {
-    console.log('✅ Fetching all maintenance requests...');
     /**
      * Retrieves all maintenance requests from the database.
      *
@@ -23,7 +22,6 @@ exports.getAllMaintenanceRequests = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows;
   } catch (error) {
-    console.error('❌ Error fetching maintenance requests:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -63,7 +61,6 @@ exports.getMaintenanceRequestById = async (ctx) => {
     ctx.status = 200;
     ctx.body = rows[0];
   } catch (error) {
-    console.error('❌ Error fetching maintenance request:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -129,7 +126,6 @@ exports.createMaintenanceRequest = async (ctx) => {
       request_id: result.insertId,
     };
   } catch (error) {
-    console.error('❌ Error creating maintenance request:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -203,7 +199,6 @@ exports.updateMaintenanceRequest = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Maintenance request updated successfully' };
   } catch (error) {
-    console.error('❌ Error updating maintenance request:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
@@ -245,7 +240,6 @@ exports.deleteMaintenanceRequest = async (ctx) => {
     ctx.status = 200;
     ctx.body = { message: 'Maintenance request deleted successfully' };
   } catch (error) {
-    console.error('❌ Error deleting maintenance request:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
