@@ -36,10 +36,12 @@
           <section class="invoice-summary">
             <h3>Invoice Summary</h3>
             <p>
-              <strong>Invoice Date:</strong> <span id="payment_date"></span>
+              <strong>Invoice Date:</strong>
+              <span id="payment_date"></span>
             </p>
             <p>
-              <strong>Monthly Rent:</strong> <span id="monthly_rent"></span>
+              <strong>Monthly Rent:</strong>
+              <span id="monthly_rent"></span>
             </p>
           </section>
 
@@ -49,7 +51,31 @@
             <ul id="charge-breakdown-list">
               <!-- Charges will be inserted here -->
             </ul>
-            <p><strong>Total Amount Due:</strong> <span id="amount"></span></p>
+            <p>
+              <strong>Total Amount Due:</strong>
+              <span id="amount"></span>
+            </p>
+          </section>
+
+          <!-- Lease Details -->
+          <section class="lease-details">
+            <h3>Lease Details</h3>
+            <p>
+              <strong>Lease Start Date:</strong>
+              <span id="lease_start_date"></span>
+            </p>
+            <p>
+              <strong>Lease End Date:</strong>
+              <span id="lease_end_date"></span>
+            </p>
+            <p>
+              <strong>Security Deposit:</strong>
+              <span id="security_deposit"></span>
+            </p>
+            <p>
+              <strong>Lease Status:</strong>
+              <span id="lease_status"></span>
+            </p>
           </section>
 
           <!-- Payment Form -->
@@ -149,10 +175,14 @@
           <!-- Payment Confirmation -->
           <section class="confirmation">
             <p>
-              <strong>Note:</strong> Your payment will be processed securely.
-              Once confirmed, a receipt will be sent to your registered email
-              address.
+              <strong>Note:</strong>
+              Your payment will be processed securely. Once confirmed, a receipt
+              will be sent to your registered email address.
             </p>
+            <p
+              id="overdue-message"
+              style="color: red; font-weight: bold"
+            ></p>
           </section>
         </div>
       </section>
@@ -160,17 +190,16 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        // Extract lease_id from the query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const leaseId = urlParams.get('lease_id');
 
         if (!leaseId) {
-          alert('Lease ID is missing. Unable to load invoice.');
+          alert('Lease ID is required.');
           return;
         }
 
-        // Fetch invoice data for the given lease_id
-        fetch(`/api/invoices?lease_id=${leaseId}`)
+        // Use the current unpaid endpoint to fetch the most recent unpaid invoice.
+        fetch(`/api/invoices/current-unpaid?lease_id=${leaseId}`)
           .then((response) => {
             if (!response.ok) {
               throw new Error('Failed to fetch invoice data');
@@ -178,31 +207,57 @@
             return response.json();
           })
           .then((data) => {
-            // Populate the invoice page with the fetched data
+            // If no unpaid invoice exists, data.invoice will be null (or message exists).
+            if (!data || (!data.invoice && !data.invoice_id)) {
+              alert('There are no unpaid invoices for this lease.');
+              return;
+            }
+
+            // Data might be returned directly as the invoice object or wrapped,
+            // so we check for invoice_id property.
+            const invoice = data.invoice_id ? data : data.invoice || data;
+
+            // Populate invoice details
             document.getElementById('payment_date').textContent =
-              data.payment_date;
+              invoice.invoice_date;
             document.getElementById(
               'monthly_rent'
-            ).textContent = `$${data.monthly_rent}`;
+            ).textContent = `$${invoice.monthly_rent}`;
             document.getElementById(
               'amount'
-            ).textContent = `$${data.total_amount}`;
+            ).textContent = `$${invoice.total_amount}`;
 
             const chargeBreakdownList = document.getElementById(
               'charge-breakdown-list'
             );
-            chargeBreakdownList.innerHTML = data.charges
+            chargeBreakdownList.innerHTML = JSON.parse(invoice.charges)
               .map(
                 (charge) => `<li>${charge.description}: $${charge.amount}</li>`
               )
               .join('');
+
+            // Populate lease details
+            document.getElementById('lease_start_date').textContent =
+              invoice.lease_start_date;
+            document.getElementById('lease_end_date').textContent =
+              invoice.lease_end_date;
+            document.getElementById(
+              'security_deposit'
+            ).textContent = `$${invoice.security_deposit}`;
+            document.getElementById('lease_status').textContent =
+              invoice.lease_status;
+
+            // If the invoice is overdue, display an overdue message.
+            if (invoice.isOverdue) {
+              document.getElementById('overdue-message').textContent =
+                'OVERDUE';
+            }
           })
           .catch((error) => {
             console.error('Error fetching invoice data:', error);
             alert('Failed to load invoice data.');
           });
 
-        // Show relevant payment details based on selected payment method
         const paymentMethodSelect = document.getElementById('payment-method');
         const cardDetails = document.getElementById('card-details');
         const bankDetails = document.getElementById('bank-details');
@@ -220,7 +275,7 @@
           }
         });
 
-        // Hide both details sections by default
+        // Initialize payment details display.
         cardDetails.style.display = 'none';
         bankDetails.style.display = 'none';
       });

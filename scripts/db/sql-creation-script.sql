@@ -90,6 +90,7 @@ CREATE TABLE IF NOT EXISTS invoices (
     invoice_id INT AUTO_INCREMENT PRIMARY KEY,
     lease_id INT NOT NULL,
     invoice_date DATE NOT NULL,
+    due_date DATE NOT NULL,  -- New due_date column for invoice due dates
     total_amount DECIMAL(10, 2) NOT NULL,
     charges JSON NOT NULL, -- Stores charge breakdown as JSON
     status ENUM('unpaid', 'paid', 'overdue') NOT NULL,
@@ -142,7 +143,7 @@ INSERT INTO maintenance_requests (tenant_id, apartment_id, request_date, issue_d
 (3, 3, '2025-02-05', 'No hot water', 'pending', NULL, NULL);
 
 -- Insert dummy data into invoices
-INSERT INTO invoices (lease_id, invoice_date, total_amount, charges, status) VALUES
-(1, '2025-02-01', 1200.00, '[{"description": "Rent", "amount": 1200.00}]', 'paid'),
-(2, '2025-02-01', 1500.00, '[{"description": "Rent", "amount": 1500.00}]', 'paid'),
-(3, '2025-03-01', 900.00, '[{"description": "Rent", "amount": 900.00}]', 'unpaid');
+INSERT INTO invoices (lease_id, invoice_date, due_date, total_amount, charges, status) VALUES
+(1, '2025-02-01', '2025-02-10', 1200.00, '[{"description": "Rent", "amount": 1200.00}]', 'paid'),
+(2, '2025-02-01', '2025-02-10', 1500.00, '[{"description": "Rent", "amount": 1500.00}]', 'paid'),
+(3, '2025-03-01', '2025-03-15', 900.00, '[{"description": "Rent", "amount": 900.00}]', 'unpaid');

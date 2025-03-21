@@ -3,22 +3,24 @@ const invoicesController = require('../controllers/invoicesController');
 
 const router = new Router({ prefix: '/api/invoices' });
 
-// Route to get all invoices
+// Existing routes...
 router.get('/', invoicesController.getAllInvoices);
-
-// Route to get a specific invoice by ID
 router.get('/:id', invoicesController.getInvoiceById);
-
-// Route to get invoices by lease ID
 router.get('/by-lease', invoicesController.getInvoicesByLeaseId);
 
-// Route to create a new invoice
+// New route for fetching an invoice by both invoice_id and lease_id
+router.get(
+  '/by-lease-and-invoice',
+  invoicesController.getInvoiceByLeaseAndInvoiceId
+);
+
+router.get(
+  '/current-unpaid',
+  invoicesController.getCurrentUnpaidInvoiceByLeaseId
+);
+
 router.post('/', invoicesController.createInvoice);
-
-// Route to update an existing invoice
 router.put('/:id', invoicesController.updateInvoice);
-
-// Route to delete an invoice
 router.delete('/:id', invoicesController.deleteInvoice);
 
 module.exports = router;

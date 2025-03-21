@@ -63,23 +63,114 @@ exports.getInvoiceById = async (ctx) => {
  * @returns {Promise<void>} Sets ctx.body with an array of invoices for the lease.
  * @throws {Error} If retrieval fails.
  */
-exports.getInvoicesByLeaseId = async (ctx) => {
+exports.getInvoiceByLeaseAndInvoiceId = async (ctx) => {
+  try {
+    const { lease_id, invoice_id } = ctx.query;
+
+    // Validate the required parameters.
+    if (!lease_id || !invoice_id) {
+      ctx.status = 400;
+      ctx.body = {
+        error: 'Both lease_id and invoice_id query parameters are required',
+      };
+      return;
+    }
+
+    // Query to fetch the specific invoice along with its lease details.
+    const [rows] = await pool.query(
+      `
+      SELECT 
+        invoices.invoice_id,
+        invoices.lease_id,
+        invoices.invoice_date,
+        invoices.total_amount,
+        invoices.charges,
+        invoices.status AS invoice_status,
+        leases.lease_start_date,
+        leases.lease_end_date,
+        leases.monthly_rent,
+        leases.security_deposit,
+        leases.status AS lease_status
+      FROM invoices
+      JOIN leases ON invoices.lease_id = leases.lease_id
+      WHERE invoices.invoice_id = ? AND invoices.lease_id = ?
+      `,
+      [invoice_id, lease_id]
+    );
+
+    // Check if any data was returned
+    if (rows.length === 0) {
+      ctx.status = 404;
+      ctx.body = {
+        error: 'Invoice not found for the given lease ID and invoice ID',
+      };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = rows[0];
+  } catch (error) {
+    console.error('❌ Error fetching invoice by lease and invoice ID:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+exports.getCurrentUnpaidInvoiceByLeaseId = async (ctx) => {
   try {
     const { lease_id } = ctx.query;
+
     if (!lease_id) {
       ctx.status = 400;
       ctx.body = { error: 'lease_id query parameter is required' };
       return;
     }
 
+    // Query to get the most recent unpaid invoice for the given lease.
     const [rows] = await pool.query(
-      'SELECT * FROM invoices WHERE lease_id = ?',
+      `
+      SELECT 
+        invoices.invoice_id,
+        invoices.lease_id,
+        invoices.invoice_date,
+        invoices.due_date,
+        invoices.total_amount,
+        invoices.charges,
+        invoices.status AS invoice_status,
+        leases.lease_start_date,
+        leases.lease_end_date,
+        leases.monthly_rent,
+        leases.security_deposit,
+        leases.status AS lease_status
+      FROM invoices
+      JOIN leases ON invoices.lease_id = leases.lease_id
+      WHERE invoices.lease_id = ? AND invoices.status = 'unpaid'
+      ORDER BY invoices.invoice_date DESC
+      LIMIT 1
+      `,
       [lease_id]
     );
+
+    if (rows.length === 0) {
+      ctx.status = 200;
+      ctx.body = {
+        message: 'There are no unpaid invoices for this lease.',
+        invoice: null,
+      };
+      return;
+    }
+
+    const invoice = rows[0];
+    const currentDate = new Date();
+    const dueDate = new Date(invoice.due_date);
+
+    // Check if the invoice is overdue.
+    invoice.isOverdue = currentDate > dueDate;
+
     ctx.status = 200;
-    ctx.body = rows;
+    ctx.body = invoice;
   } catch (error) {
-    console.error('❌ Error fetching invoices by lease ID:', error);
+    console.error('❌ Error fetching current unpaid invoice:', error);
     ctx.status = 500;
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
