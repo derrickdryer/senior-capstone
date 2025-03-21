@@ -1,9 +1,7 @@
 const Router = require('koa-router');
 const invoicesController = require('../controllers/invoicesController');
 
-const router = new Router({
-  prefix: '/api/invoices', // Set a prefix for all invoice routes
-});
+const router = new Router({ prefix: '/api/invoices' });
 
 // Route to get all invoices
 router.get('/', invoicesController.getAllInvoices);

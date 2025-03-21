@@ -9,7 +9,7 @@
 const Router = require('koa-router');
 const assetsController = require('../controllers/assetsController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/assets' });
 
 // GET all assets
 router.get('/', assetsController.getAllAssets);

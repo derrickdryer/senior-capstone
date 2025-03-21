@@ -13,7 +13,7 @@
 const Router = require('koa-router');
 const usersController = require('../controllers/usersController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/users' });
 
 // GET user by username
 router.get('/by-username/:username', usersController.getUserByName);

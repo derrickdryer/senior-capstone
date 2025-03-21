@@ -83,15 +83,15 @@ const loginRoutes = require('../../routes/login'); // Handles authentication
 const invoicesRoutes = require('../../routes/invoices');
 
 // Register API routes with designated base paths.
-router.use('/api/assets', assetsRoutes.routes());
-router.use('/api/apartments', apartmentsRoutes.routes());
-router.use('/api/tenants', tenantsRoutes.routes());
-router.use('/api/leases', leasesRoutes.routes());
-router.use('/api/payments', paymentsRoutes.routes());
-router.use('/api/maintenance-requests', maintenanceRequestsRoutes.routes());
-router.use('/api/users', usersRoutes.routes());
-router.use('/api/login', loginRoutes.routes());
-router.use('/api/invoices', invoicesRoutes.routes());
+router.use(assetsRoutes.routes());
+router.use(apartmentsRoutes.routes());
+router.use(tenantsRoutes.routes());
+router.use(leasesRoutes.routes());
+router.use(paymentsRoutes.routes());
+router.use(maintenanceRequestsRoutes.routes());
+router.use(usersRoutes.routes());
+router.use(loginRoutes.routes());
+router.use(invoicesRoutes.routes());
 
 // Add the router middleware to handle routes and allowed methods.
 app.use(router.routes()).use(router.allowedMethods());

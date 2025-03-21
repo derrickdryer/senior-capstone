@@ -9,7 +9,7 @@
 const Router = require('koa-router');
 const tenantsController = require('../controllers/tenantsController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/tenants' });
 
 // GET all tenants
 router.get('/', tenantsController.getAllTenants);

@@ -5,7 +5,7 @@
 const Router = require('koa-router');
 const loginController = require('../controllers/loginController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/login' });
 
 // POST login for user authentication
 router.post('/', loginController.login);

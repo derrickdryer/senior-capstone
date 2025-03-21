@@ -9,7 +9,7 @@
 const Router = require('koa-router');
 const paymentsController = require('../controllers/paymentsController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/payments' });
 
 // GET all payments
 router.get('/', paymentsController.getAllPayments);

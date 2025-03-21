@@ -10,7 +10,7 @@
 const Router = require('koa-router');
 const apartmentsController = require('../controllers/apartmentsController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/apartments' });
 
 // GET all apartments
 router.get('/', apartmentsController.getAllApartments);

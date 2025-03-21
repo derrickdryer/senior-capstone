@@ -10,7 +10,7 @@ const Router = require('koa-router');
 const leasesController = require('../controllers/leasesController');
 const { authenticateToken } = require('../middleware/auth');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/leases' });
 
 // Apply JWT authentication to all routes in this router
 router.use(authenticateToken);

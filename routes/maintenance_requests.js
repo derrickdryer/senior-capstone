@@ -9,7 +9,7 @@
 const Router = require('koa-router');
 const maintenanceRequestsController = require('../controllers/maintenanceRequestsController');
 
-const router = new Router();
+const router = new Router({ prefix: '/api/maintenance-requests' });
 
 // GET all maintenance requests
 router.get('/', maintenanceRequestsController.getAllMaintenanceRequests);
