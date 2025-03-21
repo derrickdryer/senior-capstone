@@ -43,6 +43,10 @@
               <strong>Monthly Rent:</strong>
               <span id="monthly_rent"></span>
             </p>
+            <p>
+              <strong>Due Date:</strong>
+              <span id="due_date"></span>
+            </p>
           </section>
 
           <!-- Charge Breakdown -->
@@ -207,25 +211,53 @@
             return response.json();
           })
           .then((data) => {
-            // If no unpaid invoice exists, data.invoice will be null (or message exists).
             if (!data || (!data.invoice && !data.invoice_id)) {
               alert('There are no unpaid invoices for this lease.');
               return;
             }
 
-            // Data might be returned directly as the invoice object or wrapped,
-            // so we check for invoice_id property.
             const invoice = data.invoice_id ? data : data.invoice || data;
 
+            // Convert dates to human-readable format.
+            const invoiceDate = new Date(
+              invoice.invoice_date
+            ).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            });
+            const leaseStart = new Date(
+              invoice.lease_start_date
+            ).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            });
+            const leaseEnd = new Date(
+              invoice.lease_end_date
+            ).toLocaleDateString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+            });
+            const dueDate = new Date(invoice.due_date).toLocaleDateString(
+              'en-US',
+              {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              }
+            );
+
             // Populate invoice details
-            document.getElementById('payment_date').textContent =
-              invoice.invoice_date;
+            document.getElementById('payment_date').textContent = invoiceDate;
             document.getElementById(
               'monthly_rent'
             ).textContent = `$${invoice.monthly_rent}`;
             document.getElementById(
               'amount'
             ).textContent = `$${invoice.total_amount}`;
+            document.getElementById('due_date').textContent = dueDate;
 
             const chargeBreakdownList = document.getElementById(
               'charge-breakdown-list'
@@ -238,9 +270,8 @@
 
             // Populate lease details
             document.getElementById('lease_start_date').textContent =
-              invoice.lease_start_date;
-            document.getElementById('lease_end_date').textContent =
-              invoice.lease_end_date;
+              leaseStart;
+            document.getElementById('lease_end_date').textContent = leaseEnd;
             document.getElementById(
               'security_deposit'
             ).textContent = `$${invoice.security_deposit}`;

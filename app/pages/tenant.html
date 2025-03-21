@@ -107,7 +107,7 @@
             if (!response.ok) {
               throw new Error('Failed to fetch user data');
             }
-            
+
             const user = await response.json();
             document.getElementById(
               'welcomeMessage'

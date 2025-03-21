@@ -3,15 +3,16 @@ const invoicesController = require('../controllers/invoicesController');
 
 const router = new Router({ prefix: '/api/invoices' });
 
-// Existing routes...
+// Specific routes first:
 router.get('/', invoicesController.getAllInvoices);
-router.get('/:id', invoicesController.getInvoiceById);
-router.get('/by-lease', invoicesController.getInvoicesByLeaseId);
-
 router.get(
   '/current-unpaid',
   invoicesController.getCurrentUnpaidInvoiceByLeaseId
 );
+router.get('/by-lease', invoicesController.getInvoicesByLeaseId);
+
+// Dynamic route should come after specific routes.
+router.get('/:id', invoicesController.getInvoiceById);
 
 router.post('/', invoicesController.createInvoice);
 router.put('/:id', invoicesController.updateInvoice);
