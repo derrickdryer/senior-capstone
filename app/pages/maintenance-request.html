@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,18 +33,17 @@
         margin: 0;
         color: var(--primary-color);
       }
-      html, body {
-  /* Remove fixed height so content can expand */
-  min-height: 100%;
-  height: auto;
-  margin: 0;
-  padding: 0;
-}
+      html,
+      body {
+        min-height: 100%;
+        height: auto;
+        margin: 0;
+        padding: 0;
+      }
 
-main.container {
-  /* Add extra padding at the bottom so you can scroll past your content */
-  padding-bottom: 120px; /* Adjust this value as needed */
-}
+      main.container {
+        padding-bottom: 120px;
+      }
     </style>
   </head>
   <body>
@@ -54,7 +52,6 @@ main.container {
         <h1>Maintenance Requests</h1>
       </div>
     </header>
-    <!-- Documentation: This page allows tenants to enter a Tenant ID and view/submit maintenance requests -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -141,7 +138,6 @@ main.container {
       </div>
     </footer>
 
-    <!-- Documentation: The inline script defines helper functions (e.g. formatDate) to format time and handles form submissions for loading and submitting requests -->
     <script>
       document.addEventListener('DOMContentLoaded', async function () {
         const tenantIdForm = document.getElementById('tenant-id-form');
@@ -154,9 +150,26 @@ main.container {
         );
         let tenantId = null;
 
+        // Prepopulate Tenant ID from local storage
+        function prepopulateTenantId() {
+          const user_id = localStorage.getItem('user_id');
+          if (user_id) {
+            tenantIdInput.value = user_id;
+            tenantIdInput.readOnly = true;
+            tenantIdInput.style.backgroundColor = '#f0f0f0';
+            tenantIdInput.style.cursor = 'not-allowed';
+            tenantIdInput.style.border = '1px solid #ccc';
+            tenantIdInput.style.color = '#666';
+            tenantIdInput.style.fontStyle = 'italic';
+            tenantIdInput.style.fontWeight = 'bold';
+          }
+        }
+
+        prepopulateTenantId();
+
         function formatDate(dateStr) {
           if (!dateStr) return 'N/A';
-          return dateStr.split('T')[0]; // Converts "2025-02-10T05:00:00.000Z" to "2025-02-10"
+          return dateStr.split('T')[0];
         }
 
         async function loadRequests() {
@@ -176,7 +189,7 @@ main.container {
             } else {
               noRequestsMessage.style.display = 'none';
               requests.forEach((request) => {
-                if (request.tenant_id !== parseInt(tenantId, 10)) return; // Ensure correct tenant ID
+                if (request.tenant_id !== parseInt(tenantId, 10)) return;
 
                 const item = document.createElement('div');
                 item.classList.add('request-item');
@@ -242,7 +255,7 @@ main.container {
             ),
             issue_description:
               document.getElementById('issue_description').value,
-            status: 'pending', // Default status for all new requests
+            status: 'pending',
           };
 
           try {
@@ -256,7 +269,7 @@ main.container {
 
             alert('Maintenance request submitted successfully!');
             maintenanceForm.reset();
-            loadRequests(); // Reload requests after submission
+            loadRequests();
           } catch (error) {
             console.error('❌ Error submitting request:', error);
             alert('Error submitting request. Please try again.');
