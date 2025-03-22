@@ -14,7 +14,7 @@
 export function createFooter() {
   const footer = document.createElement('footer');
   footer.innerHTML = `
-        <p>&copy; 2024 Russell Properties. All rights reserved.</p>
+        <p>&copy; 2024-${new Date().getFullYear()} Russell Properties. All rights reserved.</p>
   `;
   return footer;
 }
