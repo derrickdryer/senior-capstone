@@ -125,12 +125,15 @@
             return;
           }
 
+          // Force the role to "tenant" regardless of any client manipulation.
+          const role = 'tenant';
+
           try {
-            // Send registration request to the server
+            // Send registration request to the server with tenant role.
             const response = await fetch('/api/users/register', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, username, password }),
+              body: JSON.stringify({ email, username, password, role }),
             });
 
             if (!response.ok) {

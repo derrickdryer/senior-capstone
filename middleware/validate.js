@@ -8,6 +8,14 @@ const createUserSchema = Joi.object({
   // ...other fields...
 });
 
+const registerUserSchema = Joi.object({
+  username: Joi.string().required(),
+  password: Joi.string().min(6).required(),
+  email: Joi.string().email().required(),
+  role: Joi.string().valid('tenant').required(),
+  // ...other fields...
+});
+
 const updateUserSchema = Joi.object({
   username: Joi.string().optional(),
   password: Joi.string().min(6).optional(),
@@ -34,5 +42,6 @@ function validateBody(schema) {
 module.exports = {
   validateCreateUser: validateBody(createUserSchema),
   validateUpdateUser: validateBody(updateUserSchema),
+  validateRegisterUser: validateBody(registerUserSchema),
   // ...export other validators as needed...
 };

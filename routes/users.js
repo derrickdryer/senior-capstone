@@ -4,6 +4,7 @@ const { authenticateToken } = require('../middleware/auth');
 const {
   validateCreateUser,
   validateUpdateUser,
+  validateRegisterUser,
 } = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/users' });
@@ -44,6 +45,6 @@ router.delete('/:id', usersController.deleteUser, authenticateToken);
 router.put('/:id/password', usersController.updatePassword, authenticateToken);
 
 // Register route for new users (consider adding validation similar to createUser)
-router.post('/register', validateCreateUser, usersController.register);
+router.post('/register', validateRegisterUser, usersController.register);
 
 module.exports = router;
