@@ -64,54 +64,6 @@ exports.updatePassword = async (ctx) => {
 };
 
 /**
- * Authenticates a user by validating their password.
- *
- * @async
- * @function login
- * @param {Object} ctx - The Koa context object.
- * @param {Object} ctx.request.body - The user credentials.
- * @param {string} ctx.request.body.username - The username.
- * @param {string} ctx.request.body.password - The password.
- * @returns {Promise<void>} On success, sets ctx.body with a login success message, user ID, and role.
- * @throws {Error} If authentication fails.
- */
-exports.login = async (ctx) => {
-  try {
-    const { username, password } = ctx.request.body;
-
-    const [rows] = await pool.query(
-      'SELECT * FROM users WHERE username = ? LIMIT 1',
-      [username]
-    );
-
-    if (rows.length === 0) {
-      ctx.status = 401;
-      ctx.body = { error: 'Invalid username or password' };
-      return;
-    }
-
-    const user = rows[0];
-    const isMatch = await comparePassword(password, user.password);
-
-    if (!isMatch) {
-      ctx.status = 401;
-      ctx.body = { error: 'Invalid username or password' };
-      return;
-    }
-
-    ctx.status = 200;
-    ctx.body = {
-      message: 'Login successful',
-      user_id: user.user_id,
-      role: user.role,
-    };
-  } catch (error) {
-    ctx.status = 500;
-    ctx.body = { error: 'Internal Server Error', message: error.message };
-  }
-};
-
-/**
  * Registers a new user by inserting their details into the database.
  *
  * @async

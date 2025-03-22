@@ -90,7 +90,8 @@
     </main>
 
     <!-- Documentation: The script tag at the bottom contains event listeners for form submission and toggling the password visibility -->
-    <script>
+    <script type="module">
+      const token = sessionStorage.getItem('token');
       document
         .getElementById('registerForm')
         .addEventListener('submit', async function (event) {

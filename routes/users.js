@@ -8,32 +8,40 @@ const {
 
 const router = new Router({ prefix: '/api/users' });
 
-// Protect all routes except login and register (if desired, adjust as needed)
-router.use(authenticateToken);
-
 // GET user by username
-router.get('/by-username/:username', usersController.getUserByName);
+router.get(
+  '/by-username/:username',
+  usersController.getUserByName,
+  authenticateToken
+);
 
 // GET all users
-router.get('/', usersController.getAllUsers);
+router.get('/', usersController.getAllUsers, authenticateToken);
 
 // GET user by id
-router.get('/:id', usersController.getUserById);
+router.get('/:id', usersController.getUserById, authenticateToken);
 
 // Create a new user with validation
-router.post('/', validateCreateUser, usersController.createUser);
+router.post(
+  '/',
+  validateCreateUser,
+  usersController.createUser,
+  authenticateToken
+);
 
 // Update an existing user with validation
-router.put('/:id', validateUpdateUser, usersController.updateUser);
+router.put(
+  '/:id',
+  validateUpdateUser,
+  usersController.updateUser,
+  authenticateToken
+);
 
 // Delete a user
-router.delete('/:id', usersController.deleteUser);
+router.delete('/:id', usersController.deleteUser, authenticateToken);
 
 // Update user's password (consider applying custom validation for password)
-router.put('/:id/password', usersController.updatePassword);
-
-// Login route for authentication (typically unprotected)
-router.post('/login', usersController.login);
+router.put('/:id/password', usersController.updatePassword, authenticateToken);
 
 // Register route for new users (consider adding validation similar to createUser)
 router.post('/register', validateCreateUser, usersController.register);
