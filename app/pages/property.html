@@ -2,23 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link
-      rel="icon"
-      href="/public/favicon.ico"
-      type="image/x-icon"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <title>Property Details - Russell Properties</title>
+    <style>
+      /* Basic styling for details and carousels */
+      #property-details {
+        margin: 20px;
+      }
+      .carousel-container {
+        margin: 20px 0;
+      }
+      .carousel-container h2 {
+        margin-bottom: 10px;
+      }
+      .carousel {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 10px;
+      }
+      .carousel img {
+        width: 200px;
+        height: auto;
+        border: 1px solid #ddd;
+      }
+      /* Apartments list styling */
+      #apartments ul {
+        list-style: none;
+        padding: 0;
+      }
+      #apartments li {
+        margin-bottom: 15px;
+      }
+    </style>
   </head>
   <body>
-    <!-- Documentation: This page fetches property details (by property_id) and displays related apartment listings -->
+    <!-- Documentation: This page fetches property details (by property_id), displays property images, and if available, lists apartments and their images -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -34,15 +55,73 @@
       </section>
     </main>
 
-    <!-- Documentation: The script uses DOMContentLoaded to trigger fetching of property details and apartments -->
     <script>
+      // Helper function to format a date string
+      function formatDate(dateStr) {
+        if (!dateStr) return 'N/A';
+        return dateStr.split('T')[0];
+      }
+
+      // Function to load property (asset) images into a carousel container
+      async function loadPropertyImages(propertyId) {
+        try {
+          const response = await fetch(`/api/images?asset_id=${propertyId}`);
+          const images = await response.json();
+          const container = document.getElementById('property-images-carousel');
+          container.innerHTML = ''; // clear loading text
+
+          if (!images || images.length === 0) {
+            container.innerHTML = '<p>No property images available.</p>';
+            return;
+          }
+
+          images.forEach((img) => {
+            const imgEl = document.createElement('img');
+            imgEl.src = img.image_url;
+            imgEl.alt = img.caption || 'Property image';
+            container.appendChild(imgEl);
+          });
+        } catch (error) {
+          console.error('Error loading property images:', error);
+          const container = document.getElementById('property-images-carousel');
+          container.innerHTML = '<p>Property Images Coming Soon!</p>';
+        }
+      }
+
+      // Function to load apartment images into a carousel container for a given apartment_id
+      async function loadApartmentImages(apartmentId) {
+        try {
+          const response = await fetch(`/api/images?apartment_id=${apartmentId}`);
+          const images = await response.json();
+          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
+          container.innerHTML = ''; // clear loading text
+
+          if (!images || images.length === 0) {
+            container.innerHTML = '<p>No images available for this apartment.</p>';
+            return;
+          }
+
+          images.forEach((img) => {
+            const imgEl = document.createElement('img');
+            imgEl.src = img.image_url;
+            imgEl.alt = img.caption || 'Apartment image';
+            container.appendChild(imgEl);
+          });
+        } catch (error) {
+          console.error(`Error loading images for apartment ${apartmentId}:`, error);
+          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
+          container.innerHTML = '<p>Images Coming Soon.</p>';
+        }
+      }
+
       document.addEventListener('DOMContentLoaded', async () => {
+        // Extract property_id from URL (assumes URL is like /property/123)
         const pathParts = window.location.pathname.split('/');
-        const propertyId = pathParts[2]; // Extract property_id from URL
+        const propertyId = pathParts[2];
         const detailsSection = document.querySelector('#property-details');
 
         try {
-          // Fetch property details
+          // Fetch all properties and locate the one that matches propertyId
           const propertiesResponse = await fetch('/api/assets');
           const properties = await propertiesResponse.json();
           const property = properties.find((p) => p.property_id == propertyId);
@@ -52,45 +131,65 @@
             return;
           }
 
-          // Insert property details
-          detailsSection.innerHTML = `
+          // Build the property details HTML
+          let propertyHTML = `
             <h1>${property.address}</h1>
             <p>${property.city}, ${property.state} ${property.postal_code}</p>
             <p>${property.num_apartments} apartments</p>
-            <section id="apartments">
-              <h2>Apartments</h2>
-              <ul id="apartments-list">
-                <li>Loading apartments...</li>
-              </ul>
-            </section>
+            <div class="carousel-container">
+              <h2>Property Images</h2>
+              <div id="property-images-carousel" class="carousel">
+                <p>Loading property images...</p>
+              </div>
+            </div>
           `;
 
-          // Fetch only apartments linked to this property
-          const aptsResponse = await fetch(
-            `/api/apartments/property/${propertyId}`
-          );
-          if (!aptsResponse.ok) throw new Error('Error fetching apartments');
-
+          // Fetch apartments linked to this property
+          const aptsResponse = await fetch(`/api/apartments/property/${propertyId}`);
+          if (!aptsResponse.ok) {
+            throw new Error('Error fetching apartments');
+          }
           const apartments = await aptsResponse.json();
-          const apartmentsList = document.querySelector('#apartments-list');
-          apartmentsList.innerHTML = '';
 
-          if (apartments.length === 0) {
-            apartmentsList.innerHTML = `<li>No apartments available.</li>`;
-          } else {
+          // If apartments exist, build the apartments section with their images carousel
+          if (apartments && apartments.length > 0) {
+            propertyHTML += `<section id="apartments">
+              <h2>Apartments</h2>
+              <ul id="apartments-list">`;
             apartments.forEach((apartment) => {
-              const aptItem = document.createElement('li');
-              aptItem.innerHTML = `
-                <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
-                <p>Bedrooms: ${apartment.bedrooms} | Bathrooms: ${apartment.bathrooms}</p>
-                <p>Square Footage: ${apartment.square_footage} sq ft</p>
-                <p>Rent: $${apartment.rent_amount}</p>
+              propertyHTML += `
+                <li>
+                  <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
+                  <p>Bedrooms: ${apartment.bedrooms} | Bathrooms: ${apartment.bathrooms}</p>
+                  <p>Square Footage: ${apartment.square_footage} sq ft</p>
+                  <p>Rent: $${apartment.rent_amount}</p>
+                  <div class="carousel-container">
+                    <h4>Apartment Images</h4>
+                    <div id="apartment-carousel-${apartment.apartment_id}" class="carousel">
+                      <p>Loading apartment images...</p>
+                    </div>
+                  </div>
+                </li>
               `;
-              apartmentsList.appendChild(aptItem);
+            });
+            propertyHTML += `</ul></section>`;
+          }
+
+          // Render property details (and apartments section, if any)
+          detailsSection.innerHTML = propertyHTML;
+
+          // Load property images carousel
+          loadPropertyImages(propertyId);
+
+          // If apartments exist, load each apartment's images
+          if (apartments && apartments.length > 0) {
+            apartments.forEach((apartment) => {
+              loadApartmentImages(apartment.apartment_id);
             });
           }
         } catch (error) {
-          detailsSection.innerHTML = '<p>Error loading property details.</p>';
+          console.error(error);
+          detailsSection.innerHTML = '<p>Property Details</p>';
         }
       });
     </script>

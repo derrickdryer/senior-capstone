@@ -81,6 +81,7 @@ const maintenanceRequestsRoutes = require('../../routes/maintenance_requests');
 const usersRoutes = require('../../routes/users');
 const loginRoutes = require('../../routes/login'); // Handles authentication
 const invoicesRoutes = require('../../routes/invoices');
+const imagesRoutes = require('../../routes/images')
 
 // Register API routes with designated base paths.
 router.use(assetsRoutes.routes());
@@ -92,6 +93,7 @@ router.use(maintenanceRequestsRoutes.routes());
 router.use(usersRoutes.routes());
 router.use(loginRoutes.routes());
 router.use(invoicesRoutes.routes());
+router.use(imagesRoutes.routes());
 
 // Add the router middleware to handle routes and allowed methods.
 app.use(router.routes()).use(router.allowedMethods());

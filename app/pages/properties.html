@@ -16,6 +16,33 @@
       href="/public/styles/main.css"
     />
     <title>Properties - Russell Properties</title>
+    <style>
+      /* Optional: Style the property list items */
+      #properties ul {
+        list-style: none;
+        padding: 0;
+      }
+      #properties li {
+        margin-bottom: 30px;
+        border: 1px solid #ccc;
+        padding: 15px;
+      }
+      .property-details {
+        margin-bottom: 15px;
+      }
+      /* Simple horizontal scroll gallery for images */
+      .property-carousel {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding-bottom: 10px;
+      }
+      .property-carousel img {
+        width: 200px;
+        height: auto;
+        border: 1px solid #ddd;
+      }
+    </style>
   </head>
   <body>
     <script type="module">
@@ -37,7 +64,6 @@
     </main>
 
     <script>
-      <!-- Documentation: The inline script listens for DOMContentLoaded to load and display property cards dynamically -->
       document.addEventListener('DOMContentLoaded', async function () {
         try {
           const response = await fetch('/api/assets');
@@ -50,7 +76,6 @@
 
           properties.forEach((property) => {
             const listItem = document.createElement('li');
-            // Construct a link to a details page if available, or remove the <a> tag.
             listItem.innerHTML = `
               <a href="/property/${property.property_id}">
                 <div class="property-details">
@@ -59,13 +84,51 @@
                   <p>${property.num_apartments} apartments</p>
                 </div>
               </a>
+              <!-- Carousel container: images for this property will be loaded here -->
+              <div id="carousel-${property.property_id}" class="property-carousel">
+                <p>Loading images...</p>
+              </div>
             `;
             propertiesList.appendChild(listItem);
+
+            // Load images for this property
+            loadPropertyImages(property.property_id);
           });
         } catch (error) {
           alert('Failed to load properties. Please try again later.');
+          console.error('Error:', error);
         }
       });
+
+      // Function to load images for a given property (asset)
+      async function loadPropertyImages(propertyId) {
+        try {
+          const response = await fetch(`/api/images?asset_id=${propertyId}`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch images');
+          }
+          const images = await response.json();
+          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
+          carouselContainer.innerHTML = ''; // Clear placeholder
+
+          if (!images || images.length === 0) {
+            carouselContainer.innerHTML = '<p>No images available.</p>';
+            return;
+          }
+
+          // Create a simple horizontal scroll gallery
+          images.forEach((img) => {
+            const imageEl = document.createElement('img');
+            imageEl.src = img.image_url;
+            imageEl.alt = img.caption || 'Property image';
+            carouselContainer.appendChild(imageEl);
+          });
+        } catch (error) {
+          console.error(`Error loading images for property ${propertyId}:`, error);
+          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
+          carouselContainer.innerHTML = '<p>Images Coming Soon!</p>';
+        }
+      }
     </script>
   </body>
 </html>
