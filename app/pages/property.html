@@ -2,9 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/public/styles/main.css" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Property Details - Russell Properties</title>
     <style>
       /* Basic styling for details and carousels */
@@ -65,7 +75,11 @@
       // Function to load property (asset) images into a carousel container
       async function loadPropertyImages(propertyId) {
         try {
-          const response = await fetch(`/api/images?asset_id=${propertyId}`);
+          const response = await fetch(`/api/images?asset_id=${propertyId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
           const images = await response.json();
           const container = document.getElementById('property-images-carousel');
           container.innerHTML = ''; // clear loading text
@@ -91,13 +105,23 @@
       // Function to load apartment images into a carousel container for a given apartment_id
       async function loadApartmentImages(apartmentId) {
         try {
-          const response = await fetch(`/api/images?apartment_id=${apartmentId}`);
+          const response = await fetch(
+            `/api/images?apartment_id=${apartmentId}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
           const images = await response.json();
-          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
+          const container = document.getElementById(
+            `apartment-carousel-${apartmentId}`
+          );
           container.innerHTML = ''; // clear loading text
 
           if (!images || images.length === 0) {
-            container.innerHTML = '<p>No images available for this apartment.</p>';
+            container.innerHTML =
+              '<p>No images available for this apartment.</p>';
             return;
           }
 
@@ -108,8 +132,13 @@
             container.appendChild(imgEl);
           });
         } catch (error) {
-          console.error(`Error loading images for apartment ${apartmentId}:`, error);
-          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
+          console.error(
+            `Error loading images for apartment ${apartmentId}:`,
+            error
+          );
+          const container = document.getElementById(
+            `apartment-carousel-${apartmentId}`
+          );
           container.innerHTML = '<p>Images Coming Soon.</p>';
         }
       }
@@ -145,7 +174,9 @@
           `;
 
           // Fetch apartments linked to this property
-          const aptsResponse = await fetch(`/api/apartments/property/${propertyId}`);
+          const aptsResponse = await fetch(
+            `/api/apartments/property/${propertyId}`
+          );
           if (!aptsResponse.ok) {
             throw new Error('Error fetching apartments');
           }

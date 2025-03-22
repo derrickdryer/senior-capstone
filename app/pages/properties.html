@@ -103,12 +103,18 @@
       // Function to load images for a given property (asset)
       async function loadPropertyImages(propertyId) {
         try {
-          const response = await fetch(`/api/images?asset_id=${propertyId}`);
+          const response = await fetch(`/api/images?asset_id=${propertyId}`, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
           if (!response.ok) {
             throw new Error('Failed to fetch images');
           }
           const images = await response.json();
-          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
+          const carouselContainer = document.getElementById(
+            `carousel-${propertyId}`
+          );
           carouselContainer.innerHTML = ''; // Clear placeholder
 
           if (!images || images.length === 0) {
@@ -124,8 +130,13 @@
             carouselContainer.appendChild(imageEl);
           });
         } catch (error) {
-          console.error(`Error loading images for property ${propertyId}:`, error);
-          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
+          console.error(
+            `Error loading images for property ${propertyId}:`,
+            error
+          );
+          const carouselContainer = document.getElementById(
+            `carousel-${propertyId}`
+          );
           carouselContainer.innerHTML = '<p>Images Coming Soon!</p>';
         }
       }
