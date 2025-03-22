@@ -192,8 +192,9 @@
       </section>
     </main>
 
-    <script>
+    <script type="module">
       document.addEventListener('DOMContentLoaded', function () {
+        const token = sessionStorage.getItem('token');
         const urlParams = new URLSearchParams(window.location.search);
         const leaseId = urlParams.get('lease_id');
 
@@ -203,7 +204,13 @@
         }
 
         // Use the current unpaid endpoint to fetch the most recent unpaid invoice.
-        fetch(`/api/invoices/current-unpaid?lease_id=${leaseId}`)
+        fetch(`/api/invoices/current-unpaid?lease_id=${leaseId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        })
           .then((response) => {
             if (!response.ok) {
               throw new Error('Failed to fetch invoice data');
