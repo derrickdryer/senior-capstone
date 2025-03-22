@@ -46,11 +46,6 @@
         padding-bottom: 100px;
       }
 
-      footer {
-        position: relative;
-        z-index: 10;
-      }
-
       #maintenance-table {
         width: 100%;
         border-collapse: collapse;
@@ -203,14 +198,11 @@
       </div>
     </main>
 
-    <footer>
-      <div class="container">
-        <p>&copy; 2025 Russell Properties LLC. All rights reserved.</p>
-      </div>
-    </footer>
+    <footer></footer>
 
     <!-- Documentation: The inline script loads maintenance requests from /api/maintenance-requests and builds a responsive table with edit and delete actions -->
-    <script>
+    <script type="module">
+      const token = sessionStorage.getItem('token');
       // Shared search function for any table
       function setupSearch(inputId, tableId) {
         const input = document.getElementById(inputId);
@@ -250,7 +242,13 @@
 
         async function loadRequests() {
           try {
-            const response = await fetch(baseUrl);
+            const response = await fetch(baseUrl, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            });
             if (!response.ok) throw new Error('Network response was not ok');
 
             const requests = await response.json();
@@ -262,8 +260,7 @@
             } else {
               requests.forEach((request) => createTableRow(request));
             }
-          } catch (error) {
-          }
+          } catch (error) {}
         }
 
         function createTableRow(request) {
@@ -276,15 +273,15 @@
             <td contenteditable="true">${request.issue_description}</td>
             <td>
               <select class="status-dropdown">
-                <option value="pending" ${
-                  request.status === 'pending' ? 'selected' : ''
-                }>Pending</option>
-                <option value="in_progress" ${
-                  request.status === 'in_progress' ? 'selected' : ''
-                }>In Progress</option>
-                <option value="completed" ${
-                  request.status === 'completed' ? 'selected' : ''
-                }>Completed</option>
+          <option value="pending" ${
+            request.status === 'pending' ? 'selected' : ''
+          }>Pending</option>
+          <option value="in_progress" ${
+            request.status === 'in_progress' ? 'selected' : ''
+          }>In Progress</option>
+          <option value="completed" ${
+            request.status === 'completed' ? 'selected' : ''
+          }>Completed</option>
               </select>
             </td>
             <td contenteditable="true">${
@@ -337,17 +334,18 @@
 
             if (!response.ok) throw new Error('Failed to update request');
             alert('Request updated successfully!');
-          } catch (error) {
-          }
+          } catch (error) {}
         }
 
         async function deleteRequest(id, row) {
           if (confirm('Are you sure you want to delete this request?')) {
             try {
-              await fetch(`${baseUrl}/${id}`, { method: 'DELETE' });
+              await fetch(`${baseUrl}/${id}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+              });
               row.remove();
-            } catch (error) {
-            }
+            } catch (error) {}
           }
         }
 
@@ -374,7 +372,10 @@
 
           await fetch(baseUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify(formData),
           });
 
