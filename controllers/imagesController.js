@@ -22,7 +22,7 @@ exports.getImages = async (ctx) => {
 
   try {
     const [rows] = await pool.query(query, params);
-    ctx.body = rows;
+    ctx.body = { images: rows }; // ✅ Return wrapped array
   } catch (error) {
     ctx.status = 500;
     ctx.body = { message: 'Error fetching images', error: error.message };
@@ -31,37 +31,44 @@ exports.getImages = async (ctx) => {
 
 // POST /api/images
 exports.createImage = async (ctx) => {
-  const { property_id, apartment_id, image_url, caption } = ctx.request.body;
-
-  if (!property_id || !image_url) {
-    ctx.status = 400;
-    ctx.body = { message: 'Property ID and Image URL are required.' };
-    return;
-  }
-
-  const query =
-    'INSERT INTO images (property_id, apartment_id, image_url, caption) VALUES (?, ?, ?, ?)';
-  const params = [property_id, apartment_id || null, image_url, caption || null];
-
-  try {
-    const [result] = await pool.query(query, params);
-    ctx.body = {
-      image_id: result.insertId,
+    const { property_id, apartment_id, image_url, caption } = ctx.request.body;
+  
+    if (!property_id || !image_url) {
+      ctx.status = 400;
+      ctx.body = { message: 'Property ID and Image URL are required.' };
+      return;
+    }
+  
+    const query =
+      'INSERT INTO images (property_id, apartment_id, image_url, caption) VALUES (?, ?, ?, ?)';
+    const params = [
       property_id,
-      apartment_id,
-      image_url,
-      caption,
-    };
-  } catch (error) {
-    ctx.status = 500;
-    ctx.body = { message: 'Error creating image', error: error.message };
-  }
-};
+      apartment_id || null,
+      JSON.stringify([image_url]), // ✅ Make it a JSON array
+      caption || null,
+    ];
+  
+    try {
+      const [result] = await pool.query(query, params);
+      ctx.body = {
+        image_id: result.insertId,
+        property_id,
+        apartment_id,
+        image_url: [image_url], // return as array for consistency
+        caption,
+      };
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { message: 'Error creating image', error: error.message };
+    }
+  };
+  
 
 // PUT /api/images/:id
 exports.updateImage = async (ctx) => {
   const { id } = ctx.params;
   const { property_id, apartment_id, image_url, caption } = ctx.request.body;
+
   const query =
     'UPDATE images SET property_id = ?, apartment_id = ?, image_url = ?, caption = ? WHERE image_id = ?';
   const params = [property_id, apartment_id || null, image_url, caption || null, id];

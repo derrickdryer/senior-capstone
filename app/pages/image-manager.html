@@ -12,79 +12,145 @@
       href="/public/favicon.ico"
       type="image/x-icon"
     />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
-      }
-      h1 {
-        margin-bottom: 20px;
-      }
-      form {
-        margin-bottom: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      form input {
-        padding: 8px;
-        flex: 1 1 200px;
-      }
-      form button {
-        padding: 10px 20px;
-        background-color: #333;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background-color: #f4f4f4;
-      }
-      tbody tr:nth-child(even) {
-        background-color: #fafafa;
-      }
-      .edit-btn,
-      .delete-btn {
-        cursor: pointer;
-        padding: 5px 10px;
-        border: none;
-        color: #fff;
-      }
-      .edit-btn {
-        background-color: #f39c12;
-      }
-      .delete-btn {
-        background-color: #e74c3c;
-      }
-    </style>
+        .table-responsive {
+          max-height: 400px;
+          overflow-y: auto;
+          overflow-x: auto;
+          margin-bottom: 2rem;
+          border: 1px solid var(--primary-color);
+          padding-bottom: 20px;
+        }
+      
+        .table-responsive thead {
+          position: sticky;
+          top: 0;
+          background-color: var(--primary-color);
+          color: var(--secondary-color);
+          z-index: 2;
+        }
+      
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+          min-height: 100vh;
+          font-family: Arial, sans-serif;
+        }
+      
+        main.container {
+          padding-bottom: 100px;
+          margin: 20px;
+        }
+      
+        h1, h2 {
+          margin-bottom: 20px;
+        }
+      
+        form {
+          margin-bottom: 20px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+      
+        form input,
+        form select {
+          padding: 8px;
+          flex: 1 1 200px;
+        }
+      
+        form button {
+          padding: 10px 20px;
+          background-color: var(--primary-color);
+          color: var(--secondary-color);
+          border: none;
+          cursor: pointer;
+        }
+      
+        #images-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+      
+        #images-table th,
+        #images-table td {
+          border: 1px solid var(--primary-color);
+          padding: 12px;
+          text-align: left;
+        }
+      
+        #images-table th {
+          background-color: var(--primary-color);
+          color: var(--secondary-color);
+        }
+      
+        #images-table tbody tr:nth-child(even) {
+          background-color: var(--secondary-color);
+        }
+      
+        #images-table tbody tr:hover {
+          background-color: rgba(231, 76, 60, 0.2);
+        }
+      
+        .edit-btn,
+        .delete-btn {
+          cursor: pointer;
+          padding: 5px 10px;
+          border: none;
+          color: #fff;
+        }
+      
+        .edit-btn {
+          background-color: #f39c12;
+        }
+      
+        .delete-btn {
+          background-color: #e74c3c;
+        }
+      
+        .info-button {
+          display: inline-block;
+          padding: 10px 15px;
+          border: 2px solid #333;
+          border-radius: 5px;
+          background-color: #f8f9fa;
+          color: #333;
+          text-decoration: none;
+          font-weight: bold;
+        }
+      
+        .info-button:hover {
+          background-color: #ddd;
+        }
+      </style>
+      <div class="container">
+        <h1>Image Manager</h1>
+        <nav style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+            <a href="/admin" class="info-button">Back to Admin Dashboard</a>
+          </nav>
+      </div>
+      
   </head>
   <body>
-    <h1>Image Manager</h1>
-    <nav>
-        <ul>
-          <li>
-            <a
-              href="/admin"
-              class="info-button"
-              >Back to Admin Dashboard</a
-            >
-          </li>
-        </ul>
-      </nav>
+    <script type="module">
+        import { createHeader } from '/components/header.js';
+        import { createFooter } from '/components/footer.js';
+        import { requireAuth } from '/scripts/auth.js';
+    
+        document.body.prepend(createHeader());
+        document.body.appendChild(createFooter());
+        requireAuth('manager');
+      </script>
+    
+      <main class="container">
+        <h1>Image Manager</h1>
+        <nav style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+          <a href="/admin" class="info-button">Back to Admin Dashboard</a>
+        </nav>
+      </script>
     <!-- Form to add a new image -->
     <form id="add-image-form">
       <input
@@ -111,8 +177,14 @@
       />
       <button type="submit">Add Image</button>
     </form>
-
+    <input
+        type="text"
+        id="search-bar-images"
+        placeholder="Search images..."
+        style="margin-bottom: 10px; padding: 5px; width: 100%"
+      />
     <!-- Table displaying all images -->
+    <div class="table-responsive">
     <table id="images-table">
       <thead>
         <tr>
@@ -130,8 +202,30 @@
         </tr>
       </tbody>
     </table>
+</div>
 
     <script type="module">
+        // Setup search input functionality
+function setupSearch(inputId, tableId) {
+  const input = document.getElementById(inputId);
+  const table = document.getElementById(tableId);
+  input.addEventListener('input', function () {
+    const filter = this.value.toLowerCase();
+    const rows = table.getElementsByTagName('tr');
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i].id && rows[i].id.includes('no-')) continue;
+      const cells = rows[i].getElementsByTagName('td');
+      const rowText = Array.from(cells)
+        .map((cell) => cell.textContent.toLowerCase())
+        .join(' ');
+      rows[i].style.display = rowText.includes(filter) ? '' : 'none';
+    }
+  });
+}
+
+// Call it right away
+setupSearch('search-bar-images', 'images-table');
+
       const token = sessionStorage.getItem('token');
       document.addEventListener('DOMContentLoaded', () => {
         const imagesTableBody = document.querySelector('#images-table tbody');
@@ -148,7 +242,9 @@
               },
             });
             if (!response.ok) throw new Error('Error fetching images');
-            const images = await response.json();
+            const data = await response.json();
+const images = data.images || [];
+
             imagesTableBody.innerHTML = '';
 
             if (!images || images.length === 0) {
@@ -165,6 +261,7 @@
               '<tr><td colspan="6">Error loading images.</td></tr>';
           }
         }
+
 
         // Create a table row for an image
         function createImageRow(image) {
