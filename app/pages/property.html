@@ -2,22 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link
-      rel="icon"
-      href="/public/favicon.ico"
-      type="image/x-icon"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <title>Property Details - Russell Properties</title>
     <style>
-      /* Basic styling for details and carousels */
       #property-details {
         margin: 20px;
       }
@@ -38,7 +27,6 @@
         height: auto;
         border: 1px solid #ddd;
       }
-      /* Apartments list styling */
       #apartments ul {
         list-style: none;
         padding: 0;
@@ -49,7 +37,6 @@
     </style>
   </head>
   <body>
-    <!-- Documentation: This page fetches property details (by property_id), displays property images, and if available, lists apartments and their images -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -58,7 +45,6 @@
       document.body.appendChild(createFooter());
     </script>
 
-    <!-- Main Content -->
     <main>
       <section id="property-details">
         <p>Loading property details...</p>
@@ -66,140 +52,120 @@
     </main>
 
     <script>
-      // Helper function to parse image URL fields
-      // This function tries to parse the image_url field as JSON,
-      // then cleans extraneous braces and splits comma-delimited URLs.
       function parseImageUrls(imageUrlField) {
         let urls = [];
         try {
           urls = JSON.parse(imageUrlField);
-        } catch (parseError) {
-          console.error("Error parsing image_url:", parseError);
-          // Fallback: treat the field as a single URL string
+        } catch {
           urls = [imageUrlField];
         }
-        // Ensure we have an array
-        if (!Array.isArray(urls)) {
-          urls = [urls];
-        }
-        // Process each entry: remove extraneous braces and split by commas
-        let finalUrls = [];
-        urls.forEach(item => {
-          let cleanedString = typeof item === "string"
-            ? item.replace(/[{}]/g, "").trim()
-            : "";
-          let possibleUrls = cleanedString.split(",");
-          possibleUrls.forEach(rawUrl => {
-            let url = rawUrl.trim();
-            if (url.startsWith("http://") || url.startsWith("https://")) {
-              finalUrls.push(url);
-            }
-          });
+        if (!Array.isArray(urls)) urls = [urls];
+
+        return urls.map(raw => {
+          const cleaned = typeof raw === "string" ? raw.replace(/[{}"]/g, '').trim() : '';
+          if (
+            cleaned.startsWith("http://") ||
+            cleaned.startsWith("https://") ||
+            cleaned.startsWith("data:image/")
+          ) {
+            return cleaned;
+          } else {
+            return `/uploads/${cleaned}`;
+          }
         });
-        return finalUrls;
       }
 
-      // Function to load property (asset) images into the property images carousel
       async function loadPropertyImages(propertyId) {
         try {
           const response = await fetch(`/api/images?property_id=${propertyId}`, {
-            headers: {
-              "Content-Type": "application/json"
-            }
+            headers: { "Content-Type": "application/json" }
           });
           if (!response.ok) throw new Error("Failed to fetch property images");
-          const responseData = await response.json();
-          const imageRecords = responseData.images || responseData;
+          const data = await response.json();
+          const imageRecords = data.images || data;
           const container = document.getElementById("property-images-carousel");
-          container.innerHTML = ""; // clear loading text
+          container.innerHTML = "";
 
-          if (!imageRecords || imageRecords.length === 0) {
+          if (!imageRecords.length) {
             container.innerHTML = "<p>No property images available.</p>";
             return;
           }
 
-          let appendedAtLeastOne = false;
+          let found = false;
           imageRecords.forEach(record => {
             const urls = parseImageUrls(record.image_url);
             urls.forEach(url => {
-              const imgEl = document.createElement("img");
-              imgEl.src = url;
-              imgEl.alt = record.caption || "Property image";
-              container.appendChild(imgEl);
-              appendedAtLeastOne = true;
+              const img = document.createElement("img");
+              img.src = url;
+              img.alt = record.caption || "Property image";
+              container.appendChild(img);
+              found = true;
             });
           });
 
-          if (!appendedAtLeastOne) {
+          if (!found) {
             container.innerHTML = "<p>Property Images Coming Soon!</p>";
           }
-        } catch (error) {
-          console.error("Error loading property images:", error);
-          const container = document.getElementById("property-images-carousel");
-          container.innerHTML = "<p>Property Images Coming Soon!</p>";
+        } catch (err) {
+          console.error("Error loading property images:", err);
+          document.getElementById("property-images-carousel").innerHTML =
+            "<p>Property Images Coming Soon!</p>";
         }
       }
 
-      // Function to load apartment images into the corresponding carousel container for a given apartment_id
       async function loadApartmentImages(apartmentId) {
         try {
           const response = await fetch(`/api/images?apartment_id=${apartmentId}`, {
-            headers: {
-              "Content-Type": "application/json"
-            }
+            headers: { "Content-Type": "application/json" }
           });
           if (!response.ok) throw new Error("Failed to fetch apartment images");
-          const responseData = await response.json();
-          const imageRecords = responseData.images || responseData;
+          const data = await response.json();
+          const imageRecords = data.images || data;
           const container = document.getElementById(`apartment-carousel-${apartmentId}`);
-          container.innerHTML = ""; // clear loading text
+          container.innerHTML = "";
 
-          if (!imageRecords || imageRecords.length === 0) {
+          if (!imageRecords.length) {
             container.innerHTML = "<p>No images available for this apartment.</p>";
             return;
           }
 
-          let appendedAtLeastOne = false;
+          let found = false;
           imageRecords.forEach(record => {
             const urls = parseImageUrls(record.image_url);
             urls.forEach(url => {
-              const imgEl = document.createElement("img");
-              imgEl.src = url;
-              imgEl.alt = record.caption || "Apartment image";
-              container.appendChild(imgEl);
-              appendedAtLeastOne = true;
+              const img = document.createElement("img");
+              img.src = url;
+              img.alt = record.caption || "Apartment image";
+              container.appendChild(img);
+              found = true;
             });
           });
 
-          if (!appendedAtLeastOne) {
+          if (!found) {
             container.innerHTML = "<p>Apartment Images Coming Soon!</p>";
           }
-        } catch (error) {
-          console.error(`Error loading images for apartment ${apartmentId}:`, error);
-          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
-          container.innerHTML = "<p>Apartment Images Coming Soon!</p>";
+        } catch (err) {
+          console.error(`Error loading images for apartment ${apartmentId}:`, err);
+          document.getElementById(`apartment-carousel-${apartmentId}`).innerHTML =
+            "<p>Apartment Images Coming Soon!</p>";
         }
       }
 
       document.addEventListener("DOMContentLoaded", async () => {
-        // Extract property_id from URL (assumes URL is like /property/123)
-        const pathParts = window.location.pathname.split("/");
-        const propertyId = pathParts[2];
+        const propertyId = window.location.pathname.split("/")[2];
         const detailsSection = document.querySelector("#property-details");
 
         try {
-          // Fetch all properties and locate the one that matches propertyId
-          const propertiesResponse = await fetch("/api/assets");
-          if (!propertiesResponse.ok) throw new Error("Failed to fetch properties");
-          const properties = await propertiesResponse.json();
+          const propRes = await fetch("/api/assets");
+          if (!propRes.ok) throw new Error("Failed to fetch properties");
+          const properties = await propRes.json();
           const property = properties.find(p => p.property_id == propertyId);
 
           if (!property) {
-            detailsSection.innerHTML = `<p>⚠️ Property not found. Please return to <a href="/properties">Properties</a>.</p>`;
+            detailsSection.innerHTML = `<p>⚠️ Property not found. <a href="/properties">Back to list</a>.</p>`;
             return;
           }
 
-          // Build the property details HTML
           let propertyHTML = `
             <h1>${property.address}</h1>
             <p>${property.city}, ${property.state} ${property.postal_code}</p>
@@ -212,20 +178,16 @@
             </div>
           `;
 
-          // Fetch apartments linked to this property
-          const aptsResponse = await fetch(`/api/apartments/property/${propertyId}`);
-          if (!aptsResponse.ok) throw new Error("Error fetching apartments");
-          const apartments = await aptsResponse.json();
+          const aptsRes = await fetch(`/api/apartments/property/${propertyId}`);
+          if (!aptsRes.ok) throw new Error("Failed to fetch apartments");
+          const apartments = await aptsRes.json();
+          const availableApts = apartments.filter(a => a.is_available === 1);
 
-          // Filter apartments to only include those where is_available === 1
-          const availableApartments = apartments.filter(a => a.is_available === 1);
-
-          // If available apartments exist, build the apartments section
-          if (availableApartments && availableApartments.length > 0) {
+          if (availableApts.length) {
             propertyHTML += `<section id="apartments">
               <h2>Apartments</h2>
-              <ul id="apartments-list">`;
-            availableApartments.forEach(apartment => {
+              <ul>`;
+            availableApts.forEach(apartment => {
               propertyHTML += `
                 <li>
                   <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
@@ -243,23 +205,13 @@
             });
             propertyHTML += `</ul></section>`;
           }
-          // If no available apartments, simply render the property details with its images
 
-          // Render the assembled HTML into the details section
           detailsSection.innerHTML = propertyHTML;
-
-          // Load property images carousel
           loadPropertyImages(propertyId);
-
-          // For each available apartment, load its images
-          if (availableApartments && availableApartments.length > 0) {
-            availableApartments.forEach(apartment => {
-              loadApartmentImages(apartment.apartment_id);
-            });
-          }
-        } catch (error) {
-          console.error(error);
-          detailsSection.innerHTML = "<p>Property Details could not be loaded.</p>";
+          availableApts.forEach(a => loadApartmentImages(a.apartment_id));
+        } catch (err) {
+          console.error(err);
+          detailsSection.innerHTML = "<p>Property details could not be loaded.</p>";
         }
       });
     </script>

@@ -2,22 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link
-      rel="icon"
-      href="/public/favicon.ico"
-      type="image/x-icon"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/public/styles/main.css" />
     <title>Properties - Russell Properties</title>
     <style>
-      /* Optional: Style the property list items */
       #properties ul {
         list-style: none;
         padding: 0;
@@ -30,7 +19,6 @@
       .property-details {
         margin-bottom: 15px;
       }
-      /* Simple horizontal scroll gallery for images */
       .property-carousel {
         display: flex;
         overflow-x: auto;
@@ -48,37 +36,57 @@
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
-
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
     </script>
 
-    <!-- Main Content -->
     <main>
       <section id="properties">
-        <!-- Documentation: This page lists multiple properties by fetching data from /api/assets, rendering each property as a clickable item -->
-        <ul>
-          <!-- Dynamic property items will be inserted here -->
-        </ul>
+        <ul></ul>
       </section>
     </main>
 
     <script>
+      // Helper: Convert image URL or filename to displayable full URL
+      function parseImageUrls(imageUrlField) {
+        let urls = [];
+        try {
+          urls = JSON.parse(imageUrlField);
+        } catch (err) {
+          urls = [imageUrlField];
+        }
+
+        if (!Array.isArray(urls)) urls = [urls];
+
+        return urls.map(raw => {
+          const cleaned = typeof raw === "string"
+            ? raw.replace(/[{}"]/g, '').trim()
+            : '';
+
+          if (
+            cleaned.startsWith('http://') ||
+            cleaned.startsWith('https://') ||
+            cleaned.startsWith('data:image/')
+          ) {
+            return cleaned;
+          } else {
+            return `/uploads/${cleaned}`;
+          }
+        });
+      }
+
       document.addEventListener('DOMContentLoaded', async function () {
         try {
-          // 1. Fetch the list of properties
           const response = await fetch('/api/assets');
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
+          if (!response.ok) throw new Error('Failed to fetch properties');
+
           const properties = await response.json();
           const propertiesList = document.querySelector('#properties ul');
-          propertiesList.innerHTML = ''; // Clear any existing content
-  
-          // 2. Filter and render only properties where is_available === 1
+          propertiesList.innerHTML = '';
+
           properties
-            .filter(property => property.is_available === 1)
-            .forEach((property) => {
+            .filter(p => p.is_available === 1)
+            .forEach(property => {
               const listItem = document.createElement('li');
               listItem.innerHTML = `
                 <a href="/property/${property.property_id}">
@@ -93,88 +101,52 @@
                 </div>
               `;
               propertiesList.appendChild(listItem);
-  
-              // 3. Load images for this property
+
               loadPropertyImages(property.property_id);
             });
-        } catch (error) {
-          alert('Failed to load properties. Please try again later.');
-          console.error('Error:', error);
+        } catch (err) {
+          alert('Failed to load properties.');
+          console.error('Error:', err);
         }
       });
-  
+
       async function loadPropertyImages(propertyId) {
         try {
-          // 1. Fetch images for the given propertyId
-          const response = await fetch(`/api/images?property_id=${propertyId}`, {
-            headers: {
-              'Content-Type': 'application/json'
-            }
+          const res = await fetch(`/api/images?property_id=${propertyId}`, {
+            headers: { 'Content-Type': 'application/json' },
           });
-          if (!response.ok) {
-            throw new Error('Failed to fetch images');
-          }
-  
-          const responseData = await response.json();
-          // If the response contains an "images" property, use it; otherwise assume it's an array.
-          const imageRecords = responseData.images || responseData;
-  
-          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
-          carouselContainer.innerHTML = ''; // Clear "Loading images..." placeholder
-  
-          // 2. If no images are returned, display a fallback
+          if (!res.ok) throw new Error('Image fetch failed');
+
+          const data = await res.json();
+          const imageRecords = data.images || data;
+          const carousel = document.getElementById(`carousel-${propertyId}`);
+          carousel.innerHTML = '';
+
           if (!imageRecords || imageRecords.length === 0) {
-            carouselContainer.innerHTML = '<p>No images available.</p>';
+            carousel.innerHTML = '<p>No images available.</p>';
             return;
           }
-  
-          // 3. Loop through the images array and display each image object
+
           let appendedAtLeastOne = false;
+
           imageRecords.forEach(record => {
-            let urls = [];
-  
-            // a) Try to parse image_url as JSON (e.g. "[\"{https://...}\"]")
-            try {
-              urls = JSON.parse(record.image_url);
-            } catch (parseError) {
-              console.error('Error parsing image_url:', parseError);
-              // If parse fails, treat it as a single URL
-              urls = [record.image_url];
-            }
-  
-            // b) Ensure we have an array
-            if (!Array.isArray(urls)) {
-              urls = [urls];
-            }
-  
-            // c) For each entry in the array, remove extraneous braces, then split by commas
-            urls.forEach(item => {
-              let cleanedString = typeof item === 'string'
-                ? item.replace(/[{}]/g, '').trim()
-                : '';
-              let possibleUrls = cleanedString.split(',');
-              possibleUrls.forEach(rawUrl => {
-                let finalUrl = rawUrl.trim();
-                // Only add valid URLs that start with http:// or https://
-                if (finalUrl.startsWith('http://') || finalUrl.startsWith('https://')) {
-                  const imgEl = document.createElement('img');
-                  imgEl.src = finalUrl;
-                  imgEl.alt = record.caption || 'Property image';
-                  carouselContainer.appendChild(imgEl);
-                  appendedAtLeastOne = true;
-                }
-              });
+            const urls = parseImageUrls(record.image_url);
+            urls.forEach(url => {
+              const img = document.createElement('img');
+              img.src = url;
+              img.alt = record.caption || 'Property image';
+              carousel.appendChild(img);
+              appendedAtLeastOne = true;
             });
           });
-  
-          // 4. If no valid images got appended, show fallback
+
           if (!appendedAtLeastOne) {
-            carouselContainer.innerHTML = '<p>Images Coming Soon!</p>';
+            carousel.innerHTML = '<p>Images Coming Soon!</p>';
           }
-        } catch (error) {
-          console.error(`Error loading images for property ${propertyId}:`, error);
-          const carouselContainer = document.getElementById(`carousel-${propertyId}`);
-          carouselContainer.innerHTML = '<p>Images Coming Soon!</p>';
+        } catch (err) {
+          console.error(`Error loading images for property ${propertyId}:`, err);
+          const fallback = document.getElementById(`carousel-${propertyId}`);
+          fallback.innerHTML = '<p>Images Coming Soon!</p>';
         }
       }
     </script>
