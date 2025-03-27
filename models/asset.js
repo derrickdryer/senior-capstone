@@ -38,11 +38,27 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      // Availability status of the asset
+      is_available: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
     },
     {
-      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      tableName: 'assets',
+      timestamps: false, // Disables createdAt and updatedAt fields
     }
   );
+
+  // Define associations for the Asset model
+  Asset.associate = (models) => {
+    Asset.hasMany(models.Apartment, {
+      foreignKey: 'property_id',
+      as: 'apartments',
+    });
+    Asset.hasMany(models.Image, { foreignKey: 'property_id', as: 'images' });
+  };
 
   return Asset;
 };

@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       // Date when the payment occurred
       payment_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       // The payment amount
@@ -40,9 +40,14 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      tableName: 'payments',
+      timestamps: false,
     }
   );
+
+  Payment.associate = (models) => {
+    Payment.belongsTo(models.Lease, { foreignKey: 'lease_id', as: 'lease' });
+  };
 
   return Payment;
 };

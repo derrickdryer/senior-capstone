@@ -38,15 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        references: {
-          model: 'users',
-          key: 'user_id',
-        },
-        onDelete: 'SET NULL',
       },
     },
     {
-      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      tableName: 'tenants',
+      timestamps: false,
     }
   );
 
@@ -54,7 +50,16 @@ module.exports = (sequelize, DataTypes) => {
   Tenant.associate = (models) => {
     Tenant.belongsTo(models.User, {
       foreignKey: 'user_id',
+      as: 'user',
       onDelete: 'SET NULL',
+    });
+    Tenant.hasMany(models.Lease, {
+      foreignKey: 'tenant_id',
+      as: 'leases',
+    });
+    Tenant.hasMany(models.MaintenanceRequest, {
+      foreignKey: 'tenant_id',
+      as: 'maintenanceRequests',
     });
   };
 

@@ -20,18 +20,18 @@ module.exports = (sequelize, DataTypes) => {
       },
       // Unique username for logging in
       username: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(50),
         unique: true,
         allowNull: false,
       },
       // User's password (should be stored hashed)
       password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
       },
       // User's email address
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull: false,
       },
     },
@@ -40,6 +40,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: false, // Disables automatic timestamp fields
     }
   );
+
+  // Define associations for the User model
+  User.associate = (models) => {
+    User.hasOne(models.Tenant, { foreignKey: 'user_id', as: 'tenant' });
+  };
 
   return User;
 };

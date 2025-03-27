@@ -25,12 +25,12 @@ module.exports = (sequelize, DataTypes) => {
       },
       // Start date of the lease
       lease_start_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       // End date of the lease
       lease_end_date: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
       },
       // Monthly rent amount for the lease
@@ -50,9 +50,21 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      timestamps: true, // Automatically adds createdAt and updatedAt fields
+      tableName: 'leases',
+      timestamps: false, // Disables automatic createdAt and updatedAt fields
     }
   );
+
+  // Define associations for the Lease model
+  Lease.associate = (models) => {
+    Lease.belongsTo(models.Tenant, { foreignKey: 'tenant_id', as: 'tenant' });
+    Lease.belongsTo(models.Apartment, {
+      foreignKey: 'apartment_id',
+      as: 'apartment',
+    });
+    Lease.hasMany(models.Payment, { foreignKey: 'lease_id', as: 'payments' });
+    Lease.hasMany(models.Invoice, { foreignKey: 'lease_id', as: 'invoices' });
+  };
 
   return Lease;
 };

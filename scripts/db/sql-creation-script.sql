@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS assets (
     city VARCHAR(255) NOT NULL,
     state VARCHAR(10) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
-    num_apartments INT NOT NULL
+    num_apartments INT NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Table: apartments
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS apartments (
     bathrooms DECIMAL(2, 1) NOT NULL,
     square_footage DECIMAL(10, 2) NOT NULL,
     rent_amount DECIMAL(10, 2) NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE
 );
 
@@ -82,6 +84,16 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
     completion_date DATE,
     assigned_to VARCHAR(50),
     FOREIGN KEY (tenant_id) REFERENCES tenants(tenant_id) ON DELETE CASCADE,
+    FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    apartment_id INT DEFAULT NULL,
+    image_url JSON NOT NULL, -- Store image URL as a JSON array
+    caption VARCHAR(255) DEFAULT NULL,
+    FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE,
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
 

@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS assets (
     city VARCHAR(255) NOT NULL,
     state VARCHAR(10) NOT NULL,
     postal_code VARCHAR(10) NOT NULL,
-    num_apartments INT NOT NULL
+    num_apartments INT NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Table: apartments
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS apartments (
     bathrooms DECIMAL(2, 1) NOT NULL,
     square_footage DECIMAL(10, 2) NOT NULL,
     rent_amount DECIMAL(10, 2) NOT NULL,
+    is_available BOOLEAN NOT NULL DEFAULT TRUE,
     FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE
 );
 
@@ -101,6 +103,17 @@ CREATE TABLE IF NOT EXISTS invoices (
     FOREIGN KEY (lease_id) REFERENCES leases(lease_id) ON DELETE CASCADE
 );
 
+-- Table: images
+CREATE TABLE IF NOT EXISTS images (
+    image_id INT AUTO_INCREMENT PRIMARY KEY,
+    property_id INT NOT NULL,
+    apartment_id INT DEFAULT NULL,
+    image_url JSON NOT NULL, -- Store image URL as a JSON array
+    caption VARCHAR(255) DEFAULT NULL,
+    FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE,
+    FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
+);
+
 -- Insert dummy data into users
 INSERT INTO users (role, username, password, email) VALUES
 ('manager', 'manager1', '$2b$10$kB88Uv2gq.Ql61GLr4Yhc.SeoyR6vr1qZ87np5oLYlznl6doCaHwa', 'manager1@example.com'), 
@@ -108,19 +121,19 @@ INSERT INTO users (role, username, password, email) VALUES
 ('tenant', 'tenant1', '$2b$10$x3jIxgCkfA0s1UMkYVpC9edTY.Gxdx.P304qOzKbtRK3/adHjYUhS', 'tenant1@example.com');
 
 
--- Insert dummy data into assets
-INSERT INTO assets (address, city, state, postal_code, num_apartments) VALUES
-('123 Main St', 'Springfield', 'IL', '62701', 10),
-('456 Elm St', 'Springfield', 'IL', '62702', 8),
-('789 Oak St', 'Springfield', 'IL', '62703', 12);
+-- Insert dummy data into assets (with is_available)
+INSERT INTO assets (address, city, state, postal_code, num_apartments, is_available) VALUES
+('123 Main St', 'Springfield', 'IL', '62701', 10, TRUE),
+('456 Elm St', 'Springfield', 'IL', '62702', 8, TRUE),
+('789 Oak St', 'Springfield', 'IL', '62703', 12, TRUE);
 
--- Insert dummy data into apartments
-INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount) VALUES  
-(1, '1A', 1, 2, 1, 850.00, 1200.00),
-(1, '1B', 1, 3, 2, 1050.00, 1500.00),
-(2, '2A', 2, 1, 1, 650.00, 900.00),
-(2, '2B', 2, 2, 1, 800.00, 1100.00),
-(3, '3A', 3, 3, 2, 1200.00, 1800.00);
+-- Insert dummy data into apartments (with is_available)
+INSERT INTO apartments (property_id, unit_number, floor, bedrooms, bathrooms, square_footage, rent_amount, is_available) VALUES  
+(1, '1A', 1, 2, 1, 850.00, 1200.00, TRUE),
+(1, '1B', 1, 3, 2, 1050.00, 1500.00, TRUE),
+(2, '2A', 2, 1, 1, 650.00, 900.00, TRUE),
+(2, '2B', 2, 2, 1, 800.00, 1100.00, TRUE),
+(3, '3A', 3, 3, 2, 1200.00, 1800.00, TRUE);
 
 -- Insert dummy data into tenants
 INSERT INTO tenants (first_name, last_name, email, phone_number, user_id) VALUES
