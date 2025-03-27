@@ -273,3 +273,116 @@ exports.deleteUser = async (ctx) => {
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
 };
+
+/**
+ * Handles password reset requests.
+ * Generates a reset token and sends an email with a reset link.
+ *
+ * @async
+ * @function forgotPassword
+ * @param {Object} ctx - The Koa context object.
+ * @returns {Promise<void>} - Sends email with reset link.
+ */ 
+exports.forgotPassword = async (ctx) => {
+  try {
+    const { email } = ctx.request.body;
+
+    if (!email) {
+      ctx.status = 400;
+      ctx.body = { error: 'Email is required.' };
+      return;
+    }
+
+    // Check if user exists
+    const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+
+    if (user.length === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found.' };
+      return;
+    }
+
+    // Generate password reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiration = new Date(Date.now() + 3600000); // 1-hour expiration
+
+    // Store token in the database
+    await pool.query(
+      'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?',
+      [resetToken, tokenExpiration, email]
+    );
+
+    // Email transport configuration (Update with actual credentials)
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL_USER, // Use environment variables
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const resetLink = `https://yourdomain.com/reset-password?token=${resetToken}`;
+    const mailOptions = {
+      to: email,
+      subject: 'Password Reset Request',
+      text: `You requested a password reset. Click the link below to reset your password:\n\n${resetLink}\n\nThis link expires in 1 hour.`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    ctx.status = 200;
+    ctx.body = { message: 'Password reset link sent to your email.' };
+  } catch (error) {
+    console.error('Forgot Password Error:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
+/**
+ * Resets the user's password using the provided reset token.
+ *
+ * @async
+ * @function resetPassword
+ * @param {Object} ctx - The Koa context object.
+ * @returns {Promise<void>} - Updates user's password.
+ */
+exports.resetPassword = async (ctx) => {
+  try {
+    const { token, newPassword } = ctx.request.body;
+
+    if (!token || !newPassword) {
+      ctx.status = 400;
+      ctx.body = { error: 'Token and new password are required.' };
+      return;
+    }
+
+    // Check if the token is valid and not expired
+    const [user] = await pool.query(
+      'SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()',
+      [token]
+    );
+
+    if (user.length === 0) {
+      ctx.status = 400;
+      ctx.body = { error: 'Invalid or expired token.' };
+      return;
+    }
+
+    // Hash the new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password and clear reset token
+    await pool.query(
+      'UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?',
+      [hashedPassword, token]
+    );
+
+    ctx.status = 200;
+    ctx.body = { message: 'Password reset successfully. You can now log in with your new password.' };
+  } catch (error) {
+    console.error('Reset Password Error:', error);
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
