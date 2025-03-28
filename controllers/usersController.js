@@ -277,112 +277,54 @@ exports.deleteUser = async (ctx) => {
 /**
  * Handles password reset requests.
  * Generates a reset token and sends an email with a reset link.
- *
- * @async
- * @function forgotPassword
- * @param {Object} ctx - The Koa context object.
- * @returns {Promise<void>} - Sends email with reset link.
- */ 
-exports.forgotPassword = async (ctx) => {
-  try {
-    const { email } = ctx.request.body;
+ */
+const express = require('express');
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
+const app = express();
+const PORT = 3000;
 
-    if (!email) {
-      ctx.status = 400;
-      ctx.body = { error: 'Email is required.' };
-      return;
-    }
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-    // Check if user exists
-    const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+app.set('view engine', 'ejs');
 
-    if (user.length === 0) {
-      ctx.status = 404;
-      ctx.body = { error: 'User not found.' };
-      return;
-    }
+app.get('/', (req, res) => {
+    res.render('home');
+});
 
-    // Generate password reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const tokenExpiration = new Date(Date.now() + 3600000); // 1-hour expiration
+// Handle email sending
+app.post('/send-email', (req, res) => {
+    const { recipient, subject, message } = req.body;
 
-    // Store token in the database
-    await pool.query(
-      'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?',
-      [resetToken, tokenExpiration, email]
-    );
-
-    // Email transport configuration (Update with actual credentials)
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.EMAIL_USER, // Use environment variables
-        pass: process.env.EMAIL_PASS,
-      },
+        service: 'gmail',
+        auth: {
+            user: 'your gmail', 
+            pass: 'your password'
+        }
     });
 
-    const resetLink = `https://yourdomain.com/reset-password?token=${resetToken}`;
+    // Define the email options
     const mailOptions = {
-      to: email,
-      subject: 'Password Reset Request',
-      text: `You requested a password reset. Click the link below to reset your password:\n\n${resetLink}\n\nThis link expires in 1 hour.`,
+        from: 'sender mail', 
+        to: recipient, 
+        subject: subject, 
+        text: message,
     };
 
-    await transporter.sendMail(mailOptions);
+    // Send the email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error("Error occurred:", error);
+            res.status(500).send('Error in sending email. Please try again later.');
+        } else {
+            console.log('Email sent:', info.response);
+            res.send('Email sent successfully!');
+        }
+    });
+});
 
-    ctx.status = 200;
-    ctx.body = { message: 'Password reset link sent to your email.' };
-  } catch (error) {
-    console.error('Forgot Password Error:', error);
-    ctx.status = 500;
-    ctx.body = { error: 'Internal Server Error', message: error.message };
-  }
-};
-
-/**
- * Resets the user's password using the provided reset token.
- *
- * @async
- * @function resetPassword
- * @param {Object} ctx - The Koa context object.
- * @returns {Promise<void>} - Updates user's password.
- */
-exports.resetPassword = async (ctx) => {
-  try {
-    const { token, newPassword } = ctx.request.body;
-
-    if (!token || !newPassword) {
-      ctx.status = 400;
-      ctx.body = { error: 'Token and new password are required.' };
-      return;
-    }
-
-    // Check if the token is valid and not expired
-    const [user] = await pool.query(
-      'SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()',
-      [token]
-    );
-
-    if (user.length === 0) {
-      ctx.status = 400;
-      ctx.body = { error: 'Invalid or expired token.' };
-      return;
-    }
-
-    // Hash the new password
-    const hashedPassword = await hashPassword(newPassword);
-
-    // Update password and clear reset token
-    await pool.query(
-      'UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE reset_token = ?',
-      [hashedPassword, token]
-    );
-
-    ctx.status = 200;
-    ctx.body = { message: 'Password reset successfully. You can now log in with your new password.' };
-  } catch (error) {
-    console.error('Reset Password Error:', error);
-    ctx.status = 500;
-    ctx.body = { error: 'Internal Server Error', message: error.message };
-  }
-};
+app.listen(PORT, () => {
+    console.log(`App is running on port ${PORT}`);
+});
