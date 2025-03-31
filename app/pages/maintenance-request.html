@@ -40,7 +40,6 @@
         margin: 0;
         padding: 0;
       }
-
       main.container {
         padding-bottom: 120px;
       }
@@ -167,7 +166,7 @@
         if (leaseId) {
           // Fetch lease details to get tenant and apartment info
           try {
-            const response = await fetch(`/api/leases/detailed/${leaseId}`, {
+            const response = await fetch(`/api/leases/${leaseId}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -178,16 +177,17 @@
             if (response.ok) {
               const lease = await response.json();
 
-              // Set tenant ID
-              tenantId = lease.tenant.tenant_id;
+              tenantId = lease.tenant_id;
               tenantIdInput.value = tenantId;
+
+              // Set tenant ID from API response
               document.getElementById('tenant_id').value = tenantId;
 
               // Set apartment ID
               document.getElementById('apartment_id').value =
-                lease.apartment.apartment_id;
+                lease.apartment_id;
 
-              // Make fields read-only
+              // Make fields read-only and style them
               tenantIdInput.readOnly = true;
               tenantIdInput.style.backgroundColor = '#f0f0f0';
               tenantIdInput.style.cursor = 'not-allowed';
@@ -213,15 +213,15 @@
             console.error('Error fetching lease details:', error);
           }
         } else {
-          // Fallback to user_id from local storage if no lease_id is provided
+          // Fallback: attempt to prepopulate Tenant ID from localStorage
           prepopulateTenantId();
         }
 
         // Prepopulate Tenant ID from local storage
         function prepopulateTenantId() {
-          const user_id = localStorage.getItem('user_id');
-          if (user_id) {
-            tenantIdInput.value = user_id;
+          tenantId = localStorage.getItem('tenant_id');
+          if (tenantId) {
+            tenantIdInput.value = tenantId;
             tenantIdInput.readOnly = true;
             tenantIdInput.style.backgroundColor = '#f0f0f0';
             tenantIdInput.style.cursor = 'not-allowed';
@@ -229,6 +229,11 @@
             tenantIdInput.style.color = '#666';
             tenantIdInput.style.fontStyle = 'italic';
             tenantIdInput.style.fontWeight = 'bold';
+            // Set the hidden field as well
+            document.getElementById('tenant_id').value = tenantId;
+            // Also show the request section if tenantId is available
+            requestSection.classList.remove('hidden');
+            loadRequests();
           }
         }
 
@@ -242,7 +247,14 @@
 
           try {
             const response = await fetch(
-              `/api/maintenance-requests?tenant_id=${tenantId}`
+              `/api/maintenance-requests?tenant_id=${tenantId}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+              }
             );
             const requests = await response.json();
             requestList.innerHTML = '';
@@ -292,7 +304,8 @@
             alert('Please enter a valid Tenant ID.');
             return;
           }
-
+          // Save tenant ID to localStorage for future prepopulation
+          localStorage.setItem('tenant_id', tenantId);
           document.getElementById('tenant_id').value = tenantId;
           requestSection.classList.remove('hidden');
           loadRequests();
