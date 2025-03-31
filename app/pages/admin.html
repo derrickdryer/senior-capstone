@@ -218,12 +218,21 @@
           placeholder="Username"
           required
         />
-        <input
-          type="text"
+        <select
           id="user_role"
-          placeholder="Role"
           required
-        />
+        >
+          <option
+            value=""
+            disabled
+            selected
+          >
+            Select role
+          </option>
+          <option value="tenant">Tenant</option>
+          <option value="manager">Manager</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
         <input
           type="email"
           id="user_email"
