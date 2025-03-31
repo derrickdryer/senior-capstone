@@ -2,10 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
     <title>Image Manager - Russell Properties</title>
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/public/styles/main.css" />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <style>
       .table-responsive {
         max-height: 400px;
@@ -22,7 +32,8 @@
         color: var(--secondary-color);
         z-index: 2;
       }
-      html, body {
+      html,
+      body {
         margin: 0;
         padding: 0;
         min-height: 100vh;
@@ -32,7 +43,8 @@
         padding-bottom: 100px;
         margin: 20px;
       }
-      h1, h2 {
+      h1,
+      h2 {
         margin-bottom: 20px;
       }
       form {
@@ -113,109 +125,132 @@
       requireAuth('manager');
     </script>
 
+    <header>
+      <div class="container">
+        <h1>Image Management Dashboard</h1>
+        <nav>
+          <ul>
+            <li>
+              <a
+                href="/admin"
+                class="info-button"
+                >Back to Admin Dashboard</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
     <main class="container">
       <h1>Image Manager</h1>
-      <nav style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-        <a href="/admin" class="info-button">Back to Admin Dashboard</a>
+      <nav
+        style="display: flex; justify-content: flex-end; margin-bottom: 20px"
+      >
+        <a
+          href="/admin"
+          class="info-button"
+          >Back to Admin Dashboard</a
+        >
       </nav>
 
-     <!-- The form to add or append an image -->
-     <form id="add-image-form">
-      <input
-        type="number"
-        id="property_id"
-        placeholder="Property ID"
-        required
-      />
-      <input
-        type="number"
-        id="apartment_id"
-        placeholder="Apartment ID (optional)"
-      />
-      <input
-        type="file"
-        id="image_file"
-        accept="image/*"
-        required
-      />
+      <!-- The form to add or append an image -->
+      <form id="add-image-form">
+        <input
+          type="number"
+          id="property_id"
+          placeholder="Property ID"
+          required
+        />
+        <input
+          type="number"
+          id="apartment_id"
+          placeholder="Apartment ID (optional)"
+        />
+        <input
+          type="file"
+          id="image_file"
+          accept="image/*"
+          required
+        />
+        <input
+          type="text"
+          id="caption"
+          placeholder="Caption (optional)"
+        />
+        <button type="submit">Add/Append Image</button>
+      </form>
+
+      <!-- For searching the table rows -->
       <input
         type="text"
-        id="caption"
-        placeholder="Caption (optional)"
+        id="search-bar-images"
+        placeholder="Search images..."
+        style="margin-bottom: 10px; padding: 5px; width: 100%"
       />
-      <button type="submit">Add/Append Image</button>
-    </form>
 
-    <!-- For searching the table rows -->
-    <input
-      type="text"
-      id="search-bar-images"
-      placeholder="Search images..."
-      style="margin-bottom: 10px; padding: 5px; width: 100%"
-    />
+      <!-- The table with all image records -->
+      <div class="table-responsive">
+        <table id="images-table">
+          <thead>
+            <tr>
+              <th>Image ID</th>
+              <th>Property ID</th>
+              <th>Apartment ID</th>
+              <th>Image Files</th>
+              <th>Caption</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr id="no-images-message">
+              <td colspan="6">Loading images...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
 
-    <!-- The table with all image records -->
-    <div class="table-responsive">
-      <table id="images-table">
-        <thead>
-          <tr>
-            <th>Image ID</th>
-            <th>Property ID</th>
-            <th>Apartment ID</th>
-            <th>Image Files</th>
-            <th>Caption</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="no-images-message">
-            <td colspan="6">Loading images...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+    <script type="module">
+      const token = sessionStorage.getItem('token');
+      const addImageForm = document.getElementById('add-image-form');
+      const imagesTableBody = document.querySelector('#images-table tbody');
+      const noImagesMessage = document.getElementById('no-images-message');
+      const imagesUrl = '/api/images';
 
-  <script type="module">
-    const token = sessionStorage.getItem('token');
-    const addImageForm = document.getElementById('add-image-form');
-    const imagesTableBody = document.querySelector('#images-table tbody');
-    const noImagesMessage = document.getElementById('no-images-message');
-    const imagesUrl = '/api/images';
-
-    // 1) Setup search bar
-    function setupSearch(inputId, tableId) {
-      const input = document.getElementById(inputId);
-      const table = document.getElementById(tableId);
-      input.addEventListener('input', function () {
-        const filter = this.value.toLowerCase();
-        const rows = table.getElementsByTagName('tr');
-        for (let i = 1; i < rows.length; i++) {
-          if (rows[i].id && rows[i].id.includes('no-')) continue;
-          const cells = rows[i].getElementsByTagName('td');
-          const rowText = Array.from(cells)
-            .map(cell => cell.textContent.toLowerCase())
-            .join(' ');
-          rows[i].style.display = rowText.includes(filter) ? '' : 'none';
-        }
-      });
-    }
-    setupSearch('search-bar-images', 'images-table');
-
-    // 2) Extract filenames from the JSON array
-    function extractFilenames(imageUrlField) {
-      try {
-        const arr = JSON.parse(imageUrlField);
-        return Array.isArray(arr) ? arr.join(', ') : imageUrlField;
-      } catch (e) {
-        return imageUrlField;
+      // 1) Setup search bar
+      function setupSearch(inputId, tableId) {
+        const input = document.getElementById(inputId);
+        const table = document.getElementById(tableId);
+        input.addEventListener('input', function () {
+          const filter = this.value.toLowerCase();
+          const rows = table.getElementsByTagName('tr');
+          for (let i = 1; i < rows.length; i++) {
+            if (rows[i].id && rows[i].id.includes('no-')) continue;
+            const cells = rows[i].getElementsByTagName('td');
+            const rowText = Array.from(cells)
+              .map((cell) => cell.textContent.toLowerCase())
+              .join(' ');
+            rows[i].style.display = rowText.includes(filter) ? '' : 'none';
+          }
+        });
       }
-    }
+      setupSearch('search-bar-images', 'images-table');
 
-    // 3) Create a row in the table for each image record
-    function createImageRow(image) {
-      const row = document.createElement('tr');
-      row.innerHTML = `
+      // 2) Extract filenames from the JSON array
+      function extractFilenames(imageUrlField) {
+        try {
+          const arr = JSON.parse(imageUrlField);
+          return Array.isArray(arr) ? arr.join(', ') : imageUrlField;
+        } catch (e) {
+          return imageUrlField;
+        }
+      }
+
+      // 3) Create a row in the table for each image record
+      function createImageRow(image) {
+        const row = document.createElement('tr');
+        row.innerHTML = `
         <td>${image.image_id}</td>
         <td contenteditable="true">${image.property_id || ''}</td>
         <td contenteditable="true">${image.apartment_id || ''}</td>
@@ -226,150 +261,156 @@
           <button class="delete-btn">Delete</button>
         </td>
       `;
-      
-      // Event listeners
-      row.querySelector('.edit-btn').addEventListener('click', async () => {
+
+        // Event listeners
+        row.querySelector('.edit-btn').addEventListener('click', async () => {
+          try {
+            const newData = {
+              property_id: parseInt(row.children[1].textContent) || null,
+              apartment_id: parseInt(row.children[2].textContent) || null,
+              image_url: JSON.stringify(
+                row.children[3].textContent
+                  .split(',')
+                  .map((f) => f.trim())
+                  .filter((f) => f)
+              ),
+              caption: row.children[4].textContent.trim() || null,
+            };
+
+            const response = await fetch(`${imagesUrl}/${image.image_id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(newData),
+            });
+
+            if (!response.ok) throw new Error('Failed to update');
+            alert('Updated successfully!');
+          } catch (error) {
+            console.error('Update error:', error);
+            alert('Error updating: ' + error.message);
+          }
+        });
+
+        row.querySelector('.delete-btn').addEventListener('click', async () => {
+          if (!confirm('Delete this image record permanently?')) return;
+          try {
+            const response = await fetch(`${imagesUrl}/${image.image_id}`, {
+              method: 'DELETE',
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) throw new Error('Failed to delete');
+            row.remove();
+            alert('Deleted successfully!');
+          } catch (error) {
+            console.error('Delete error:', error);
+            alert('Error deleting: ' + error.message);
+          }
+        });
+
+        imagesTableBody.appendChild(row);
+      }
+
+      // 4) Load images on page load
+      async function loadImages() {
         try {
-          const newData = {
-            property_id: parseInt(row.children[1].textContent) || null,
-            apartment_id: parseInt(row.children[2].textContent) || null,
-            image_url: JSON.stringify(
-              row.children[3].textContent
-                .split(',')
-                .map(f => f.trim())
-                .filter(f => f)
-            ),
-            caption: row.children[4].textContent.trim() || null
-          };
+          const response = await fetch(imagesUrl);
+          const data = await response.json();
+          imagesTableBody.innerHTML = '';
 
-          const response = await fetch(`${imagesUrl}/${image.image_id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify(newData)
-          });
-
-          if (!response.ok) throw new Error('Failed to update');
-          alert('Updated successfully!');
+          if (data.images?.length) {
+            data.images.forEach(createImageRow);
+            noImagesMessage.style.display = 'none';
+          } else {
+            noImagesMessage.innerHTML = '<td colspan="6">No images found</td>';
+            noImagesMessage.style.display = 'table-row';
+          }
         } catch (error) {
-          console.error('Update error:', error);
-          alert('Error updating: ' + error.message);
+          console.error('Load error:', error);
+          imagesTableBody.innerHTML =
+            '<tr><td colspan="6">Error loading images</td></tr>';
+        }
+      }
+
+      // 5) Handle form submissions
+      addImageForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const propertyId = document.getElementById('property_id').value;
+        const apartmentId = document.getElementById('apartment_id').value;
+        const fileInput = document.getElementById('image_file');
+        const caption = document.getElementById('caption').value;
+        const fileName = fileInput.files[0]?.name;
+
+        if (!propertyId || !fileName) {
+          alert('Please fill required fields');
+          return;
+        }
+
+        try {
+          // Check for existing images
+          const checkUrl = `${imagesUrl}?property_id=${propertyId}&apartment_id=${
+            apartmentId || ''
+          }`;
+          const existing = await (await fetch(checkUrl)).json();
+
+          if (existing.images?.length) {
+            // Append to existing record
+            const existingImg = existing.images[0];
+            const currentFiles = JSON.parse(existingImg.image_url);
+            const updatedFiles = Array.isArray(currentFiles)
+              ? [...currentFiles, fileName]
+              : [fileName];
+
+            const response = await fetch(
+              `${imagesUrl}/${existingImg.image_id}`,
+              {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  ...existingImg,
+                  image_url: JSON.stringify(updatedFiles),
+                  caption: caption || existingImg.caption,
+                }),
+              }
+            );
+
+            if (!response.ok) throw new Error('Append failed');
+            alert('Image appended successfully!');
+          } else {
+            // Create new record
+            const response = await fetch(imagesUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                property_id: propertyId,
+                apartment_id: apartmentId || null,
+                image_url: JSON.stringify([fileName]),
+                caption: caption || null,
+              }),
+            });
+
+            if (!response.ok) throw new Error('Create failed');
+            alert('Image added successfully!');
+          }
+
+          addImageForm.reset();
+          loadImages();
+        } catch (error) {
+          console.error('Submission error:', error);
+          alert('Operation failed: ' + error.message);
         }
       });
 
-      row.querySelector('.delete-btn').addEventListener('click', async () => {
-        if (!confirm('Delete this image record permanently?')) return;
-        try {
-          const response = await fetch(`${imagesUrl}/${image.image_id}`, {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (!response.ok) throw new Error('Failed to delete');
-          row.remove();
-          alert('Deleted successfully!');
-        } catch (error) {
-          console.error('Delete error:', error);
-          alert('Error deleting: ' + error.message);
-        }
-      });
-
-      imagesTableBody.appendChild(row);
-    }
-
-    // 4) Load images on page load
-    async function loadImages() {
-      try {
-        const response = await fetch(imagesUrl);
-        const data = await response.json();
-        imagesTableBody.innerHTML = '';
-        
-        if (data.images?.length) {
-          data.images.forEach(createImageRow);
-          noImagesMessage.style.display = 'none';
-        } else {
-          noImagesMessage.innerHTML = '<td colspan="6">No images found</td>';
-          noImagesMessage.style.display = 'table-row';
-        }
-      } catch (error) {
-        console.error('Load error:', error);
-        imagesTableBody.innerHTML = '<tr><td colspan="6">Error loading images</td></tr>';
-      }
-    }
-
-    // 5) Handle form submissions
-    addImageForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const propertyId = document.getElementById('property_id').value;
-      const apartmentId = document.getElementById('apartment_id').value;
-      const fileInput = document.getElementById('image_file');
-      const caption = document.getElementById('caption').value;
-      const fileName = fileInput.files[0]?.name;
-
-      if (!propertyId || !fileName) {
-        alert('Please fill required fields');
-        return;
-      }
-
-      try {
-        // Check for existing images
-        const checkUrl = `${imagesUrl}?property_id=${propertyId}&apartment_id=${apartmentId || ''}`;
-        const existing = await (await fetch(checkUrl)).json();
-
-        if (existing.images?.length) {
-          // Append to existing record
-          const existingImg = existing.images[0];
-          const currentFiles = JSON.parse(existingImg.image_url);
-          const updatedFiles = Array.isArray(currentFiles) 
-            ? [...currentFiles, fileName]
-            : [fileName];
-
-          const response = await fetch(`${imagesUrl}/${existingImg.image_id}`, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              ...existingImg,
-              image_url: JSON.stringify(updatedFiles),
-              caption: caption || existingImg.caption
-            })
-          });
-
-          if (!response.ok) throw new Error('Append failed');
-          alert('Image appended successfully!');
-        } else {
-          // Create new record
-          const response = await fetch(imagesUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              property_id: propertyId,
-              apartment_id: apartmentId || null,
-              image_url: JSON.stringify([fileName]),
-              caption: caption || null
-            })
-          });
-
-          if (!response.ok) throw new Error('Create failed');
-          alert('Image added successfully!');
-        }
-
-        addImageForm.reset();
-        loadImages();
-      } catch (error) {
-        console.error('Submission error:', error);
-        alert('Operation failed: ' + error.message);
-      }
-    });
-
-    // Initial load
-    document.addEventListener('DOMContentLoaded', loadImages);
-  </script>
-</body>
+      // Initial load
+      document.addEventListener('DOMContentLoaded', loadImages);
+    </script>
+  </body>
 </html>
