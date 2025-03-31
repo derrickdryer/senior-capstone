@@ -113,19 +113,17 @@ const loginSchema = Joi.object({
 const createImageSchema = Joi.object({
   property_id: Joi.number().integer().required(),
   apartment_id: Joi.number().integer().optional().allow(null),
-  image_url: Joi.alternatives()
-    .try(Joi.string().uri(), Joi.array().items(Joi.string().uri()))
-    .required(),
-  caption: Joi.string().optional(),
+  image_data: Joi.string().required(), // assuming base64 string
+  mime_type: Joi.string().valid('image/jpeg', 'image/png').required(),
+  caption: Joi.string().optional().allow(null),
 });
 
 const updateImageSchema = Joi.object({
   property_id: Joi.number().integer().optional(),
   apartment_id: Joi.number().integer().optional().allow(null),
-  image_url: Joi.alternatives()
-    .try(Joi.string().uri(), Joi.array().items(Joi.string().uri()))
-    .optional(),
-  caption: Joi.string().optional(),
+  image_data: Joi.string().optional(), // only when sending a new file
+  mime_type: Joi.string().valid('image/jpeg', 'image/png').optional(),
+  caption: Joi.string().optional().allow(null),
 });
 
 // New lease schemas

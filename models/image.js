@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Image = sequelize.define(
-    'Image',
+  const image = sequelize.define(
+    'image',
     {
       image_id: {
         type: DataTypes.INTEGER,
@@ -16,8 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: null,
       },
-      image_url: {
-        type: DataTypes.JSON,
+      image_data: {
+        type: DataTypes.BLOB('long'),
+        allowNull: false,
+      },
+      mime_type: {
+        type: DataTypes.ENUM('image/jpeg', 'image/png'),
         allowNull: false,
       },
       caption: {
@@ -39,5 +43,5 @@ module.exports = (sequelize, DataTypes) => {
     });
   };
 
-  return Image;
+  return image;
 };

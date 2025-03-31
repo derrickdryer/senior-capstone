@@ -2,9 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/public/styles/main.css" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
     <title>Properties - Russell Properties</title>
     <style>
       #properties ul {
@@ -47,22 +57,24 @@
     </main>
 
     <script>
-      // Helper: Convert image URL or filename to displayable full URL
-      function parseImageUrls(imageUrlField) {
+      // Updated helper: Returns the image source based on available record fields.
+      // If the record contains blob data and a MIME type, build a data URI.
+      // Otherwise, fallback to parsing the image_url field.
+      function getImageSource(record) {
+        if (record.image_data && record.mime_type) {
+          return `data:${record.mime_type};base64,${record.image_data}`;
+        }
         let urls = [];
         try {
-          urls = JSON.parse(imageUrlField);
+          urls = JSON.parse(record.image_url);
         } catch (err) {
-          urls = [imageUrlField];
+          urls = [record.image_url];
         }
-
         if (!Array.isArray(urls)) urls = [urls];
-
-        return urls.map(raw => {
-          const cleaned = typeof raw === "string"
-            ? raw.replace(/[{}"]/g, '').trim()
-            : '';
-
+        // Use the first valid URL
+        return urls.map((raw) => {
+          const cleaned =
+            typeof raw === 'string' ? raw.replace(/[{}"]/g, '').trim() : '';
           if (
             cleaned.startsWith('http://') ||
             cleaned.startsWith('https://') ||
@@ -72,7 +84,7 @@
           } else {
             return `/uploads/${cleaned}`;
           }
-        });
+        })[0];
       }
 
       document.addEventListener('DOMContentLoaded', async function () {
@@ -85,8 +97,8 @@
           propertiesList.innerHTML = '';
 
           properties
-            .filter(p => p.is_available === 1)
-            .forEach(property => {
+            .filter((p) => p.is_available === 1)
+            .forEach((property) => {
               const listItem = document.createElement('li');
               listItem.innerHTML = `
                 <a href="/property/${property.property_id}">
@@ -101,7 +113,6 @@
                 </div>
               `;
               propertiesList.appendChild(listItem);
-
               loadPropertyImages(property.property_id);
             });
         } catch (err) {
@@ -128,23 +139,25 @@
           }
 
           let appendedAtLeastOne = false;
-
-          imageRecords.forEach(record => {
-            const urls = parseImageUrls(record.image_url);
-            urls.forEach(url => {
+          imageRecords.forEach((record) => {
+            const imageSrc = getImageSource(record);
+            if (imageSrc) {
               const img = document.createElement('img');
-              img.src = url;
+              img.src = imageSrc;
               img.alt = record.caption || 'Property image';
               carousel.appendChild(img);
               appendedAtLeastOne = true;
-            });
+            }
           });
 
           if (!appendedAtLeastOne) {
             carousel.innerHTML = '<p>Images Coming Soon!</p>';
           }
         } catch (err) {
-          console.error(`Error loading images for property ${propertyId}:`, err);
+          console.error(
+            `Error loading images for property ${propertyId}:`,
+            err
+          );
           const fallback = document.getElementById(`carousel-${propertyId}`);
           fallback.innerHTML = '<p>Images Coming Soon!</p>';
         }

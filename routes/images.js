@@ -1,4 +1,3 @@
-// routes/imageRoutes.js
 const Router = require('koa-router');
 const imagesController = require('../controllers/imagesController');
 const { authenticateToken } = require('../middleware/auth');

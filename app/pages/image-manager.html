@@ -125,7 +125,7 @@
       const noImagesMessage = document.getElementById('no-images-message');
       const imagesUrl = '/api/images';
 
-      // 1) Setup search bar
+      // 1) Setup search bar (unchanged)
       function setupSearch(inputId, tableId) {
         const input = document.getElementById(inputId);
         const table = document.getElementById(tableId);
@@ -144,43 +144,35 @@
       }
       setupSearch('search-bar-images', 'images-table');
 
-      // 2) Extract filenames from the JSON array
-      function extractFilenames(imageUrlField) {
-        try {
-          const arr = JSON.parse(imageUrlField);
-          return Array.isArray(arr) ? arr.join(', ') : imageUrlField;
-        } catch (e) {
-          return imageUrlField;
-        }
-      }
-
-      // 3) Create a row in the table for each image record
+      // 2) Create a row in the table for each image record with a preview
       function createImageRow(image) {
         const row = document.createElement('tr');
-        row.innerHTML = `
-        <td>${image.image_id}</td>
-        <td contenteditable="true">${image.property_id || ''}</td>
-        <td contenteditable="true">${image.apartment_id || ''}</td>
-        <td contenteditable="true">${extractFilenames(image.image_url)}</td>
-        <td contenteditable="true">${image.caption || ''}</td>
-        <td>
-          <button class="edit-btn">Save</button>
-          <button class="delete-btn">Delete</button>
-        </td>
-      `;
+        // Build an image tag using the base64 image_data and MIME type.
+        let imgTag = '';
+        if (image.image_data && image.mime_type) {
+          imgTag = `<img src="data:${image.mime_type};base64,${image.image_data}" alt="Image ${image.image_id}" style="max-width:100px; max-height:100px;" />`;
+        }
 
-        // Event listeners
+        row.innerHTML = `
+          <td>${image.image_id}</td>
+          <td contenteditable="true">${image.property_id || ''}</td>
+          <td contenteditable="true">${image.apartment_id || ''}</td>
+          <td>${imgTag}</td>
+          <td contenteditable="true">${image.caption || ''}</td>
+          <td>
+            <button class="edit-btn">Save</button>
+            <button class="delete-btn">Delete</button>
+          </td>
+        `;
+
+        // Only allow editing of text fields (property_id, apartment_id, caption)
+        // For updating the image blob, a new file must be uploaded via the form.
         row.querySelector('.edit-btn').addEventListener('click', async () => {
           try {
             const newData = {
               property_id: parseInt(row.children[1].textContent) || null,
               apartment_id: parseInt(row.children[2].textContent) || null,
-              image_url: JSON.stringify(
-                row.children[3].textContent
-                  .split(',')
-                  .map((f) => f.trim())
-                  .filter((f) => f)
-              ),
+              // Do not update image_data here—updates to the image require a new file upload.
               caption: row.children[4].textContent.trim() || null,
             };
 
@@ -220,7 +212,7 @@
         imagesTableBody.appendChild(row);
       }
 
-      // 4) Load images on page load
+      // 3) Load images on page load (unchanged)
       async function loadImages() {
         try {
           const response = await fetch(imagesUrl);
@@ -241,55 +233,52 @@
         }
       }
 
-      // 5) Handle form submissions
+      // 4) Handle form submissions by reading the file as base64 data and extracting the MIME type
       addImageForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const propertyId = document.getElementById('property_id').value;
         const apartmentId = document.getElementById('apartment_id').value;
         const fileInput = document.getElementById('image_file');
         const caption = document.getElementById('caption').value;
-        const fileName = fileInput.files[0]?.name;
+        const file = fileInput.files[0];
 
-        if (!propertyId || !fileName) {
+        if (!propertyId || !file) {
           alert('Please fill required fields');
           return;
         }
 
-        try {
-          // Check for existing images
-          const checkUrl = `${imagesUrl}?property_id=${propertyId}&apartment_id=${
-            apartmentId || ''
-          }`;
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          // event.target.result is like "data:image/png;base64,...."
+          const dataUrl = event.target.result;
+          const [meta, base64Data] = dataUrl.split(',');
+          const mime_type = meta.match(/data:(.*);base64/)[1];
+
+          // Determine if an image record already exists for this property/apartment
+          const checkUrl = `${imagesUrl}?property_id=${propertyId}&apartment_id=${apartmentId || ''}`;
           const existing = await (await fetch(checkUrl)).json();
 
           if (existing.images?.length) {
-            // Append to existing record
+            // Update existing record with the new image data and MIME type
             const existingImg = existing.images[0];
-            const currentFiles = JSON.parse(existingImg.image_url);
-            const updatedFiles = Array.isArray(currentFiles)
-              ? [...currentFiles, fileName]
-              : [fileName];
-
-            const response = await fetch(
-              `${imagesUrl}/${existingImg.image_id}`,
-              {
-                method: 'PUT',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                  ...existingImg,
-                  image_url: JSON.stringify(updatedFiles),
-                  caption: caption || existingImg.caption,
-                }),
-              }
-            );
-
-            if (!response.ok) throw new Error('Append failed');
-            alert('Image appended successfully!');
+            const response = await fetch(`${imagesUrl}/${existingImg.image_id}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                property_id: propertyId,
+                apartment_id: apartmentId || null,
+                image_data: base64Data,
+                mime_type,
+                caption: caption || existingImg.caption,
+              }),
+            });
+            if (!response.ok) throw new Error('Update failed');
+            alert('Image updated successfully!');
           } else {
-            // Create new record
+            // Create new image record
             const response = await fetch(imagesUrl, {
               method: 'POST',
               headers: {
@@ -299,21 +288,18 @@
               body: JSON.stringify({
                 property_id: propertyId,
                 apartment_id: apartmentId || null,
-                image_url: JSON.stringify([fileName]),
+                image_data: base64Data,
+                mime_type,
                 caption: caption || null,
               }),
             });
-
             if (!response.ok) throw new Error('Create failed');
             alert('Image added successfully!');
           }
-
           addImageForm.reset();
           loadImages();
-        } catch (error) {
-          console.error('Submission error:', error);
-          alert('Operation failed: ' + error.message);
-        }
+        };
+        reader.readAsDataURL(file);
       });
 
       // Initial load

@@ -2,37 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="/public/styles/main.css" />
-    <title>Property Details - Russell Properties</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <link
+      rel="icon"
+      href="/public/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="/public/styles/main.css"
+    />
+    <title>Properties - Russell Properties</title>
     <style>
-      #property-details {
-        margin: 20px;
+      #properties ul {
+        list-style: none;
+        padding: 0;
       }
-      .carousel-container {
-        margin: 20px 0;
+      #properties li {
+        margin-bottom: 30px;
+        border: 1px solid #ccc;
+        padding: 15px;
       }
-      .carousel-container h2 {
-        margin-bottom: 10px;
+      .property-details {
+        margin-bottom: 15px;
       }
-      .carousel {
+      .property-carousel {
         display: flex;
         overflow-x: auto;
         gap: 10px;
         padding-bottom: 10px;
       }
-      .carousel img {
+      .property-carousel img {
         width: 200px;
         height: auto;
         border: 1px solid #ddd;
-      }
-      #apartments ul {
-        list-style: none;
-        padding: 0;
-      }
-      #apartments li {
-        margin-bottom: 15px;
       }
     </style>
   </head>
@@ -40,180 +46,122 @@
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
-
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
     </script>
 
     <main>
-      <section id="property-details">
-        <p>Loading property details...</p>
+      <section id="properties">
+        <ul></ul>
       </section>
     </main>
 
     <script>
-      function parseImageUrls(imageUrlField) {
+      // Updated helper: Returns the image source based on available record fields.
+      // If the record contains blob data and a MIME type, build a data URI.
+      // Otherwise, fallback to parsing the image_url field.
+      function getImageSource(record) {
+        if (record.image_data && record.mime_type) {
+          return `data:${record.mime_type};base64,${record.image_data}`;
+        }
         let urls = [];
         try {
-          urls = JSON.parse(imageUrlField);
-        } catch {
-          urls = [imageUrlField];
+          urls = JSON.parse(record.image_url);
+        } catch (err) {
+          urls = [record.image_url];
         }
         if (!Array.isArray(urls)) urls = [urls];
-
-        return urls.map(raw => {
-          const cleaned = typeof raw === "string" ? raw.replace(/[{}"]/g, '').trim() : '';
+        // Use the first valid URL
+        return urls.map((raw) => {
+          const cleaned =
+            typeof raw === 'string' ? raw.replace(/[{}"]/g, '').trim() : '';
           if (
-            cleaned.startsWith("http://") ||
-            cleaned.startsWith("https://") ||
-            cleaned.startsWith("data:image/")
+            cleaned.startsWith('http://') ||
+            cleaned.startsWith('https://') ||
+            cleaned.startsWith('data:image/')
           ) {
             return cleaned;
           } else {
             return `/uploads/${cleaned}`;
           }
-        });
+        })[0];
       }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        try {
+          const response = await fetch('/api/assets');
+          if (!response.ok) throw new Error('Failed to fetch properties');
+
+          const properties = await response.json();
+          const propertiesList = document.querySelector('#properties ul');
+          propertiesList.innerHTML = '';
+
+          properties
+            .filter((p) => p.is_available === 1)
+            .forEach((property) => {
+              const listItem = document.createElement('li');
+              listItem.innerHTML = `
+                <a href="/property/${property.property_id}">
+                  <div class="property-details">
+                    <h3>${property.address}</h3>
+                    <p>${property.city}, ${property.state} ${property.postal_code}</p>
+                    <p>${property.num_apartments} apartments</p>
+                  </div>
+                </a>
+                <div id="carousel-${property.property_id}" class="property-carousel">
+                  <p>Loading images...</p>
+                </div>
+              `;
+              propertiesList.appendChild(listItem);
+              loadPropertyImages(property.property_id);
+            });
+        } catch (err) {
+          alert('Failed to load properties.');
+          console.error('Error:', err);
+        }
+      });
 
       async function loadPropertyImages(propertyId) {
         try {
-          const response = await fetch(`/api/images?property_id=${propertyId}`, {
-            headers: { "Content-Type": "application/json" }
+          const res = await fetch(`/api/images?property_id=${propertyId}`, {
+            headers: { 'Content-Type': 'application/json' },
           });
-          if (!response.ok) throw new Error("Failed to fetch property images");
-          const data = await response.json();
-          const imageRecords = data.images || data;
-          const container = document.getElementById("property-images-carousel");
-          container.innerHTML = "";
+          if (!res.ok) throw new Error('Image fetch failed');
 
-          if (!imageRecords.length) {
-            container.innerHTML = "<p>No property images available.</p>";
+          const data = await res.json();
+          const imageRecords = data.images || data;
+          const carousel = document.getElementById(`carousel-${propertyId}`);
+          carousel.innerHTML = '';
+
+          if (!imageRecords || imageRecords.length === 0) {
+            carousel.innerHTML = '<p>No images available.</p>';
             return;
           }
 
-          let found = false;
-          imageRecords.forEach(record => {
-            const urls = parseImageUrls(record.image_url);
-            urls.forEach(url => {
-              const img = document.createElement("img");
-              img.src = url;
-              img.alt = record.caption || "Property image";
-              container.appendChild(img);
-              found = true;
-            });
+          let appendedAtLeastOne = false;
+          imageRecords.forEach((record) => {
+            const imageSrc = getImageSource(record);
+            if (imageSrc) {
+              const img = document.createElement('img');
+              img.src = imageSrc;
+              img.alt = record.caption || 'Property image';
+              carousel.appendChild(img);
+              appendedAtLeastOne = true;
+            }
           });
 
-          if (!found) {
-            container.innerHTML = "<p>Property Images Coming Soon!</p>";
+          if (!appendedAtLeastOne) {
+            carousel.innerHTML = '<p>Images Coming Soon!</p>';
           }
         } catch (err) {
-          console.error("Error loading property images:", err);
-          document.getElementById("property-images-carousel").innerHTML =
-            "<p>Property Images Coming Soon!</p>";
+          console.error(
+            `Error loading images for property ${propertyId}:`,
+            err
+          );
+          const fallback = document.getElementById(`carousel-${propertyId}`);
+          fallback.innerHTML = '<p>Images Coming Soon!</p>';
         }
       }
-
-      async function loadApartmentImages(apartmentId) {
-        try {
-          const response = await fetch(`/api/images?apartment_id=${apartmentId}`, {
-            headers: { "Content-Type": "application/json" }
-          });
-          if (!response.ok) throw new Error("Failed to fetch apartment images");
-          const data = await response.json();
-          const imageRecords = data.images || data;
-          const container = document.getElementById(`apartment-carousel-${apartmentId}`);
-          container.innerHTML = "";
-
-          if (!imageRecords.length) {
-            container.innerHTML = "<p>No images available for this apartment.</p>";
-            return;
-          }
-
-          let found = false;
-          imageRecords.forEach(record => {
-            const urls = parseImageUrls(record.image_url);
-            urls.forEach(url => {
-              const img = document.createElement("img");
-              img.src = url;
-              img.alt = record.caption || "Apartment image";
-              container.appendChild(img);
-              found = true;
-            });
-          });
-
-          if (!found) {
-            container.innerHTML = "<p>Apartment Images Coming Soon!</p>";
-          }
-        } catch (err) {
-          console.error(`Error loading images for apartment ${apartmentId}:`, err);
-          document.getElementById(`apartment-carousel-${apartmentId}`).innerHTML =
-            "<p>Apartment Images Coming Soon!</p>";
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", async () => {
-        const propertyId = window.location.pathname.split("/")[2];
-        const detailsSection = document.querySelector("#property-details");
-
-        try {
-          const propRes = await fetch("/api/assets");
-          if (!propRes.ok) throw new Error("Failed to fetch properties");
-          const properties = await propRes.json();
-          const property = properties.find(p => p.property_id == propertyId);
-
-          if (!property) {
-            detailsSection.innerHTML = `<p>⚠️ Property not found. <a href="/properties">Back to list</a>.</p>`;
-            return;
-          }
-
-          let propertyHTML = `
-            <h1>${property.address}</h1>
-            <p>${property.city}, ${property.state} ${property.postal_code}</p>
-            <p>${property.num_apartments} apartments</p>
-            <div class="carousel-container">
-              <h2>Property Images</h2>
-              <div id="property-images-carousel" class="carousel">
-                <p>Loading property images...</p>
-              </div>
-            </div>
-          `;
-
-          const aptsRes = await fetch(`/api/apartments/property/${propertyId}`);
-          if (!aptsRes.ok) throw new Error("Failed to fetch apartments");
-          const apartments = await aptsRes.json();
-          const availableApts = apartments.filter(a => a.is_available === 1);
-
-          if (availableApts.length) {
-            propertyHTML += `<section id="apartments">
-              <h2>Apartments</h2>
-              <ul>`;
-            availableApts.forEach(apartment => {
-              propertyHTML += `
-                <li>
-                  <h3>Unit ${apartment.unit_number} (Floor ${apartment.floor})</h3>
-                  <p>Bedrooms: ${apartment.bedrooms} | Bathrooms: ${apartment.bathrooms}</p>
-                  <p>Square Footage: ${apartment.square_footage} sq ft</p>
-                  <p>Rent: $${apartment.rent_amount}</p>
-                  <div class="carousel-container">
-                    <h4>Apartment Images</h4>
-                    <div id="apartment-carousel-${apartment.apartment_id}" class="carousel">
-                      <p>Loading apartment images...</p>
-                    </div>
-                  </div>
-                </li>
-              `;
-            });
-            propertyHTML += `</ul></section>`;
-          }
-
-          detailsSection.innerHTML = propertyHTML;
-          loadPropertyImages(propertyId);
-          availableApts.forEach(a => loadApartmentImages(a.apartment_id));
-        } catch (err) {
-          console.error(err);
-          detailsSection.innerHTML = "<p>Property details could not be loaded.</p>";
-        }
-      });
     </script>
   </body>
 </html>

@@ -87,11 +87,14 @@ CREATE TABLE IF NOT EXISTS maintenance_requests (
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
 );
 
+-- Table: images
+DROP TABLE IF EXISTS images;
 CREATE TABLE IF NOT EXISTS images (
     image_id INT AUTO_INCREMENT PRIMARY KEY,
     property_id INT NOT NULL,
     apartment_id INT DEFAULT NULL,
-    image_url JSON NOT NULL, -- Store image URL as a JSON array
+    image_data LONGBLOB NOT NULL, -- stores the binary data of the image
+    mime_type ENUM('image/jpeg', 'image/png') NOT NULL, -- validates the image type
     caption VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (property_id) REFERENCES assets(property_id) ON DELETE CASCADE,
     FOREIGN KEY (apartment_id) REFERENCES apartments(apartment_id) ON DELETE CASCADE
