@@ -8,6 +8,8 @@
   --transition-speed: 0.3s;
   --max-width: 1600px;
   --padding: 20px;
+  --hero-overlay: rgba(0, 0, 0, 0.5);
+  --hero-height: 80vh;
 }
 
 /* Reset default styles */
@@ -55,6 +57,9 @@ header {
   z-index: 1000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 header h1 {
@@ -72,12 +77,13 @@ header nav {
 header nav ul {
   display: flex;
   gap: 20px;
+  list-style: none;
 }
 
 header nav ul li a {
   color: var(--secondary-color);
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 10px 15px;
   border-radius: 4px;
   transition: background var(--transition-speed);
 }
@@ -98,14 +104,44 @@ main {
   padding: 40px 20px;
   max-width: var(--max-width);
   margin: 0 auto;
+  line-height: 1.6;
 }
 
 section {
   margin-bottom: 40px;
 }
 
+/* Hero section improvements */
+.hero {
+  background: url('../images/modern-apartment.jpg') center/cover no-repeat;
+  height: var(--hero-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--hero-overlay);
+}
+
+.hero-content {
+  position: relative;
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  z-index: 1;
+}
+
 section#home {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+  background: linear-gradient(var(--hero-overlay), var(--hero-overlay)),
     url('../public/images/hero.jpg') center/cover no-repeat;
   color: var(--secondary-color);
   padding: 100px 20px;
@@ -189,6 +225,10 @@ footer {
 
   section#home p {
     font-size: 1rem;
+  }
+
+  .hero {
+    height: 60vh;
   }
 }
 

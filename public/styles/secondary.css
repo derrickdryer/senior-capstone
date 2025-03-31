@@ -2,7 +2,7 @@
 
 /* Global Enhancements */
 body {
-  background: linear-gradient(135deg, #f0f4f8, #ffffff);
+  background: linear-gradient(135deg, #f0f4f8, var(--background-color));
 }
 
 /* Header Enhancements */
@@ -25,6 +25,7 @@ form input:focus,
 form textarea:focus,
 form select:focus {
   box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+  outline: none;
 }
 
 /* Button Enhancements */
@@ -32,11 +33,21 @@ button,
 .btn {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow var(--transition-speed);
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  padding: 10px 20px;
+}
+
+button:hover,
+.btn:hover {
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* Maintenance Request Page Enhancements */
 #request-section {
-  background-color: #ffffff;
+  background-color: var(--background-color);
   padding: 30px;
   margin-top: 20px;
   border-radius: 8px;
@@ -55,7 +66,7 @@ button,
 .invoice-summary,
 .charge-breakdown,
 .lease-details {
-  background: #ffffff;
+  background: var(--background-color);
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;

@@ -98,8 +98,11 @@ main {
   padding: 40px 20px;
   max-width: var(--max-width);
   margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
+/* Contact Section improvements */
 section#contact {
   text-align: center;
   margin-bottom: 40px;
@@ -117,11 +120,14 @@ section#contact p {
   margin-bottom: 20px;
 }
 
+/* Form Styles */
 section#contact form {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 15px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 section#contact form label {
@@ -133,13 +139,20 @@ section#contact form label {
 section#contact form input,
 section#contact form textarea {
   width: 100%;
-  max-width: 500px;
   padding: 10px;
   border: 1px solid var(--secondary-color);
   border-radius: 4px;
   font-size: 1rem;
+  transition: border var(--transition-speed);
 }
 
+section#contact form input:focus,
+section#contact form textarea:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+/* Button styling */
 section#contact form button {
   padding: 10px 20px;
   background: var(--primary-color);
