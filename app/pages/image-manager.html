@@ -254,48 +254,23 @@
           const [meta, base64Data] = dataUrl.split(',');
           const mime_type = meta.match(/data:(.*);base64/)[1];
 
-          // Determine if an image record already exists for this property/apartment
-          const checkUrl = `${imagesUrl}?property_id=${propertyId}&apartment_id=${apartmentId || ''}`;
-          const existing = await (await fetch(checkUrl)).json();
-
-          if (existing.images?.length) {
-            // Update existing record with the new image data and MIME type
-            const existingImg = existing.images[0];
-            const response = await fetch(`${imagesUrl}/${existingImg.image_id}`, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                property_id: propertyId,
-                apartment_id: apartmentId || null,
-                image_data: base64Data,
-                mime_type,
-                caption: caption || existingImg.caption,
-              }),
-            });
-            if (!response.ok) throw new Error('Update failed');
-            alert('Image updated successfully!');
-          } else {
-            // Create new image record
-            const response = await fetch(imagesUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify({
-                property_id: propertyId,
-                apartment_id: apartmentId || null,
-                image_data: base64Data,
-                mime_type,
-                caption: caption || null,
-              }),
-            });
-            if (!response.ok) throw new Error('Create failed');
-            alert('Image added successfully!');
-          }
+          // Always create a new image record
+          const response = await fetch(imagesUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              property_id: propertyId,
+              apartment_id: apartmentId || null,
+              image_data: base64Data,
+              mime_type,
+              caption: caption || null,
+            }),
+          });
+          if (!response.ok) throw new Error('Create failed');
+          alert('Image added successfully!');
           addImageForm.reset();
           loadImages();
         };
