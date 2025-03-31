@@ -1,0 +1,175 @@
+/* Enhanced Secondary Styles */
+
+/* Global Enhancements */
+body {
+  background: linear-gradient(135deg, #f0f4f8, #ffffff);
+}
+
+/* Header Enhancements */
+header {
+  border-bottom: 2px solid var(--accent-color);
+}
+
+header nav ul li a {
+  font-weight: 600;
+  transition: background var(--transition-speed),
+    transform var(--transition-speed);
+}
+
+header nav ul li a:hover {
+  transform: scale(1.05);
+}
+
+/* Form Focus States */
+form input:focus,
+form textarea:focus,
+form select:focus {
+  box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+/* Button Enhancements */
+button,
+.btn {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Maintenance Request Page Enhancements */
+#request-section {
+  background-color: #ffffff;
+  padding: 30px;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.request-item {
+  transition: transform var(--transition-speed);
+}
+
+.request-item:hover {
+  transform: translateY(-3px);
+}
+
+/* Invoice Page Enhancements */
+.invoice-summary,
+.charge-breakdown,
+.lease-details {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.invoice-summary h3,
+.charge-breakdown h3,
+.lease-details h3 {
+  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 5px;
+}
+
+.charge-breakdown ul li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+/* Login & Register Pages Enhancements */
+#login,
+#register {
+  background: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#login h2,
+#register h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#login form,
+#register form {
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+/* Tenant Account Enhancements */
+#user-account {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#user-account h2 {
+  margin-bottom: 20px;
+}
+
+#user-account form {
+  margin-bottom: 20px;
+}
+
+/* Lease Details Enhancements */
+#lease-details {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#lease-details h2 {
+  margin-bottom: 20px;
+}
+
+#lease-details #details p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+/* Invoice Success Page Enhancements */
+#invoice-success .container {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#invoice-success h2 {
+  margin-bottom: 20px;
+}
+
+#invoice-success a {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--primary-color);
+  color: var(--secondary-color);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background var(--transition-speed);
+}
+
+#invoice-success a:hover {
+  background: var(--accent-color);
+}
+
+/* Additional Account Update Form Enhancements */
+#updateEmailForm,
+#updatePasswordForm {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  #user-account,
+  #lease-details,
+  #invoice-success .container,
+  #login,
+  #register,
+  #request-section {
+    padding: 20px;
+  }
+}
