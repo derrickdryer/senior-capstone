@@ -221,8 +221,9 @@
 
               for (const tenant of tenants) {
                 const leases = await fetchLeases(tenant.tenant_id);
-
                 leases.forEach((lease) => {
+                  // Only add if the lease actually belongs to the tenant.
+                  if (lease.tenant_id !== tenant.tenant_id) return;
                   if (!leaseMap.has(lease.lease_id)) {
                     leaseMap.set(lease.lease_id, {
                       lease,
@@ -240,6 +241,8 @@
               });
 
               leaseMap.forEach(({ lease, tenants }) => {
+                // Only render the row if there is at least one tenant under this lease
+                if (tenants.length === 0) return;
                 const leaseRow = document.createElement('tr');
                 leaseRow.innerHTML = `
             <td>${lease.lease_id}</td>
