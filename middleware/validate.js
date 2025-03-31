@@ -30,7 +30,7 @@ const createAssetSchema = Joi.object({
   state: Joi.string().required(),
   postal_code: Joi.string().required(),
   num_apartments: Joi.number().integer().required(),
-  is_available: Joi.boolean().optional(),
+  is_available: Joi.boolean().truthy(1).falsy(0).optional(),
 });
 
 const updateAssetSchema = Joi.object({
@@ -39,7 +39,7 @@ const updateAssetSchema = Joi.object({
   state: Joi.string().optional(),
   postal_code: Joi.string().optional(),
   num_apartments: Joi.number().integer().optional(),
-  is_available: Joi.boolean().optional(),
+  is_available: Joi.boolean().truthy(1).falsy(0).optional(),
 });
 
 const createApartmentSchema = Joi.object({
@@ -50,7 +50,7 @@ const createApartmentSchema = Joi.object({
   bathrooms: Joi.number().required(),
   square_footage: Joi.number().required(),
   rent_amount: Joi.number().required(),
-  is_available: Joi.boolean().optional(),
+  is_available: Joi.boolean().truthy(1).falsy(0).optional(),
 });
 
 const updateApartmentSchema = Joi.object({
@@ -61,7 +61,7 @@ const updateApartmentSchema = Joi.object({
   bathrooms: Joi.number().optional(),
   square_footage: Joi.number().optional(),
   rent_amount: Joi.number().optional(),
-  is_available: Joi.boolean().optional(),
+  is_available: Joi.boolean().truthy(1).falsy(0).optional(),
 });
 
 const createMaintenanceRequestSchema = Joi.object({

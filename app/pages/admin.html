@@ -371,7 +371,7 @@
             num_apartments: parseInt(row.children[5].innerText.trim(), 10),
             is_available: row.children[6].querySelector('input').checked
               ? 1
-              : null,
+              : 0,
           };
           try {
             const response = await fetch(`/api/assets/${id}`, {
@@ -523,7 +523,7 @@
             rent_amount: parseFloat(row.children[7].innerText.trim()),
             is_available: row.children[8].querySelector('input').checked
               ? 1
-              : null,
+              : 0,
           };
           try {
             const response = await fetch(`${apartmentsUrl}/${id}`, {
