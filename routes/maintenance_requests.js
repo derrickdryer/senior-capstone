@@ -9,6 +9,10 @@
 const Router = require('koa-router');
 const maintenanceRequestsController = require('../controllers/maintenanceRequestsController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateMaintenanceRequest,
+  validateUpdateMaintenanceRequest,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/maintenance-requests' });
 
@@ -21,10 +25,18 @@ router.get('/', maintenanceRequestsController.getAllMaintenanceRequests);
 router.get('/:id', maintenanceRequestsController.getMaintenanceRequestById);
 
 // Create a new maintenance request
-router.post('/', maintenanceRequestsController.createMaintenanceRequest);
+router.post(
+  '/',
+  validateCreateMaintenanceRequest,
+  maintenanceRequestsController.createMaintenanceRequest
+);
 
 // Update an existing maintenance request
-router.put('/:id', maintenanceRequestsController.updateMaintenanceRequest);
+router.put(
+  '/:id',
+  validateUpdateMaintenanceRequest,
+  maintenanceRequestsController.updateMaintenanceRequest
+);
 
 // Delete a maintenance request
 router.delete('/:id', maintenanceRequestsController.deleteMaintenanceRequest);

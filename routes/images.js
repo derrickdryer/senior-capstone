@@ -2,6 +2,10 @@
 const Router = require('koa-router');
 const imagesController = require('../controllers/imagesController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateImage,
+  validateUpdateImage,
+} = require('../middleware/validate');
 
 const router = new Router({
   prefix: '/api/images',
@@ -11,12 +15,22 @@ const router = new Router({
 router.get('/', imagesController.getImages);
 
 // CREATE: Add a new image
-router.post('/', imagesController.createImage, authenticateToken);
+router.post(
+  '/',
+  authenticateToken,
+  validateCreateImage,
+  imagesController.createImage
+);
 
 // UPDATE: Update an existing image record
-router.put('/:id', imagesController.updateImage, authenticateToken);
+router.put(
+  '/:id',
+  authenticateToken,
+  validateUpdateImage,
+  imagesController.updateImage
+);
 
 // DELETE: Delete an image record
-router.delete('/:id', imagesController.deleteImage, authenticateToken);
+router.delete('/:id', authenticateToken, imagesController.deleteImage);
 
 module.exports = router;

@@ -9,6 +9,10 @@
 const Router = require('koa-router');
 const assetsController = require('../controllers/assetsController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateAsset,
+  validateUpdateAsset,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/assets' });
 
@@ -19,10 +23,20 @@ router.get('/', assetsController.getAllAssets);
 router.get('/:id', assetsController.getAssetById);
 
 // Create a new asset
-router.post('/', authenticateToken, assetsController.createAsset);
+router.post(
+  '/',
+  authenticateToken,
+  validateCreateAsset,
+  assetsController.createAsset
+);
 
 // Update an existing asset
-router.put('/:id', authenticateToken, assetsController.updateAsset);
+router.put(
+  '/:id',
+  authenticateToken,
+  validateUpdateAsset,
+  assetsController.updateAsset
+);
 
 // Delete an asset
 router.delete('/:id', authenticateToken, assetsController.deleteAsset);

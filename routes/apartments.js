@@ -10,6 +10,10 @@
 const Router = require('koa-router');
 const apartmentsController = require('../controllers/apartmentsController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateApartment,
+  validateUpdateApartment,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/apartments' });
 
@@ -20,10 +24,20 @@ router.get('/', apartmentsController.getAllApartments);
 router.get('/:id', apartmentsController.getApartmentById);
 
 // Create a new apartment
-router.post('/', authenticateToken, apartmentsController.createApartment);
+router.post(
+  '/',
+  authenticateToken,
+  validateCreateApartment,
+  apartmentsController.createApartment
+);
 
 // Update an existing apartment
-router.put('/:id', authenticateToken, apartmentsController.updateApartment);
+router.put(
+  '/:id',
+  authenticateToken,
+  validateUpdateApartment,
+  apartmentsController.updateApartment
+);
 
 // Delete an apartment
 router.delete('/:id', authenticateToken, apartmentsController.deleteApartment);

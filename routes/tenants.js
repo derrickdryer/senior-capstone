@@ -9,6 +9,10 @@
 const Router = require('koa-router');
 const tenantsController = require('../controllers/tenantsController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateTenant,
+  validateUpdateTenant,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/tenants' });
 
@@ -21,10 +25,10 @@ router.get('/', tenantsController.getAllTenants);
 router.get('/:id', tenantsController.getTenantById);
 
 // Create a new tenant
-router.post('/', tenantsController.createTenant);
+router.post('/', validateCreateTenant, tenantsController.createTenant);
 
 // Update an existing tenant
-router.put('/:id', tenantsController.updateTenant);
+router.put('/:id', validateUpdateTenant, tenantsController.updateTenant);
 
 // Delete a tenant
 router.delete('/:id', tenantsController.deleteTenant);

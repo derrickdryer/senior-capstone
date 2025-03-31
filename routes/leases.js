@@ -9,6 +9,10 @@
 const Router = require('koa-router');
 const leasesController = require('../controllers/leasesController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreateLease,
+  validateUpdateLease,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/leases' });
 
@@ -24,10 +28,10 @@ router.get('/:id', leasesController.getLeaseById);
 router.get('/detailed/:id', leasesController.getLeaseByIdDetailed);
 
 // Create a new lease
-router.post('/', leasesController.createLease);
+router.post('/', validateCreateLease, leasesController.createLease);
 
 // Update an existing lease
-router.put('/:id', leasesController.updateLease);
+router.put('/:id', validateUpdateLease, leasesController.updateLease);
 
 // Delete a lease
 router.delete('/:id', leasesController.deleteLease);

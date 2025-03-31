@@ -9,6 +9,10 @@
 const Router = require('koa-router');
 const paymentsController = require('../controllers/paymentsController');
 const { authenticateToken } = require('../middleware/auth');
+const {
+  validateCreatePayment,
+  validateUpdatePayment,
+} = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/payments' });
 
@@ -21,10 +25,10 @@ router.get('/', paymentsController.getAllPayments);
 router.get('/:id', paymentsController.getPaymentById);
 
 // Create a new payment
-router.post('/', paymentsController.createPayment);
+router.post('/', validateCreatePayment, paymentsController.createPayment);
 
 // Update an existing payment
-router.put('/:id', paymentsController.updatePayment);
+router.put('/:id', validateUpdatePayment, paymentsController.updatePayment);
 
 // Delete a payment
 router.delete('/:id', paymentsController.deletePayment);
