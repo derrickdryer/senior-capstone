@@ -81,7 +81,7 @@ const maintenanceRequestsRoutes = require('../../routes/maintenance_requests');
 const usersRoutes = require('../../routes/users');
 const loginRoutes = require('../../routes/login'); // Handles authentication
 const invoicesRoutes = require('../../routes/invoices');
-const imagesRoutes = require('../../routes/images')
+const imagesRoutes = require('../../routes/images');
 
 // Register API routes with designated base paths.
 router.use(assetsRoutes.routes());
@@ -135,13 +135,6 @@ router.get('/property/:id', async (ctx) => {
   ctx.body = fs.createReadStream(filePath);
 });
 
-// Global error handler to catch and log unexpected server errors.
-app.on('error', (err, ctx) => {
-  console.error('Global Error Handler:', err);
-  ctx.status = 500;
-  ctx.body = 'Internal Server Error';
-});
-
 // Determine the port from environment variables (default to 3000).
 let server;
 const PORT = process.env.PORT || 3000;
@@ -162,10 +155,3 @@ server = app.listen(PORT, (err) => {
   }
 });
 // }
-
-// Fallback: Ensure the server is listening.
-if (!server.listening) {
-  server.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-}

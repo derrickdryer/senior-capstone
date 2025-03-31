@@ -151,6 +151,72 @@
         );
         let tenantId = null;
 
+        // Function to get query parameters
+        function getQueryParam(param) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(param);
+        }
+
+        // Check if lease_id is provided in URL
+        const leaseId = getQueryParam('lease_id');
+
+        // Set today's date by default
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('request_date').value = today;
+
+        if (leaseId) {
+          // Fetch lease details to get tenant and apartment info
+          try {
+            const response = await fetch(`/api/leases/detailed/${leaseId}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            if (response.ok) {
+              const lease = await response.json();
+
+              // Set tenant ID
+              tenantId = lease.tenant.tenant_id;
+              tenantIdInput.value = tenantId;
+              document.getElementById('tenant_id').value = tenantId;
+
+              // Set apartment ID
+              document.getElementById('apartment_id').value =
+                lease.apartment.apartment_id;
+
+              // Make fields read-only
+              tenantIdInput.readOnly = true;
+              tenantIdInput.style.backgroundColor = '#f0f0f0';
+              tenantIdInput.style.cursor = 'not-allowed';
+              tenantIdInput.style.border = '1px solid #ccc';
+              tenantIdInput.style.color = '#666';
+
+              const apartmentIdInput = document.getElementById('apartment_id');
+              apartmentIdInput.readOnly = true;
+              apartmentIdInput.style.backgroundColor = '#f0f0f0';
+              apartmentIdInput.style.cursor = 'not-allowed';
+              apartmentIdInput.style.border = '1px solid #ccc';
+              apartmentIdInput.style.color = '#666';
+
+              // Show request section automatically
+              requestSection.classList.remove('hidden');
+
+              // Load existing requests
+              loadRequests();
+            } else {
+              console.error('Failed to fetch lease details');
+            }
+          } catch (error) {
+            console.error('Error fetching lease details:', error);
+          }
+        } else {
+          // Fallback to user_id from local storage if no lease_id is provided
+          prepopulateTenantId();
+        }
+
         // Prepopulate Tenant ID from local storage
         function prepopulateTenantId() {
           const user_id = localStorage.getItem('user_id');
@@ -165,8 +231,6 @@
             tenantIdInput.style.fontWeight = 'bold';
           }
         }
-
-        prepopulateTenantId();
 
         function formatDate(dateStr) {
           if (!dateStr) return 'N/A';
@@ -272,6 +336,7 @@
 
             alert('Maintenance request submitted successfully!');
             maintenanceForm.reset();
+            document.getElementById('request_date').value = today;
             loadRequests();
           } catch (error) {
             alert('Error submitting request. Please try again.');

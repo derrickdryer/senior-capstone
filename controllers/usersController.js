@@ -274,57 +274,57 @@ exports.deleteUser = async (ctx) => {
   }
 };
 
-/**
- * Handles password reset requests.
- * Generates a reset token and sends an email with a reset link.
- */
-const express = require('express');
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
-const app = express();
-const PORT = 3000;
+// /**
+//  * Handles password reset requests.
+//  * Generates a reset token and sends an email with a reset link.
+//  */
+// const express = require('express');
+// const nodemailer = require('nodemailer');
+// const bodyParser = require('body-parser');
+// const app = express();
+// const PORT = 3000;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
-app.get('/', (req, res) => {
-    res.render('home');
-});
+// app.get('/', (req, res) => {
+//     res.render('home');
+// });
 
-// Handle email sending
-app.post('/send-email', (req, res) => {
-    const { recipient, subject, message } = req.body;
+// // Handle email sending
+// app.post('/send-email', (req, res) => {
+//     const { recipient, subject, message } = req.body;
 
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: 'your gmail', 
-            pass: 'your password'
-        }
-    });
+//     const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//             user: 'your gmail',
+//             pass: 'your password'
+//         }
+//     });
 
-    // Define the email options
-    const mailOptions = {
-        from: 'sender mail', 
-        to: recipient, 
-        subject: subject, 
-        text: message,
-    };
+//     // Define the email options
+//     const mailOptions = {
+//         from: 'sender mail',
+//         to: recipient,
+//         subject: subject,
+//         text: message,
+//     };
 
-    // Send the email
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.error("Error occurred:", error);
-            res.status(500).send('Error in sending email. Please try again later.');
-        } else {
-            console.log('Email sent:', info.response);
-            res.send('Email sent successfully!');
-        }
-    });
-});
+//     // Send the email
+//     transporter.sendMail(mailOptions, (error, info) => {
+//         if (error) {
+//             console.error("Error occurred:", error);
+//             res.status(500).send('Error in sending email. Please try again later.');
+//         } else {
+//             console.log('Email sent:', info.response);
+//             res.send('Email sent successfully!');
+//         }
+//     });
+// });
 
-app.listen(PORT, () => {
-    console.log(`App is running on port ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`App is running on port ${PORT}`);
+// });

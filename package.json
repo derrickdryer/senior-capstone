@@ -27,6 +27,7 @@
     "koa-static": "^5.0.0",
     "mariadb": "^3.4.0",
     "mysql2": "^3.12.0",
+    "nodemailer": "^6.10.0",
     "sequelize": "^6.37.5",
     "spdy": "^4.0.2",
     "supertest": "^7.0.0"
