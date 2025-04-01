@@ -2,31 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
-    <link
-      rel="icon"
-      href="/public/favicon.ico"
-      type="image/x-icon"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon" />
     <title>Maintenance Requests</title>
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/main.css"
-    />
-    <link
-      rel="stylesheet"
-      href="/public/styles/admin.css"
-    />
+    <link rel="stylesheet" href="/public/styles/main.css" />
+    <link rel="stylesheet" href="/public/styles/admin.css" />
   </head>
   <body>
-    <!-- Documentation: This page provides an admin/manager view for all maintenance requests, including functions to add, update, and delete requests -->
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
@@ -43,11 +25,7 @@
         <nav>
           <ul>
             <li>
-              <a
-                href="/admin"
-                class="info-button"
-                >Back to Admin Dashboard</a
-              >
+              <a href="/admin" class="info-button">Back to Admin Dashboard</a>
             </li>
           </ul>
         </nav>
@@ -56,51 +34,20 @@
 
     <main class="container">
       <h2>All Maintenance Request Information</h2>
-      <input
-        type="text"
-        id="search-bar-maintenance"
-        placeholder="Search maintenance requests..."
-        style="margin-bottom: 10px; padding: 5px; width: 100%"
-      />
-      <!-- Add New Request Form -->
+      <input type="text" id="search-bar-maintenance" placeholder="Search maintenance requests..." style="margin-bottom: 10px; padding: 5px; width: 100%" />
+
       <form id="add-request-form">
-        <input
-          type="number"
-          id="tenant_id"
-          placeholder="Tenant ID"
-          required
-        />
-        <input
-          type="number"
-          id="apartment_id"
-          placeholder="Apartment ID"
-          required
-        />
-        <input
-          type="date"
-          id="request_date"
-          required
-        />
-        <input
-          type="text"
-          id="issue_description"
-          placeholder="Issue Description"
-          required
-        />
+        <input type="number" id="tenant_id" placeholder="Tenant ID" required />
+        <input type="number" id="apartment_id" placeholder="Apartment ID" required />
+        <input type="date" id="request_date" required />
+        <input type="text" id="issue_description" placeholder="Issue Description" required />
         <select id="status">
           <option value="pending">Pending</option>
           <option value="in_progress">In Progress</option>
           <option value="completed">Completed</option>
         </select>
-        <input
-          type="date"
-          id="completion_date"
-        />
-        <input
-          type="text"
-          id="assigned_to"
-          placeholder="Assigned To"
-        />
+        <input type="date" id="completion_date" />
+        <input type="text" id="assigned_to" placeholder="Assigned To" />
         <button type="submit">Add Request</button>
       </form>
 
@@ -128,44 +75,36 @@
       </div>
     </main>
 
-    <!-- Documentation: The inline script loads maintenance requests from /api/maintenance-requests and builds a responsive table with edit and delete actions -->
     <script type="module">
       const token = sessionStorage.getItem('token');
-      // Shared search function for any table
+
       function setupSearch(inputId, tableId) {
         const input = document.getElementById(inputId);
         const table = document.getElementById(tableId);
-
         input.addEventListener('input', function () {
           const filter = this.value.toLowerCase();
           const rows = table.getElementsByTagName('tr');
-
-          // Loop starts at 1 to skip header row
           for (let i = 1; i < rows.length; i++) {
-            // Skip fallback row if its ID includes 'no-'
             if (rows[i].id && rows[i].id.includes('no-')) continue;
-
             const cells = rows[i].getElementsByTagName('td');
-            const rowText = Array.from(cells)
-              .map((cell) => cell.textContent.toLowerCase())
-              .join(' ');
+            const rowText = Array.from(cells).map((cell) => cell.textContent.toLowerCase()).join(' ');
             rows[i].style.display = rowText.includes(filter) ? '' : 'none';
           }
         });
       }
 
-      document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('DOMContentLoaded', () => {
         setupSearch('search-bar-maintenance', 'maintenance-table');
       });
-      document.addEventListener('DOMContentLoaded', async function () {
-        const token = sessionStorage.getItem('token');
+
+      document.addEventListener('DOMContentLoaded', async () => {
         const baseUrl = '/api/maintenance-requests';
         const tableBody = document.querySelector('#maintenance-table tbody');
         const addRequestForm = document.getElementById('add-request-form');
 
         function formatDate(dateStr) {
           if (!dateStr) return null;
-          return dateStr.split('T')[0];
+          return dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
         }
 
         async function loadRequests() {
@@ -178,17 +117,17 @@
               },
             });
             if (!response.ok) throw new Error('Network response was not ok');
-
             const requests = await response.json();
             tableBody.innerHTML = '';
-
             if (!requests || requests.length === 0) {
-              tableBody.innerHTML =
-                "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
+              tableBody.innerHTML = "<tr><td colspan='9'>No maintenance requests found.</td></tr>";
             } else {
               requests.forEach((request) => createTableRow(request));
             }
-          } catch (error) {}
+          } catch (error) {
+            alert('Error loading maintenance requests');
+            console.error(error);
+          }
         }
 
         function createTableRow(request) {
@@ -201,46 +140,27 @@
             <td contenteditable="true">${request.issue_description}</td>
             <td>
               <select class="status-dropdown">
-          <option value="pending" ${
-            request.status === 'pending' ? 'selected' : ''
-          }>Pending</option>
-          <option value="in_progress" ${
-            request.status === 'in_progress' ? 'selected' : ''
-          }>In Progress</option>
-          <option value="completed" ${
-            request.status === 'completed' ? 'selected' : ''
-          }>Completed</option>
+                <option value="pending" ${request.status === 'pending' ? 'selected' : ''}>Pending</option>
+                <option value="in_progress" ${request.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+                <option value="completed" ${request.status === 'completed' ? 'selected' : ''}>Completed</option>
               </select>
             </td>
-            <td contenteditable="true">${
-              formatDate(request.completion_date) || ''
-            }</td>
-            <td contenteditable="true">${
-              request.assigned_to || 'Unassigned'
-            }</td>
+            <td contenteditable="true">${formatDate(request.completion_date) || ''}</td>
+            <td contenteditable="true">${request.assigned_to || 'Unassigned'}</td>
             <td>
               <button class="edit-btn">Save</button>
               <button class="delete-btn">Delete</button>
             </td>
           `;
 
-          row
-            .querySelector('.edit-btn')
-            .addEventListener('click', () =>
-              updateRequest(request.request_id, row)
-            );
-          row
-            .querySelector('.delete-btn')
-            .addEventListener('click', () =>
-              deleteRequest(request.request_id, row)
-            );
+          row.querySelector('.edit-btn').addEventListener('click', () => updateRequest(request.request_id, row));
+          row.querySelector('.delete-btn').addEventListener('click', () => deleteRequest(request.request_id, row));
 
           tableBody.appendChild(row);
         }
 
         async function updateRequest(id, row) {
           const updatedRequest = {
-            request_id: id,
             tenant_id: parseInt(row.children[1].innerText, 10),
             apartment_id: parseInt(row.children[2].innerText, 10),
             request_date: formatDate(row.children[3].innerText),
@@ -260,20 +180,28 @@
               body: JSON.stringify(updatedRequest),
             });
 
-            if (!response.ok) throw new Error('Failed to update request');
+            if (!response.ok) throw new Error(await response.text());
             alert('Request updated successfully!');
-          } catch (error) {}
+            loadRequests();
+          } catch (error) {
+            alert(`Update failed: ${error}`);
+            console.error(error);
+          }
         }
 
         async function deleteRequest(id, row) {
           if (confirm('Are you sure you want to delete this request?')) {
             try {
-              await fetch(`${baseUrl}/${id}`, {
+              const response = await fetch(`${baseUrl}/${id}`, {
                 method: 'DELETE',
                 headers: { Authorization: `Bearer ${token}` },
               });
+              if (!response.ok) throw new Error('Failed to delete request');
               row.remove();
-            } catch (error) {}
+            } catch (error) {
+              alert('Delete failed');
+              console.error(error);
+            }
           }
         }
 
@@ -282,32 +210,32 @@
 
           const formData = {
             tenant_id: parseInt(document.getElementById('tenant_id').value, 10),
-            apartment_id: parseInt(
-              document.getElementById('apartment_id').value,
-              10
-            ),
-            request_date: formatDate(
-              document.getElementById('request_date').value
-            ),
-            issue_description:
-              document.getElementById('issue_description').value,
+            apartment_id: parseInt(document.getElementById('apartment_id').value, 10),
+            request_date: formatDate(document.getElementById('request_date').value),
+            issue_description: document.getElementById('issue_description').value,
             status: document.getElementById('status').value,
-            completion_date:
-              formatDate(document.getElementById('completion_date').value) ||
-              null,
+            completion_date: formatDate(document.getElementById('completion_date').value) || null,
             assigned_to: document.getElementById('assigned_to').value || null,
           };
 
-          await fetch(baseUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(formData),
-          });
+          try {
+            const response = await fetch(baseUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(formData),
+            });
 
-          loadRequests();
+            if (!response.ok) throw new Error('Failed to add request');
+            alert('Request added successfully!');
+            addRequestForm.reset();
+            loadRequests();
+          } catch (error) {
+            alert('Failed to add request');
+            console.error(error);
+          }
         });
 
         loadRequests();
