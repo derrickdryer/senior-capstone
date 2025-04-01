@@ -24,11 +24,54 @@
       href="/public/styles/secondary.css"
     />
     <title>Lease Details - Russell Properties</title>
+    <style>
+      /* Container styling */
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1rem;
+        font-family: Arial, sans-serif;
+      }
+
+      /* Section title styling */
+      #lease-details h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Example styling for the container of each lease section */
+      .lease-section {
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      /* Optional: style the section headers */
+      .lease-section h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+      }
+
+      /* Use CSS Grid to lay out the definition list in columns */
+      .lease-section dl {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: 1rem;   /* Space between label and value */
+        row-gap: 0.5rem;    /* Space between each row */
+      }
+
+      /* Make the dt label stand out */
+      .lease-section dt {
+        font-weight: 600;
+      }
+    </style>
   </head>
   <body>
     <script type="module">
       import { createHeader } from '/components/header.js';
       import { createFooter } from '/components/footer.js';
+
       document.body.prepend(createHeader());
       document.body.appendChild(createFooter());
     </script>
@@ -77,9 +120,7 @@
           const lease = await response.json();
           displayLeaseDetails(lease);
         } catch (error) {
-          document.getElementById(
-            'details'
-          ).innerHTML = `<p>${error.message}</p>`;
+          document.getElementById('details').innerHTML = `<p>${error.message}</p>`;
         }
       }
 
@@ -92,44 +133,84 @@
         });
 
         // Build the HTML layout for detailed lease information.
-        // Assumes the API now returns nested objects:
-        //   lease.tenant with first_name, last_name, email, etc.
-        //   lease.apartment with apartment details (unit_number, floor, etc.)
-        //   lease.property with property details (address, city, state, postal_code)
         const htmlContent = `
-          <h3>Lease Information</h3>
-          <p><strong>Lease ID:</strong> ${lease.lease_id}</p>
-          <p><strong>Status:</strong> ${lease.status}</p>
-          
-          <h3>Tenant Details</h3>
-          <p><strong>Name:</strong> ${lease.tenant.first_name} ${
-          lease.tenant.last_name
-        }</p>
-          <p><strong>Email:</strong> ${lease.tenant.email}</p>
+          <div class="lease-section">
+            <h3>Lease Information</h3>
+            <dl>
+              <dt>Lease ID:</dt>
+              <dd>${lease.lease_id}</dd>
+              
+              <dt>Status:</dt>
+              <dd>${lease.status}</dd>
+            </dl>
+          </div>
 
-          <h3>Apartment Details</h3>
-          <p><strong>Apartment ID:</strong> ${lease.apartment.apartment_id}</p>
-          <p><strong>Unit:</strong> ${lease.apartment.unit_number}</p>
-          <p><strong>Floor:</strong> ${lease.apartment.floor}</p>
-          <p><strong>Bedrooms:</strong> ${lease.apartment.bedrooms}</p>
-          <p><strong>Bathrooms:</strong> ${lease.apartment.bathrooms}</p>
-          
-          <h3>Property Details</h3>
-          <p><strong>Address:</strong> ${lease.property.address}</p>
-          <p><strong>City:</strong> ${lease.property.city}</p>
-          <p><strong>State:</strong> ${lease.property.state}</p>
-          <p><strong>Postal Code:</strong> ${lease.property.postal_code}</p>
-          
-          <h3>Lease Terms</h3>
-          <p><strong>Lease Start Date:</strong> ${dateFormatter.format(
-            new Date(lease.lease_start_date)
-          )}</p>
-          <p><strong>Lease End Date:</strong> ${dateFormatter.format(
-            new Date(lease.lease_end_date)
-          )}</p>
-          <p><strong>Monthly Rent:</strong> $${lease.monthly_rent}</p>
-          <p><strong>Security Deposit:</strong> $${lease.security_deposit}</p>
+          <div class="lease-section">
+            <h3>Tenant Details</h3>
+            <dl>
+              <dt>Name:</dt>
+              <dd>${lease.tenant.first_name} ${lease.tenant.last_name}</dd>
+              
+              <dt>Email:</dt>
+              <dd>${lease.tenant.email}</dd>
+            </dl>
+          </div>
+
+          <div class="lease-section">
+            <h3>Apartment Details</h3>
+            <dl>
+              <dt>Apartment ID:</dt>
+              <dd>${lease.apartment.apartment_id}</dd>
+
+              <dt>Unit:</dt>
+              <dd>${lease.apartment.unit_number}</dd>
+
+              <dt>Floor:</dt>
+              <dd>${lease.apartment.floor}</dd>
+
+              <dt>Bedrooms:</dt>
+              <dd>${lease.apartment.bedrooms}</dd>
+
+              <dt>Bathrooms:</dt>
+              <dd>${lease.apartment.bathrooms}</dd>
+            </dl>
+          </div>
+
+          <div class="lease-section">
+            <h3>Property Details</h3>
+            <dl>
+              <dt>Address:</dt>
+              <dd>${lease.property.address}</dd>
+
+              <dt>City:</dt>
+              <dd>${lease.property.city}</dd>
+
+              <dt>State:</dt>
+              <dd>${lease.property.state}</dd>
+
+              <dt>Postal Code:</dt>
+              <dd>${lease.property.postal_code}</dd>
+            </dl>
+          </div>
+
+          <div class="lease-section">
+            <h3>Lease Terms</h3>
+            <dl>
+              <dt>Lease Start Date:</dt>
+              <dd>${dateFormatter.format(new Date(lease.lease_start_date))}</dd>
+
+              <dt>Lease End Date:</dt>
+              <dd>${dateFormatter.format(new Date(lease.lease_end_date))}</dd>
+
+              <dt>Monthly Rent:</dt>
+              <dd>$${lease.monthly_rent}</dd>
+
+              <dt>Security Deposit:</dt>
+              <dd>$${lease.security_deposit}</dd>
+            </dl>
+          </div>
         `;
+
         document.getElementById('details').innerHTML = htmlContent;
       }
     </script>
