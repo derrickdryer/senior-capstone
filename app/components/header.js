@@ -77,6 +77,9 @@ export function createHeader() {
     if (role === 'manager') {
       extraButtons += `<li><a href="/admin">Admin</a></li>`;
     }
+    if (role === 'maintenance') {
+      extraButtons += `<li><a href="/maintenance-info">Maintenance</a></li>`;
+    }
     if (role === 'tenant') {
       extraButtons += `<li><a href="/tenant">Tenant</a></li>`;
     }
