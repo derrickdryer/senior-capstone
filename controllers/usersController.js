@@ -63,6 +63,28 @@ exports.updatePassword = async (ctx) => {
   }
 };
 
+exports.updateEmail = async (ctx) => {
+  try {
+    const { email } = ctx.request.body;
+    const result = await pool.query(
+      'UPDATE users SET email = ? WHERE user_id = ?',
+      [email, ctx.params.id]
+    );
+
+    if (result.affectedRows === 0) {
+      ctx.status = 404;
+      ctx.body = { error: 'User not found' };
+      return;
+    }
+
+    ctx.status = 200;
+    ctx.body = { message: 'Email updated successfully' };
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};
+
 /**
  * Registers a new user by inserting their details into the database.
  *

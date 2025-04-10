@@ -44,6 +44,9 @@ router.delete('/:id', usersController.deleteUser, authenticateToken);
 // Update user's password (consider applying custom validation for password)
 router.put('/:id/password', usersController.updatePassword, authenticateToken);
 
+// Update user's email (consider applying custom validation for email)
+router.put('/:id/email', usersController.updateEmail, authenticateToken);
+
 // Register route for new users (consider adding validation similar to createUser)
 router.post('/register', validateRegisterUser, usersController.register);
 
