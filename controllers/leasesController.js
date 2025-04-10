@@ -304,3 +304,27 @@ exports.deleteLease = async (ctx) => {
     ctx.body = { error: 'Internal Server Error', message: error.message };
   }
 };
+
+// Join the tenants and leases tables to get tenant details for each lease and ensure user_id is on each row
+/**
+ * Retrieves all leases with tenant details.
+ *
+ * @async
+ * @function getAllLeasesWithTenantDetails
+ * @param {Object} ctx - The Koa context object.
+ * @returns {Promise<void>} On success, ctx.body contains an array of lease objects with tenant details.
+ * @throws {Error} If an error occurs during the query.
+ */
+exports.getAllLeasesWithTenantDetails = async (ctx) => {
+  try {
+    const sql =
+      'SELECT l.*, t.first_name, t.last_name, t.email, t.user_id FROM leases l JOIN tenants t ON l.tenant_id = t.tenant_id WHERE t.user_id = ?';
+    const userId = ctx.params.id; // Ensure your route parameter is named "id"
+    const [rows] = await pool.query(sql, [userId]);
+    ctx.status = 200;
+    ctx.body = rows;
+  } catch (error) {
+    ctx.status = 500;
+    ctx.body = { error: 'Internal Server Error', message: error.message };
+  }
+};

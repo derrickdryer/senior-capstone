@@ -22,6 +22,13 @@ router.use(authenticateToken);
 // GET all leases
 router.get('/', leasesController.getAllLeases);
 
+// Get all leases by user id with join controlleer
+router.get(
+  '/user/:id',
+  leasesController.getAllLeasesWithTenantDetails,
+  authenticateToken
+);
+
 // GET lease by id
 router.get('/:id', leasesController.getLeaseById);
 
