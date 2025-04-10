@@ -5,6 +5,8 @@ const {
   validateCreateUser,
   validateUpdateUser,
   validateRegisterUser,
+  validateUpdatePassword,
+  validateUpdateEmail,
 } = require('../middleware/validate');
 
 const router = new Router({ prefix: '/api/users' });
@@ -42,10 +44,20 @@ router.put(
 router.delete('/:id', usersController.deleteUser, authenticateToken);
 
 // Update user's password (consider applying custom validation for password)
-router.put('/:id/password', usersController.updatePassword, authenticateToken);
+router.put(
+  '/:id/password',
+  validateUpdatePassword,
+  usersController.updatePassword,
+  authenticateToken
+);
 
 // Update user's email (consider applying custom validation for email)
-router.put('/:id/email', usersController.updateEmail, authenticateToken);
+router.put(
+  '/:id/email',
+  validateUpdateEmail,
+  usersController.updateEmail,
+  authenticateToken
+);
 
 // Register route for new users (consider adding validation similar to createUser)
 router.post('/register', validateRegisterUser, usersController.register);

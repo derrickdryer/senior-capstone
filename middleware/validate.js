@@ -164,6 +164,15 @@ const updateTenantSchema = Joi.object({
   user_id: Joi.number().integer().optional(),
 });
 
+// NEW: Schemas for updating password and email
+const updatePasswordSchema = Joi.object({
+  password: Joi.string().min(6).required(),
+});
+
+const updateEmailSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
 function validateBody(schema) {
   return async (ctx, next) => {
     const { error, value } = schema.validate(ctx.request.body, {
@@ -205,4 +214,6 @@ module.exports = {
   // New exports for tenants
   validateCreateTenant: validateBody(createTenantSchema),
   validateUpdateTenant: validateBody(updateTenantSchema),
+  validateUpdatePassword: validateBody(updatePasswordSchema),
+  validateUpdateEmail: validateBody(updateEmailSchema),
 };
