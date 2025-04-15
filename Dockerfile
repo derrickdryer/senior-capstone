@@ -14,9 +14,6 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Run CRUD tests 
-RUN npm run crud-test
-
 # Copy SSL certificates
 #COPY certs/server.crt /etc/ssl/certs/hidden-it-com.crt
 #COPY certs/server.key /etc/ssl/private/hidden-it-com.key
