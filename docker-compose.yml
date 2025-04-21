@@ -1,0 +1,41 @@
+services:
+  website:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: capstone_website
+    pull_policy: always
+    container_name: capstone_website
+    restart: unless-stopped
+    environment:
+      DB_USER: realtor_website
+      DB_PASSWORD: 'SecretPassword' # Change this to a secure password
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: realtor_website
+    depends_on:
+      - mariadb
+    networks:
+      - frontend
+      - backend
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SecretPassword' # Change this to a secure password
+      MYSQL_DATABASE: realtor_website
+      MYSQL_USER: realtor_website
+      MYSQL_PASSWORD: 'SecretPassword' # Change this to a secure password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./scripts/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - backend
+volumes:
+  mariadb_data:
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true

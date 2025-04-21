@@ -1,10 +1,6 @@
 -- Database: realtor_website
 CREATE DATABASE IF NOT EXISTS realtor_website;
 
--- Explicitly allow remote connections from any IP (% wildcard)
-CREATE USER IF NOT EXISTS 'realtor_website'@'localhost' IDENTIFIED BY 'PASSWORD';
-GRANT ALL PRIVILEGES ON realtor_website.* TO 'realtor_website'@'localhost';
-
 USE realtor_website;
 
 -- Table: users
