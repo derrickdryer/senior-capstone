@@ -36,6 +36,6 @@ volumes:
   mariadb_data:
 networks:
   frontend:
-    external: true
+    external: false
   backend:
-    external: true
+    external: false
